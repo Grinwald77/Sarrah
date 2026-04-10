@@ -1,19 +1,33 @@
 export const FactorModel = {
+
     calc(groups){
 
-        let R0=0,R1=0,q=0,p=0;
+        let R0=0, R1=0;
+        let q=0, p=0;
 
         groups.forEach(g=>{
-            let r0=g.q0*g.p0;
-            let r1=g.q1*g.p1;
 
-            R0+=r0;
-            R1+=r1;
+            let q0 = g.quantity0 || 0;
+            let q1 = g.quantity1 || 0;
+            let p0 = g.price0 || 0;
+            let p1 = g.price1 || 0;
 
-            q+=(g.q1-g.q0)*g.p0;
-            p+=g.q1*(g.p1-g.p0);
+            let r0 = q0 * p0;
+            let r1 = q1 * p1;
+
+            R0 += r0;
+            R1 += r1;
+
+            q += (q1 - q0) * p0;
+            p += q1 * (p1 - p0);
         });
 
-        return {R0,R1,dR:R1-R0,q,p};
+        return {
+            R0,
+            R1,
+            dR: R1 - R0,
+            q,
+            p
+        };
     }
 };

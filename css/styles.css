@@ -1,38 +1,174 @@
-body { font-family:-apple-system; background:#f4f6fa; padding:15px; }
+/* =========================
+   BASE
+========================= */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f4f6fa;
+    padding: 15px;
+    margin: 0;
+}
+
+/* =========================
+   BLOCKS
+========================= */
 
 .block {
-    background:white;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:15px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
 }
 
-.top-bar { display:flex; gap:10px; flex-wrap:wrap; }
+/* =========================
+   TOP BAR
+========================= */
 
-table { width:100%; border-collapse:collapse; }
-td,th { padding:6px; text-align:center; border-bottom:1px solid #eee; }
+.top-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
 
-input { width:90px; padding:5px; }
+.top-bar div {
+    font-size: 13px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+input, select {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+}
+
+input {
+    width: 90px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th {
+    background: #f7f9fc;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+td, th {
+    padding: 6px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+/* TOTAL ROW */
+tr:last-child {
+    font-weight: bold;
+    background: #eef2ff;
+}
+
+/* COLORS */
+
+.green {
+    color: #16a34a;
+}
+
+.red {
+    color: #dc2626;
+}
+
+/* =========================
+   BUTTON SYSTEM
+========================= */
 
 button {
-    padding:8px 14px;
-    border:none;
-    border-radius:8px;
-    background:#4facfe;
-    color:white;
-    font-weight:600;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
+
+/* 🔵 PRIMARY (Build) */
 .build-btn {
     background: linear-gradient(135deg, #4facfe, #00f2fe);
     color: white;
     font-weight: 700;
-    padding: 12px 22px;
-    border-radius: 12px;
+    padding: 12px 20px;
 }
 
+.build-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.build-btn:active {
+    transform: scale(0.96);
+}
+
+/* ⚪ SECONDARY (Test) */
 .test-btn {
     background: white;
+    color: #333;
     border: 2px solid #d6dcff;
     padding: 10px 16px;
-    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.test-btn:hover {
+    background: #f5f7ff;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.test-btn:active {
+    transform: scale(0.97);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.empty {
+    padding: 12px;
+    color: #777;
+    text-align: center;
+}
+
+/* =========================
+   RTL SUPPORT
+========================= */
+
+body[dir="rtl"] {
+    direction: rtl;
+}
+
+body[dir="rtl"] .top-bar {
+    flex-direction: row-reverse;
+}
+
+body[dir="rtl"] input,
+body[dir="rtl"] select {
+    text-align: right;
+}
+
+/* =========================
+   SMOOTH UX
+========================= */
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #4facfe;
+    box-shadow: 0 0 0 2px rgba(79,172,254,0.2);
 }

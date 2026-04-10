@@ -22,3 +22,17 @@ button {
     color:white;
     font-weight:600;
 }
+.build-btn {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: white;
+    font-weight: 700;
+    padding: 12px 22px;
+    border-radius: 12px;
+}
+
+.test-btn {
+    background: white;
+    border: 2px solid #d6dcff;
+    padding: 10px 16px;
+    border-radius: 10px;
+}

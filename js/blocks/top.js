@@ -59,8 +59,9 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <div style="align-self:end;">
-                <button id="buildBtn">${t("build")}</button>
+            <div style="align-self:end; display:flex; gap:8px;">
+                <button id="buildBtn" class="build-btn">${t("build")}</button>
+                <button id="testBtn" class="test-btn">Test</button>
             </div>
 
         </div>
@@ -72,7 +73,9 @@ export const TopBlock = {
 
     bind(){
 
+        // =========================
         // BUILD MODEL
+        // =========================
         document.getElementById("buildBtn").onclick = () => {
 
             let n = +document.getElementById("groupCount").value || 1;
@@ -87,13 +90,7 @@ export const TopBlock = {
                     quantity1:0,
 
                     price0:0,
-                    price1:0,
-
-                    // 🔥 финансы (задел)
-                    directCost0:0,
-                    directCost1:0,
-                    variableRate0:0,
-                    variableRate1:0
+                    price1:0
                 });
             }
 
@@ -101,25 +98,53 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
+        // =========================
+        // TEST DATA
+        // =========================
+        document.getElementById("testBtn").onclick = () => {
+
+            let groups = Store.get("groups");
+            if(!groups || !groups.length) return;
+
+            groups.forEach(g=>{
+                g.quantity0 = Math.floor(Math.random()*10)+1;
+                g.quantity1 = Math.floor(Math.random()*10)+1;
+
+                g.price0 = Math.floor(Math.random()*10000)+1000;
+                g.price1 = Math.floor(Math.random()*10000)+1000;
+            });
+
+            Store.set("groups", groups);
+        };
+
+        // =========================
         // LANGUAGE
+        // =========================
         document.getElementById("lang").onchange = (e)=>{
             Store.set("language", e.target.value);
             applyDir();
             this.render();
         };
 
-        // PERIOD TYPE CHANGE
+        // =========================
+        // PERIOD TYPE
+        // =========================
         document.getElementById("periodType").onchange = ()=>{
             this.fillPeriods();
         };
 
-        // PERIOD SELECTION
-        document.getElementById("period0").onchange = this.updatePeriods;
-        document.getElementById("period1").onchange = this.updatePeriods;
-        document.getElementById("type0").onchange = this.updatePeriods;
-        document.getElementById("type1").onchange = this.updatePeriods;
+        // =========================
+        // PERIOD CHANGE
+        // =========================
+        document.getElementById("period0").onchange = ()=>this.updatePeriods();
+        document.getElementById("period1").onchange = ()=>this.updatePeriods();
+        document.getElementById("type0").onchange = ()=>this.updatePeriods();
+        document.getElementById("type1").onchange = ()=>this.updatePeriods();
     },
 
+    // =========================
+    // GENERATE PERIOD LIST
+    // =========================
     fillPeriods(){
 
         let type = document.getElementById("periodType").value;
@@ -139,6 +164,9 @@ export const TopBlock = {
         this.updatePeriods();
     },
 
+    // =========================
+    // SAVE PERIODS TO STORE
+    // =========================
     updatePeriods(){
 
         const p0 = document.getElementById("period0").value;

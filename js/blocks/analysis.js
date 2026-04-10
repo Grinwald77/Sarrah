@@ -1,6 +1,5 @@
 import { Store } from '../store.js';
 import { FactorModel } from '../models/factor.js';
-import { t } from '../i18n.js';
 
 export const AnalysisBlock = {
 
@@ -10,20 +9,22 @@ export const AnalysisBlock = {
 
     render(){
 
-        let groups = Store.get("groups");
+        let groups = Store.get("groups") || [];
         if(!groups.length) return;
 
         let r = FactorModel.calc(groups);
 
         document.getElementById("analysisBlock").innerHTML = `
-        <b>${t("analysis")}</b><br><br>
+        <div style="background:white; padding:10px; border-radius:10px; margin-top:10px;">
+            <b>Revenue Factor Analysis</b><br><br>
 
-        R0: ${Math.round(r.R0)}<br>
-        R1: ${Math.round(r.R1)}<br>
-        Δ: ${Math.round(r.dR)}<br><br>
+            Revenue Initial: ${Math.round(r.R0)}<br>
+            Revenue Current: ${Math.round(r.R1)}<br>
+            Change: ${Math.round(r.dR)}<br><br>
 
-        Quantity: ${Math.round(r.q)}<br>
-        Price: ${Math.round(r.p)}
+            Quantity Effect: ${Math.round(r.q)}<br>
+            Price Effect: ${Math.round(r.p)}
+        </div>
         `;
     }
 };

@@ -4,12 +4,22 @@ export const TableBlock = {
 
     init(){
         Store.subscribe(()=>this.render());
+        this.render(); // важно — первый рендер
     },
 
     render(){
 
         let groups = Store.get("groups") || [];
-        if(!groups.length) return;
+
+        // 👉 если данных нет
+        if(!groups.length){
+            document.getElementById("tableBlock").innerHTML = `
+                <div style="padding:10px; color:#777;">
+                    No data yet — click Build
+                </div>
+            `;
+            return;
+        }
 
         let html = `
         <table>
@@ -31,17 +41,23 @@ export const TableBlock = {
 
             <th>Initial</th>
             <th>Current</th>
-            <th>Δ</th>
+            <th>Δ Revenue</th>
 
             <th>Initial</th>
             <th>Current</th>
-            <th>Δ</th>
+            <th>Δ Share</th>
         </tr>
         `;
 
-        let R0=0, R1=0;
-        let r0=[], r1=[];
+        let R0 = 0;
+        let R1 = 0;
 
+        let r0 = [];
+        let r1 = [];
+
+        // =========================
+        // расчёт выручки
+        // =========================
         groups.forEach((g,i)=>{
 
             let q0 = g.quantity0 || 0;
@@ -58,6 +74,9 @@ export const TableBlock = {
 
         let dR = R1 - R0;
 
+        // =========================
+        // строки таблицы
+        // =========================
         groups.forEach((g,i)=>{
 
             let q0 = g.quantity0 || 0;
@@ -73,32 +92,53 @@ export const TableBlock = {
 
             html += `
             <tr>
-                <td><input value="${g.name}" data-i="${i}" data-k="name"></td>
 
-                <td><input value="${q0}" data-i="${i}" data-k="quantity0"></td>
-                <td><input value="${q1}" data-i="${i}" data-k="quantity1"></td>
+                <td>
+                    <input value="${g.name}" data-i="${i}" data-k="name">
+                </td>
 
-                <td><input value="${p0}" data-i="${i}" data-k="price0"></td>
-                <td><input value="${p1}" data-i="${i}" data-k="price1"></td>
+                <td>
+                    <input value="${q0}" data-i="${i}" data-k="quantity0">
+                </td>
+
+                <td>
+                    <input value="${q1}" data-i="${i}" data-k="quantity1">
+                </td>
+
+                <td>
+                    <input value="${p0}" data-i="${i}" data-k="price0">
+                </td>
+
+                <td>
+                    <input value="${p1}" data-i="${i}" data-k="price1">
+                </td>
 
                 <td>${Math.round(r0[i])}</td>
                 <td>${Math.round(r1[i])}</td>
 
-                <td style="color:${delta>=0?'green':'red'}">${Math.round(delta)}</td>
+                <td class="${delta>=0?'green':'red'}">
+                    ${Math.round(delta)}
+                </td>
 
                 <td>${s0.toFixed(1)}%</td>
                 <td>${s1.toFixed(1)}%</td>
 
-                <td style="color:${ds>=0?'green':'red'}">${ds.toFixed(1)} pp</td>
+                <td class="${ds>=0?'green':'red'}">
+                    ${ds.toFixed(1)} pp
+                </td>
+
             </tr>
             `;
         });
 
+        // =========================
+        // итоги
+        // =========================
         let totalQ0 = groups.reduce((s,g)=>s+(g.quantity0||0),0);
         let totalQ1 = groups.reduce((s,g)=>s+(g.quantity1||0),0);
 
-        let avgP0 = totalQ0 ? R0/totalQ0 : 0;
-        let avgP1 = totalQ1 ? R1/totalQ1 : 0;
+        let avgP0 = totalQ0 ? R0 / totalQ0 : 0;
+        let avgP1 = totalQ1 ? R1 / totalQ1 : 0;
 
         html += `
         <tr style="font-weight:bold; background:#eef2ff;">
@@ -119,6 +159,7 @@ export const TableBlock = {
             <td>100%</td>
             <td>0</td>
         </tr>
+
         </table>
         `;
 
@@ -129,16 +170,16 @@ export const TableBlock = {
 
     bind(){
 
-        document.querySelectorAll("#tableBlock input").forEach(inp=>{
+        document.querySelectorAll("#tableBlock input").forEach(input=>{
 
-            inp.oninput = (e)=>{
+            input.oninput = (e)=>{
 
                 let i = e.target.dataset.i;
                 let k = e.target.dataset.k;
 
                 let groups = Store.get("groups");
 
-                groups[i][k] = k==="name"
+                groups[i][k] = (k === "name")
                     ? e.target.value
                     : +e.target.value || 0;
 

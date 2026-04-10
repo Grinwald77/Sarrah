@@ -1,0 +1,24 @@
+body { font-family:-apple-system; background:#f4f6fa; padding:15px; }
+
+.block {
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.top-bar { display:flex; gap:10px; flex-wrap:wrap; }
+
+table { width:100%; border-collapse:collapse; }
+td,th { padding:6px; text-align:center; border-bottom:1px solid #eee; }
+
+input { width:90px; padding:5px; }
+
+button {
+    padding:8px 14px;
+    border:none;
+    border-radius:8px;
+    background:#4facfe;
+    color:white;
+    font-weight:600;
+}

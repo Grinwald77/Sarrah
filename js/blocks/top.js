@@ -16,37 +16,37 @@ export const TopBlock = {
         <div class="top-bar">
 
             <div>
-                Groups<br>
+                ${t("groups")}<br>
                 <input id="groupCount" value="${state.groupCount}">
             </div>
 
             <div>
-                Period Type<br>
+                ${t("periodType")}<br>
                 <select id="periodType">
-                    <option value="months">Months</option>
-                    <option value="weeks">Weeks</option>
-                    <option value="quarters">Quarters</option>
-                    <option value="years">Years</option>
+                    <option value="months">${t("months")}</option>
+                    <option value="weeks">${t("weeks")}</option>
+                    <option value="quarters">${t("quarters")}</option>
+                    <option value="years">${t("years")}</option>
                 </select>
             </div>
 
             <div>
-                Source Period<br>
+                ${t("sourcePeriod")}<br>
                 <select id="period0"></select>
                 <select id="type0">
-                    <option value="Actual">Actual</option>
-                    <option value="Planned">Planned</option>
-                    <option value="Past">Past</option>
+                    <option value="Actual">${t("actual")}</option>
+                    <option value="Planned">${t("planned")}</option>
+                    <option value="Past">${t("past")}</option>
                 </select>
             </div>
 
             <div>
-                Current Period<br>
+                ${t("currentPeriod")}<br>
                 <select id="period1"></select>
                 <select id="type1">
-                    <option value="Actual">Actual</option>
-                    <option value="Planned">Planned</option>
-                    <option value="Past">Past</option>
+                    <option value="Actual">${t("actual")}</option>
+                    <option value="Planned">${t("planned")}</option>
+                    <option value="Past">${t("past")}</option>
                 </select>
             </div>
 
@@ -61,7 +61,7 @@ export const TopBlock = {
 
             <div style="align-self:end; display:flex; gap:8px;">
                 <button id="buildBtn" class="build-btn">${t("build")}</button>
-                <button id="testBtn" class="test-btn">Test</button>
+                <button id="testBtn" class="test-btn">${t("test")}</button>
             </div>
 
         </div>
@@ -73,9 +73,6 @@ export const TopBlock = {
 
     bind(){
 
-        // =========================
-        // BUILD MODEL
-        // =========================
         document.getElementById("buildBtn").onclick = () => {
 
             let n = +document.getElementById("groupCount").value || 1;
@@ -85,10 +82,8 @@ export const TopBlock = {
             for(let i=0;i<n;i++){
                 groups.push({
                     name: `${t("group")} ${i+1}`,
-
                     quantity0:0,
                     quantity1:0,
-
                     price0:0,
                     price1:0
                 });
@@ -98,18 +93,14 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
-        // =========================
-        // TEST DATA
-        // =========================
         document.getElementById("testBtn").onclick = () => {
 
             let groups = Store.get("groups");
-            if(!groups || !groups.length) return;
+            if(!groups.length) return;
 
             groups.forEach(g=>{
                 g.quantity0 = Math.floor(Math.random()*10)+1;
                 g.quantity1 = Math.floor(Math.random()*10)+1;
-
                 g.price0 = Math.floor(Math.random()*10000)+1000;
                 g.price1 = Math.floor(Math.random()*10000)+1000;
             });
@@ -117,38 +108,25 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
-        // =========================
-        // LANGUAGE
-        // =========================
         document.getElementById("lang").onchange = (e)=>{
             Store.set("language", e.target.value);
             applyDir();
             this.render();
         };
 
-        // =========================
-        // PERIOD TYPE
-        // =========================
         document.getElementById("periodType").onchange = ()=>{
             this.fillPeriods();
         };
 
-        // =========================
-        // PERIOD CHANGE
-        // =========================
         document.getElementById("period0").onchange = ()=>this.updatePeriods();
         document.getElementById("period1").onchange = ()=>this.updatePeriods();
         document.getElementById("type0").onchange = ()=>this.updatePeriods();
         document.getElementById("type1").onchange = ()=>this.updatePeriods();
     },
 
-    // =========================
-    // GENERATE PERIOD LIST
-    // =========================
     fillPeriods(){
 
         let type = document.getElementById("periodType").value;
-
         let list = Periods.generate(type);
 
         let html = list.map(x=>`<option>${x}</option>`).join("");
@@ -156,7 +134,6 @@ export const TopBlock = {
         document.getElementById("period0").innerHTML = html;
         document.getElementById("period1").innerHTML = html;
 
-        // по умолчанию следующий период
         if(list.length > 1){
             document.getElementById("period1").selectedIndex = 1;
         }
@@ -164,9 +141,6 @@ export const TopBlock = {
         this.updatePeriods();
     },
 
-    // =========================
-    // SAVE PERIODS TO STORE
-    // =========================
     updatePeriods(){
 
         const p0 = document.getElementById("period0").value;
@@ -182,5 +156,4 @@ export const TopBlock = {
             type1: t1
         });
     }
-
 };

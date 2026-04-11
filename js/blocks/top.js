@@ -15,10 +15,13 @@ export const TopBlock = {
         <div class="top-bar">
 
             <!-- ЛОГО -->
-                <div class="logo-block">
-                    <img src="assets/logo.png" class="logo">
-                <span class="logo-text">Sarrah BI</span>
-            </div>
+            <div class="logo-block">
+                <img src="assets/logo.png" class="logo">
+            <div class="logo-text">
+            <div class="logo-main">Sarrah BI Model:</div>
+            <div class="logo-sub">Revenue & Cost Factor Analysis</div>
+        </div>
+    </div>
 
             <!-- БЛОК 1 -->
             <div class="top-group">

@@ -14,6 +14,18 @@ export const TopBlock = {
         document.getElementById("topBlock").innerHTML = `
         <div class="top-bar">
 
+            <!-- 🔥 LOGO -->
+            <div class="logo-block">
+                <img src="logo.png" class="logo">
+                <div>
+                    <div class="logo-text">Sarrah BI</div>
+                    <div class="logo-sub">
+                        Model Sarrah BI: Revenue & Cost Factor Analysis
+                    </div>
+                </div>
+            </div>
+
+            <!-- НАСТРОЙКИ -->
             <div class="top-group">
                 <span class="label">${t("language")}</span>
                 <select id="lang">
@@ -49,6 +61,7 @@ export const TopBlock = {
                 </select>
             </div>
 
+            <!-- SOURCE -->
             <div class="top-group">
                 <span class="label">${t("source")}</span>
 
@@ -61,6 +74,7 @@ export const TopBlock = {
                 </select>
             </div>
 
+            <!-- CURRENT -->
             <div class="top-group">
                 <span class="label">${t("current")}</span>
 
@@ -73,6 +87,7 @@ export const TopBlock = {
                 </select>
             </div>
 
+            <!-- BUTTONS -->
             <div class="top-group">
                 <button id="buildBtn" class="build-btn">${t("build")}</button>
                 <button id="testBtn" class="test-btn">${t("test")}</button>
@@ -87,18 +102,14 @@ export const TopBlock = {
         document.getElementById("periodType").value = Store.get("periodType");
 
         this.fillPeriods();
-
-        // 🔒 ВАЖНО: восстанавливаем значения
         this.restoreSelections();
 
         document.getElementById("lang").value = state.language;
 
-        // ⌨️ навигация
         this.addNavigation();
     },
 
     bind(){
-
         document.getElementById("buildBtn").onclick = () => {
 
             let n = +document.getElementById("groupCount").value || 1;
@@ -135,10 +146,7 @@ export const TopBlock = {
         };
 
         document.getElementById("lang").onchange = (e)=>{
-
-            // 🔒 сохраняем ВСЕ значения перед перерендером
             this.updatePeriods();
-
             Store.set("language", e.target.value);
             applyDir();
             this.render();
@@ -168,8 +176,6 @@ export const TopBlock = {
     restoreSelections(){
 
         let p = Store.get("periods");
-
-        if(!p) return;
 
         document.getElementById("period0").value = p.period0;
         document.getElementById("period1").value = p.period1;
@@ -203,21 +209,10 @@ export const TopBlock = {
 
         let list = [];
 
-        if(type==="months"){
-            list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-        }
-
-        if(type==="weeks"){
-            list = Array.from({length:52},(_,i)=>`W${i+1}`);
-        }
-
-        if(type==="quarters"){
-            list = ["Q1","Q2","Q3","Q4"];
-        }
-
-        if(type==="years"){
-            list = ["Year"];
-        }
+        if(type==="months") list = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        if(type==="weeks") list = Array.from({length:52},(_,i)=>`W${i+1}`);
+        if(type==="quarters") list = ["Q1","Q2","Q3","Q4"];
+        if(type==="years") list = ["Year"];
 
         let html = list.map(x=>`<option>${x}</option>`).join("");
 
@@ -237,7 +232,6 @@ export const TopBlock = {
         });
     },
 
-    // ⌨️ ENTER → NEXT FIELD
     addNavigation(){
 
         const elements = document.querySelectorAll(

@@ -15,28 +15,29 @@ export const TableBlock = {
         let html = `
         <table>
         <tr>
-            <th rowspan="2">Group</th>
+            <th rowspan="2">${t("group")}</th>
 
-            <th colspan="2">Quantity</th>
-            <th colspan="2">Average Price</th>
-            <th colspan="3">Revenue</th>
-            <th colspan="3">Share</th>
+            <th colspan="2">${t("quantity")}</th>
+            <th colspan="2">${t("price")}</th>
+            <th colspan="4">${t("revenue")}</th>
+            <th colspan="3">${t("share")}</th>
         </tr>
 
         <tr>
-            <th>Initial</th>
-            <th>Current</th>
+            <th>${t("initial")}</th>
+            <th>${t("current")}</th>
 
-            <th>Initial</th>
-            <th>Current</th>
+            <th>${t("initial")}</th>
+            <th>${t("current")}</th>
 
-            <th>Initial</th>
-            <th>Current</th>
-            <th>Δ Revenue</th>
+            <th>${t("initial")}</th>
+            <th>${t("current")}</th>
+            <th>${t("change")}</th>
+            <th>%</th>
 
-            <th>Initial</th>
-            <th>Current</th>
-            <th>Δ Share</th>
+            <th>${t("initial")}</th>
+            <th>${t("current")}</th>
+            <th>${t("change")}</th>
         </tr>
         `;
 
@@ -66,6 +67,8 @@ export const TableBlock = {
 
             let delta = r1[i] - r0[i];
 
+            let percent = r0[i] ? (delta / r0[i] * 100) : 0;
+
             let s0 = R0 ? r0[i]/R0*100 : 0;
             let s1 = R1 ? r1[i]/R1*100 : 0;
             let ds = s1 - s0;
@@ -87,6 +90,10 @@ export const TableBlock = {
                     ${Math.round(delta)}
                 </td>
 
+                <td class="${percent>=0?'green':'red'}">
+                    ${percent.toFixed(1)}%
+                </td>
+
                 <td>${s0.toFixed(1)}%</td>
                 <td>${s1.toFixed(1)}%</td>
 
@@ -98,7 +105,7 @@ export const TableBlock = {
         });
 
         // ======================
-        // ✅ TOTAL ROW (добавлено)
+        // TOTAL
         // ======================
 
         let totalQ0 = groups.reduce((s,g)=>s+(+g.quantity0||0),0);
@@ -106,6 +113,8 @@ export const TableBlock = {
 
         let avgP0 = totalQ0 ? R0/totalQ0 : 0;
         let avgP1 = totalQ1 ? R1/totalQ1 : 0;
+
+        let totalPercent = R0 ? (dR / R0 * 100) : 0;
 
         html += `
         <tr class="total">
@@ -122,6 +131,10 @@ export const TableBlock = {
 
             <td class="${dR>=0?'green':'red'}">
                 ${Math.round(dR)}
+            </td>
+
+            <td class="${totalPercent>=0?'green':'red'}">
+                ${totalPercent.toFixed(1)}%
             </td>
 
             <td>100%</td>

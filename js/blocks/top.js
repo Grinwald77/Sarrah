@@ -16,7 +16,7 @@ export const TopBlock = {
 
             <!-- 🔥 LOGO -->
             <div class="logo-block">
-                <img src="logo.png" class="logo">
+            <img src="./assets/logo.png" class="logo">
                 <div>
                     <div class="logo-text">Sarrah BI</div>
                     <div class="logo-sub">

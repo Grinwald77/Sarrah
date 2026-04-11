@@ -83,9 +83,18 @@ export const TopBlock = {
 
         this.bind();
         this.fillYears();
+
+        document.getElementById("periodType").value = Store.get("periodType");
+
         this.fillPeriods();
 
+        // 🔒 ВАЖНО: восстанавливаем значения
+        this.restoreSelections();
+
         document.getElementById("lang").value = state.language;
+
+        // ⌨️ навигация
+        this.addNavigation();
     },
 
     bind(){
@@ -126,6 +135,10 @@ export const TopBlock = {
         };
 
         document.getElementById("lang").onchange = (e)=>{
+
+            // 🔒 сохраняем ВСЕ значения перед перерендером
+            this.updatePeriods();
+
             Store.set("language", e.target.value);
             applyDir();
             this.render();
@@ -139,7 +152,8 @@ export const TopBlock = {
             Store.set("scale", e.target.value);
         };
 
-        document.getElementById("periodType").onchange = ()=>{
+        document.getElementById("periodType").onchange = (e)=>{
+            Store.set("periodType", e.target.value);
             this.fillPeriods();
         };
 
@@ -149,6 +163,22 @@ export const TopBlock = {
         document.getElementById("year1").onchange = ()=>this.updatePeriods();
         document.getElementById("type0").onchange = ()=>this.updatePeriods();
         document.getElementById("type1").onchange = ()=>this.updatePeriods();
+    },
+
+    restoreSelections(){
+
+        let p = Store.get("periods");
+
+        if(!p) return;
+
+        document.getElementById("period0").value = p.period0;
+        document.getElementById("period1").value = p.period1;
+
+        document.getElementById("year0").value = p.year0;
+        document.getElementById("year1").value = p.year1;
+
+        document.getElementById("type0").value = p.type0;
+        document.getElementById("type1").value = p.type1;
     },
 
     fillYears(){
@@ -163,8 +193,8 @@ export const TopBlock = {
         document.getElementById("year0").innerHTML = html;
         document.getElementById("year1").innerHTML = html;
 
-        document.getElementById("year0").value = 2026;
-        document.getElementById("year1").value = 2026;
+        document.getElementById("year0").value = Store.get("periods").year0;
+        document.getElementById("year1").value = Store.get("periods").year1;
     },
 
     fillPeriods(){
@@ -193,8 +223,6 @@ export const TopBlock = {
 
         document.getElementById("period0").innerHTML = html;
         document.getElementById("period1").innerHTML = html;
-
-        this.updatePeriods();
     },
 
     updatePeriods(){
@@ -202,10 +230,27 @@ export const TopBlock = {
         Store.set("periods", {
             period0: document.getElementById("period0").value,
             period1: document.getElementById("period1").value,
-            type0: document.getElementById("type0").value,
-            type1: document.getElementById("type1").value,
             year0: document.getElementById("year0").value,
-            year1: document.getElementById("year1").value
+            year1: document.getElementById("year1").value,
+            type0: document.getElementById("type0").value,
+            type1: document.getElementById("type1").value
+        });
+    },
+
+    // ⌨️ ENTER → NEXT FIELD
+    addNavigation(){
+
+        const elements = document.querySelectorAll(
+            "#topBlock input, #topBlock select"
+        );
+
+        elements.forEach((el,i)=>{
+            el.addEventListener("keydown", e=>{
+                if(e.key === "Enter"){
+                    e.preventDefault();
+                    elements[i+1]?.focus();
+                }
+            });
         });
     }
 };

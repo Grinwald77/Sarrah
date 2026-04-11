@@ -41,7 +41,10 @@ body {
     color: #6b7280;
     font-weight: 500;
 }
-
+select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 /* =========================
    INPUTS / SELECTS
 ========================= */

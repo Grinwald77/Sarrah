@@ -44,7 +44,7 @@ export const TableBlock = {
         let R0=0, R1=0;
         let r0=[], r1=[];
 
-        // ========= расчёт =========
+        // ===== расчет =====
         groups.forEach((g,i)=>{
 
             let q0 = +g.quantity0 || 0;
@@ -61,7 +61,7 @@ export const TableBlock = {
 
         let dR = R1 - R0;
 
-        // ========= строки =========
+        // ===== строки =====
         groups.forEach((g,i)=>{
 
             let delta = r1[i] - r0[i];
@@ -92,13 +92,14 @@ export const TableBlock = {
 
                 <td>${s0.toFixed(1)}%</td>
                 <td>${s1.toFixed(1)}%</td>
+
                 <td class="${ds>=0?'green':'red'}">${ds.toFixed(1)}</td>
 
             </tr>
             `;
         });
 
-        // ========= TOTAL =========
+        // ===== TOTAL =====
         let totalQ0 = groups.reduce((s,g)=>s+(+g.quantity0||0),0);
         let totalQ1 = groups.reduce((s,g)=>s+(+g.quantity1||0),0);
 
@@ -136,7 +137,7 @@ export const TableBlock = {
     },
 
     // =========================
-    // INPUT SAVE
+    // INPUT → STORE
     // =========================
     bindInputs(){
 
@@ -158,15 +159,16 @@ export const TableBlock = {
     },
 
     // =========================
-    // 🔥 EXCEL PASTE
+    // 🔥 EXCEL PASTE (ФИКС)
     // =========================
     enablePaste(){
 
         document.querySelectorAll("#tableBlock input").forEach(input=>{
 
-            input.addEventListener("paste", e=>{
+            input.onpaste = (e)=>{
 
                 let text = e.clipboardData.getData("text");
+
                 if(!text.includes("\n")) return;
 
                 e.preventDefault();
@@ -187,8 +189,11 @@ export const TableBlock = {
                     groups[i].price1 = +c[4] || 0;
                 });
 
-                Store.set("groups", groups);
-            });
+                // 🔥 ключевой фикс
+                setTimeout(()=>{
+                    Store.set("groups", groups);
+                }, 0);
+            };
         });
     }
 };

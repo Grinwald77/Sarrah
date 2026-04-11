@@ -27,7 +27,16 @@ export const Dict = {
 
         build:"Build",
         test:"Test",
-        total:"Total"
+        total:"Total",
+
+        currency:"Currency",
+        scale:"Scale",
+
+        units:"Units",
+        thousands:"Thousands",
+        millions:"Millions",
+        totalRevenue:"Total Revenue"
+        
     },
 
     ru:{
@@ -55,7 +64,15 @@ export const Dict = {
 
         build:"Построить",
         test:"Тест",
-        total:"Итого"
+        total:"Итого",
+        currency:"Валюта",
+        scale:"Масштаб",
+
+        units:"Единицы",
+        thousands:"Тысячи",
+        millions:"Миллионы",
+        totalRevenue:"Всего Выручка"
+
     },
 
     he:{
@@ -83,7 +100,15 @@ export const Dict = {
 
         build:"בנה",
         test:"בדיקה",
-        total:"סה״כ"
+        total:"סה״כ",
+        currency:"מטבע",
+        scale:"קנה מידה",
+
+        units:"יחידות",
+        thousands:"אלפים",
+        millions:"מיליונים",
+        totalRevenue:"סה״כ הכנסות"
+        
     }
 };
 

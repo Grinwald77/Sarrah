@@ -10,60 +10,47 @@ export const TableBlock = {
     render(){
 
         let groups = Store.get("groups");
-        let periods = Store.get("periods") || {};
-
         if(!groups || !groups.length) return;
-
-        const {
-            period0 = "",
-            period1 = "",
-            type0 = "",
-            type1 = ""
-        } = periods;
-
-        // 🔥 формируем подписи
-        const label0 = `${period0} (${t(type0?.toLowerCase?.() || "")})`;
-        const label1 = `${period1} (${t(type1?.toLowerCase?.() || "")})`;
-
-        const headerType = `${t(type0?.toLowerCase?.() || "")} → ${t(type1?.toLowerCase?.() || "")}`;
 
         let html = `
         <table>
         <tr>
             <th rowspan="2">${t("group")}</th>
 
-            <th colspan="2">${t("quantity")} (${headerType})</th>
-            <th colspan="2">${t("price")} (${headerType})</th>
-            <th colspan="4">${t("revenue")} (${headerType})</th>
+            <th colspan="2">${t("quantity")}</th>
+            <th colspan="2">${t("price")}</th>
+            <th colspan="4">${t("revenue")}</th>
             <th colspan="3">${t("share")}</th>
         </tr>
 
         <tr>
-            <th>${label0}</th>
-            <th>${label1}</th>
+            <th>${t("initial")}</th>
+            <th>${t("current")}</th>
 
-            <th>${label0}</th>
-            <th>${label1}</th>
+            <th>${t("initial")}</th>
+            <th>${t("current")}</th>
 
-            <th>${label0}</th>
-            <th>${label1}</th>
-            <th>${t("change")}</th>
+            <th>${t("initial")}</th>
+            <th>${t("current")}</th>
+            <th>Δ</th>
             <th>%</th>
 
-            <th>${label0}</th>
-            <th>${label1}</th>
-            <th>${t("change")}</th>
+            <th>${t("initial")}</th>
+            <th>${t("current")}</th>
+            <th>Δ</th>
         </tr>
         `;
 
         let R0=0, R1=0;
         let r0=[], r1=[];
 
+        // ========= расчёт =========
         groups.forEach((g,i)=>{
-            let q0 = g.quantity0 || 0;
-            let q1 = g.quantity1 || 0;
-            let p0 = g.price0 || 0;
-            let p1 = g.price1 || 0;
+
+            let q0 = +g.quantity0 || 0;
+            let q1 = +g.quantity1 || 0;
+            let p0 = +g.price0 || 0;
+            let p1 = +g.price1 || 0;
 
             r0[i] = q0 * p0;
             r1[i] = q1 * p1;
@@ -74,10 +61,11 @@ export const TableBlock = {
 
         let dR = R1 - R0;
 
+        // ========= строки =========
         groups.forEach((g,i)=>{
 
             let delta = r1[i] - r0[i];
-            let percent = r0[i] ? (delta / r0[i] * 100) : 0;
+            let percent = r0[i] ? delta / r0[i] * 100 : 0;
 
             let s0 = R0 ? r0[i]/R0*100 : 0;
             let s1 = R1 ? r1[i]/R1*100 : 0;
@@ -85,42 +73,37 @@ export const TableBlock = {
 
             html += `
             <tr>
-                <td>${g.name}</td>
 
-                <td>${g.quantity0}</td>
-                <td>${g.quantity1}</td>
+                <td>
+                    <input data-field="name" data-i="${i}" value="${g.name}">
+                </td>
 
-                <td>${g.price0}</td>
-                <td>${g.price1}</td>
+                <td><input data-field="quantity0" data-i="${i}" value="${g.quantity0 || ""}"></td>
+                <td><input data-field="quantity1" data-i="${i}" value="${g.quantity1 || ""}"></td>
+
+                <td><input data-field="price0" data-i="${i}" value="${g.price0 || ""}"></td>
+                <td><input data-field="price1" data-i="${i}" value="${g.price1 || ""}"></td>
 
                 <td>${Math.round(r0[i])}</td>
                 <td>${Math.round(r1[i])}</td>
 
-                <td class="${delta>=0?'green':'red'}">
-                    ${Math.round(delta)}
-                </td>
-
-                <td class="${percent>=0?'green':'red'}">
-                    ${percent.toFixed(1)}%
-                </td>
+                <td class="${delta>=0?'green':'red'}">${Math.round(delta)}</td>
+                <td>${percent.toFixed(1)}%</td>
 
                 <td>${s0.toFixed(1)}%</td>
                 <td>${s1.toFixed(1)}%</td>
+                <td class="${ds>=0?'green':'red'}">${ds.toFixed(1)}</td>
 
-                <td class="${ds>=0?'green':'red'}">
-                    ${ds.toFixed(1)} pp
-                </td>
             </tr>
             `;
         });
 
+        // ========= TOTAL =========
         let totalQ0 = groups.reduce((s,g)=>s+(+g.quantity0||0),0);
         let totalQ1 = groups.reduce((s,g)=>s+(+g.quantity1||0),0);
 
         let avgP0 = totalQ0 ? R0/totalQ0 : 0;
         let avgP1 = totalQ1 ? R1/totalQ1 : 0;
-
-        let totalPercent = R0 ? (dR / R0 * 100) : 0;
 
         html += `
         <tr class="total">
@@ -135,13 +118,8 @@ export const TableBlock = {
             <td>${Math.round(R0)}</td>
             <td>${Math.round(R1)}</td>
 
-            <td class="${dR>=0?'green':'red'}">
-                ${Math.round(dR)}
-            </td>
-
-            <td class="${totalPercent>=0?'green':'red'}">
-                ${totalPercent.toFixed(1)}%
-            </td>
+            <td class="${dR>=0?'green':'red'}">${Math.round(dR)}</td>
+            <td>100%</td>
 
             <td>100%</td>
             <td>100%</td>
@@ -152,5 +130,65 @@ export const TableBlock = {
         html += `</table>`;
 
         document.getElementById("tableBlock").innerHTML = html;
+
+        this.bindInputs();
+        this.enablePaste();
+    },
+
+    // =========================
+    // INPUT SAVE
+    // =========================
+    bindInputs(){
+
+        document.querySelectorAll("#tableBlock input").forEach(input=>{
+
+            input.addEventListener("input", e=>{
+
+                let i = e.target.dataset.i;
+                let field = e.target.dataset.field;
+
+                let groups = Store.get("groups");
+
+                groups[i][field] =
+                    field === "name" ? e.target.value : +e.target.value;
+
+                Store.set("groups", groups);
+            });
+        });
+    },
+
+    // =========================
+    // 🔥 EXCEL PASTE
+    // =========================
+    enablePaste(){
+
+        document.querySelectorAll("#tableBlock input").forEach(input=>{
+
+            input.addEventListener("paste", e=>{
+
+                let text = e.clipboardData.getData("text");
+                if(!text.includes("\n")) return;
+
+                e.preventDefault();
+
+                let rows = text.trim().split("\n");
+                let groups = Store.get("groups");
+
+                rows.forEach((row,i)=>{
+
+                    if(i >= groups.length) return;
+
+                    let c = row.split(/\t/);
+
+                    groups[i].name = c[0] || "";
+                    groups[i].quantity0 = +c[1] || 0;
+                    groups[i].quantity1 = +c[2] || 0;
+                    groups[i].price0 = +c[3] || 0;
+                    groups[i].price1 = +c[4] || 0;
+                });
+
+                Store.set("groups", groups);
+            });
+        });
     }
 };

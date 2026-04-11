@@ -11,9 +11,20 @@ export const TopBlock = {
     render(){
 
         const state = Store.state;
+        const periods = Store.get("periods") || {};
 
         document.getElementById("topBlock").innerHTML = `
         <div class="top-bar">
+
+            <!-- 🔥 ЯЗЫК ПЕРВЫЙ -->
+            <div>
+                Language<br>
+                <select id="lang">
+                    <option value="en">EN</option>
+                    <option value="ru">RU</option>
+                    <option value="he">HE</option>
+                </select>
+            </div>
 
             <div>
                 ${t("groups")}<br>
@@ -50,15 +61,6 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <div>
-                Language<br>
-                <select id="lang">
-                    <option value="en">EN</option>
-                    <option value="ru">RU</option>
-                    <option value="he">HE</option>
-                </select>
-            </div>
-
             <div style="align-self:end; display:flex; gap:8px;">
                 <button id="buildBtn" class="build-btn">${t("build")}</button>
                 <button id="testBtn" class="test-btn">${t("test")}</button>
@@ -68,10 +70,18 @@ export const TopBlock = {
         `;
 
         this.bind();
+
+        // 🔥 заполняем периоды
         this.fillPeriods();
 
-        // ✅ фикс языка
+        // 🔥 восстанавливаем значения
         document.getElementById("lang").value = state.language;
+        document.getElementById("periodType").value = periods.type || "months";
+
+        if(periods.period0) document.getElementById("period0").value = periods.period0;
+        if(periods.period1) document.getElementById("period1").value = periods.period1;
+        if(periods.type0) document.getElementById("type0").value = periods.type0;
+        if(periods.type1) document.getElementById("type1").value = periods.type1;
     },
 
     bind(){
@@ -99,7 +109,7 @@ export const TopBlock = {
         document.getElementById("testBtn").onclick = () => {
 
             let groups = Store.get("groups");
-            if(!groups || !groups.length) return; // ✅ фикс
+            if(!groups || !groups.length) return;
 
             groups.forEach(g=>{
                 g.quantity0 = Math.floor(Math.random()*10)+1;
@@ -111,10 +121,16 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
+        // 🔥 СМЕНА ЯЗЫКА БЕЗ СБРОСА
         document.getElementById("lang").onchange = (e)=>{
+
+            // сохраняем текущие значения
+            this.updatePeriods();
+
             Store.set("language", e.target.value);
             applyDir();
-            this.render();
+
+            this.render(); // перерисовка без потери данных
         };
 
         document.getElementById("periodType").onchange = ()=>{
@@ -137,13 +153,17 @@ export const TopBlock = {
         document.getElementById("period0").innerHTML = html;
         document.getElementById("period1").innerHTML = html;
 
-        // ✅ выбираем 2026 (исправлено)
-        let index2026 = list.findIndex(x => x.endsWith("2026"));
+        // 🔥 если нет сохраненных — ставим 2026
+        let periods = Store.get("periods");
 
-        if(index2026 !== -1){
-            document.getElementById("period0").selectedIndex = index2026;
-            document.getElementById("period1").selectedIndex =
-                index2026 + 1 < list.length ? index2026 + 1 : index2026;
+        if(!periods){
+            let index2026 = list.findIndex(x => x.endsWith("2026"));
+
+            if(index2026 !== -1){
+                document.getElementById("period0").selectedIndex = index2026;
+                document.getElementById("period1").selectedIndex =
+                    index2026 + 1 < list.length ? index2026 + 1 : index2026;
+            }
         }
 
         this.updatePeriods();

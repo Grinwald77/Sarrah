@@ -3,31 +3,17 @@ import { Store } from './store.js';
 export const Dict = {
 
     en:{
-        language:"Language",
-        groups:"Groups",
         group:"Group",
+        quantity:"Quantity",
+        price:"Price",
+        revenue:"Revenue",
+        share:"Share",
 
-        periodType:"Period",
-        months:"Months",
-        weeks:"Weeks",
-        quarters:"Quarters",
-        years:"Years",
-
-        source:"Source",
+        initial:"Initial",
         current:"Current",
 
         actual:"Actual",
         planned:"Planned",
-        past:"Past",
-
-        quantity:"Quantity",
-        price:"Price",
-        revenue:"Revenue",
-        analysis:"Analysis",
-
-        build:"Build",
-        test:"Test",
-        total:"Total",
 
         currency:"Currency",
         scale:"Scale",
@@ -35,80 +21,54 @@ export const Dict = {
         units:"Units",
         thousands:"Thousands",
         millions:"Millions",
+
         totalRevenue:"Total Revenue"
-        
     },
 
     ru:{
-        language:"Язык",
-        groups:"Группы",
         group:"Группа",
+        quantity:"Количество",
+        price:"Цена",
+        revenue:"Выручка",
+        share:"Доля",
 
-        periodType:"Период",
-        months:"Месяцы",
-        weeks:"Недели",
-        quarters:"Кварталы",
-        years:"Годы",
-
-        source:"Исходный",
+        initial:"Исходный",
         current:"Текущий",
 
         actual:"Факт",
         planned:"План",
-        past:"Прошлый",
 
-        quantity:"Количество",
-        price:"Цена",
-        revenue:"Выручка",
-        analysis:"Анализ",
-
-        build:"Построить",
-        test:"Тест",
-        total:"Итого",
         currency:"Валюта",
         scale:"Масштаб",
 
         units:"Единицы",
         thousands:"Тысячи",
         millions:"Миллионы",
-        totalRevenue:"Всего Выручка"
 
+        totalRevenue:"Итого выручка"
     },
 
     he:{
-        language:"שפה",
-        groups:"קבוצות",
         group:"קבוצה",
+        quantity:"כמות",
+        price:"מחיר",
+        revenue:"הכנסות",
+        share:"נתח",
 
-        periodType:"תקופה",
-        months:"חודשים",
-        weeks:"שבועות",
-        quarters:"רבעונים",
-        years:"שנים",
-
-        source:"מקור",
+        initial:"תחלתי",
         current:"נוכחי",
 
         actual:"בפועל",
         planned:"מתוכנן",
-        past:"עבר",
 
-        quantity:"כמות",
-        price:"מחיר",
-        revenue:"הכנסות",
-        analysis:"ניתוח",
-
-        build:"בנה",
-        test:"בדיקה",
-        total:"סה״כ",
         currency:"מטבע",
         scale:"קנה מידה",
 
         units:"יחידות",
         thousands:"אלפים",
         millions:"מיליונים",
+
         totalRevenue:"סה״כ הכנסות"
-        
     }
 };
 

@@ -1,15 +1,26 @@
 export const Store = {
+
     state:{
         groups:[],
         groupCount:5,
+
         language:"en",
 
-        currency:"USD",
+        // 💰 валюта и масштаб
+        currency:"ILS",
         scale:"units",
 
+        // 📊 тип периода по умолчанию
+        periodType:"quarters",
+
+        // 📅 периоды (дефолт Q1 2026)
         periods:{
-            period0:"",
-            period1:"",
+            period0:"Q1",
+            period1:"Q1",
+
+            year0:"2026",
+            year1:"2026",
+
             type0:"Actual",
             type1:"Actual"
         }
@@ -18,7 +29,7 @@ export const Store = {
     listeners:[],
 
     set(key,val){
-        this.state[key]=val;
+        this.state[key] = val;
         this.emit();
     },
 

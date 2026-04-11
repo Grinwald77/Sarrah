@@ -14,9 +14,8 @@ export const TopBlock = {
         document.getElementById("topBlock").innerHTML = `
         <div class="top-bar">
 
-            <!-- ЯЗЫК -->
             <div>
-                ${t("language")}<br>
+                <span class="label">${t("language")}</span>
                 <select id="lang">
                     <option value="en">EN</option>
                     <option value="ru">RU</option>
@@ -24,15 +23,13 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <!-- ГРУППЫ -->
             <div>
-                ${t("groups")}<br>
+                <span class="label">${t("groups")}</span>
                 <input id="groupCount" value="${state.groupCount}">
             </div>
 
-            <!-- ТИП ПЕРИОДА -->
             <div>
-                ${t("periodType")}<br>
+                <span class="label">${t("periodType")}</span>
                 <select id="periodType">
                     <option value="months">${t("months")}</option>
                     <option value="weeks">${t("weeks")}</option>
@@ -41,9 +38,8 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <!-- SOURCE -->
             <div>
-                ${t("sourcePeriod")}<br>
+                <span class="label">${t("source")}</span>
                 <select id="year0"></select>
                 <select id="period0"></select>
                 <select id="type0">
@@ -53,9 +49,8 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <!-- CURRENT -->
             <div>
-                ${t("currentPeriod")}<br>
+                <span class="label">${t("current")}</span>
                 <select id="year1"></select>
                 <select id="period1"></select>
                 <select id="type1">
@@ -65,11 +60,8 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <!-- КНОПКИ -->
-            <div style="align-self:end; display:flex; gap:8px;">
-                <button id="buildBtn" class="build-btn">${t("build")}</button>
-                <button id="testBtn" class="test-btn">${t("test")}</button>
-            </div>
+            <button id="buildBtn" class="build-btn">${t("build")}</button>
+            <button id="testBtn" class="test-btn">${t("test")}</button>
 
         </div>
         `;
@@ -84,7 +76,6 @@ export const TopBlock = {
 
     bind(){
 
-        // BUILD
         document.getElementById("buildBtn").onclick = () => {
 
             let n = +document.getElementById("groupCount").value || 1;
@@ -105,7 +96,6 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
-        // TEST
         document.getElementById("testBtn").onclick = () => {
 
             let groups = Store.get("groups");
@@ -121,14 +111,12 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
-        // LANGUAGE
         document.getElementById("lang").onchange = (e)=>{
             Store.set("language", e.target.value);
             applyDir();
             this.render();
         };
 
-        // PERIOD TYPE
         document.getElementById("periodType").onchange = ()=>{
             this.fillPeriods();
         };
@@ -190,7 +178,6 @@ export const TopBlock = {
         document.getElementById("period1").innerHTML = html;
     },
 
-    // 🔥 НАВИГАЦИЯ КАК EXCEL
     addNavigation(){
 
         const elements = document.querySelectorAll(
@@ -198,9 +185,7 @@ export const TopBlock = {
         );
 
         elements.forEach((el,i)=>{
-
             el.addEventListener("keydown", e=>{
-
                 if(e.key === "Enter"){
                     e.preventDefault();
                     elements[i+1]?.focus();

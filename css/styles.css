@@ -33,20 +33,35 @@ body {
 .logo-block {
     display:flex;
     align-items:center;
-    gap:10px;
-    margin-right:16px;
+    gap:14px;
+    margin-right:20px;
 }
 
 .logo {
     width:150px;
     height:150px;
+    object-fit:contain;
 }
 
 .logo-text {
-    font-weight:1200;
-    font-size:36px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+/* главное название */
+.logo-main {
+    font-weight:800;
+    font-size:34px;
     color:#1f2a44;
-    letter-spacing:0.8px;
+    letter-spacing:0.6px;
+}
+
+/* подзаголовок */
+.logo-sub {
+    font-size:14px;
+    color:#6b7280;
+    margin-top:4px;
 }
 
 /* ===== GROUPS ===== */

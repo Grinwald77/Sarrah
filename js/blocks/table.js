@@ -5,6 +5,7 @@ export const TableBlock = {
 
     init(){
         Store.subscribe(()=>this.render());
+        this.render(); // ← важно для первого рендера
     },
 
     render(){
@@ -42,12 +43,9 @@ export const TableBlock = {
         `;
 
         let R0=0, R1=0;
-
         let r0=[], r1=[];
 
-        // ========= расчет =========
         groups.forEach((g,i)=>{
-
             let q0 = g.quantity0 || 0;
             let q1 = g.quantity1 || 0;
             let p0 = g.price0 || 0;
@@ -62,11 +60,9 @@ export const TableBlock = {
 
         let dR = R1 - R0;
 
-        // ========= строки =========
         groups.forEach((g,i)=>{
 
             let delta = r1[i] - r0[i];
-
             let percent = r0[i] ? (delta / r0[i] * 100) : 0;
 
             let s0 = R0 ? r0[i]/R0*100 : 0;
@@ -103,10 +99,6 @@ export const TableBlock = {
             </tr>
             `;
         });
-
-        // ======================
-        // TOTAL
-        // ======================
 
         let totalQ0 = groups.reduce((s,g)=>s+(+g.quantity0||0),0);
         let totalQ1 = groups.reduce((s,g)=>s+(+g.quantity1||0),0);

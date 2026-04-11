@@ -14,6 +14,12 @@ export const TopBlock = {
         document.getElementById("topBlock").innerHTML = `
         <div class="top-bar">
 
+            <!-- ЛОГО -->
+                <div class="logo-block">
+                    <img src="assets/logo.png" class="logo">
+                <span class="logo-text">Sarrah BI</span>
+            </div>
+
             <!-- БЛОК 1 -->
             <div class="top-group">
                 <span class="label">${t("language")}</span>

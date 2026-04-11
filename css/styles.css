@@ -1,16 +1,36 @@
+body {
+    font-family:-apple-system;
+    background:#f4f6fa;
+    padding:15px;
+}
+
+/* =========================
+   БЛОКИ
+========================= */
+.block {
+    background:white;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+/* =========================
+   🔥 TOP BAR — ОДНА СТРОКА
+========================= */
 .top-bar {
     display:flex;
     align-items:center;
-    gap:30px;              /* расстояние между блоками */
+    gap:25px;
     flex-wrap:nowrap;
     overflow-x:auto;
 }
 
-/* 🔥 каждый блок — строка */
+/* группы (Language / Source / Current) */
 .top-group {
     display:flex;
+    flex-direction:row;       /* 🔥 строго горизонтально */
     align-items:center;
-    gap:8px;
+    gap:6px;
     white-space:nowrap;
 }
 
@@ -20,14 +40,25 @@
     color:#666;
 }
 
-/* поля */
+/* =========================
+   🔥 ГЛАВНЫЙ ФИКС ПРОБЛЕМЫ
+========================= */
+
+/* ❌ убрали width:100% */
 input, select {
     padding:6px;
     border-radius:6px;
     border:1px solid #ddd;
+
+    width:auto;              /* 🔥 КРИТИЧНО */
+    min-width:70px;
+
+    display:inline-block;    /* 🔥 чтобы не падали вниз */
 }
 
-/* кнопки */
+/* =========================
+   КНОПКИ
+========================= */
 button {
     padding:8px 14px;
     border:none;
@@ -44,4 +75,28 @@ button {
 .test-btn {
     background:white;
     border:2px solid #d6dcff;
+}
+
+/* =========================
+   ТАБЛИЦА
+========================= */
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+td, th {
+    padding:6px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+/* цвета */
+.green { color:green; }
+.red { color:red; }
+
+/* итог */
+.total {
+    background:#eef2ff;
+    font-weight:bold;
 }

@@ -144,6 +144,13 @@ td {
     text-align:center;
 }
 
+.table-title {
+    font-size:16px;
+    font-weight:600;
+    margin-bottom:10px;
+    color:#1f2a44;
+}
+
 /* hover строк */
 tr:hover td {
     background:#f5f7fb;

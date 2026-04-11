@@ -5,39 +5,53 @@ export const TableBlock = {
 
     init(){
         Store.subscribe(()=>this.render());
-        this.render(); // ← важно для первого рендера
     },
 
     render(){
 
         let groups = Store.get("groups");
+        let periods = Store.get("periods") || {};
+
         if(!groups || !groups.length) return;
+
+        const {
+            period0 = "",
+            period1 = "",
+            type0 = "",
+            type1 = ""
+        } = periods;
+
+        // 🔥 формируем подписи
+        const label0 = `${period0} (${t(type0?.toLowerCase?.() || "")})`;
+        const label1 = `${period1} (${t(type1?.toLowerCase?.() || "")})`;
+
+        const headerType = `${t(type0?.toLowerCase?.() || "")} → ${t(type1?.toLowerCase?.() || "")}`;
 
         let html = `
         <table>
         <tr>
             <th rowspan="2">${t("group")}</th>
 
-            <th colspan="2">${t("quantity")}</th>
-            <th colspan="2">${t("price")}</th>
-            <th colspan="4">${t("revenue")}</th>
+            <th colspan="2">${t("quantity")} (${headerType})</th>
+            <th colspan="2">${t("price")} (${headerType})</th>
+            <th colspan="4">${t("revenue")} (${headerType})</th>
             <th colspan="3">${t("share")}</th>
         </tr>
 
         <tr>
-            <th>${t("initial")}</th>
-            <th>${t("current")}</th>
+            <th>${label0}</th>
+            <th>${label1}</th>
 
-            <th>${t("initial")}</th>
-            <th>${t("current")}</th>
+            <th>${label0}</th>
+            <th>${label1}</th>
 
-            <th>${t("initial")}</th>
-            <th>${t("current")}</th>
+            <th>${label0}</th>
+            <th>${label1}</th>
             <th>${t("change")}</th>
             <th>%</th>
 
-            <th>${t("initial")}</th>
-            <th>${t("current")}</th>
+            <th>${label0}</th>
+            <th>${label1}</th>
             <th>${t("change")}</th>
         </tr>
         `;

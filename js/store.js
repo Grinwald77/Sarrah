@@ -1,10 +1,13 @@
 export const Store = {
 
-    state:{
-        groups:[],
-        groupCount:5,
-        language:"en"
-    },
+   state:{
+    groups:[],
+    groupCount:5,
+    language:"en",
+
+    currency:"USD",
+    scale:"$"
+}
 
     listeners:[],
 

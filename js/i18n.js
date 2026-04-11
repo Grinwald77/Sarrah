@@ -29,6 +29,14 @@ export const Dict = {
 
         noData:"No data",
 
+        periodType:"Period Type",
+        months:"Months",
+        weeks:"Weeks",
+        quarters:"Quarters",
+        years:"Years",
+        sourcePeriod:"Source Period",
+        currentPeriod:"Current Period",
+        
         // будущие финансы
         directCost:"Direct Cost",
         variableCost:"Variable Cost",
@@ -65,6 +73,16 @@ export const Dict = {
 
         noData:"Нет данных",
 
+
+        periodType:"Тип периода",
+        
+        months:"Месяцы",
+        weeks:"Недели",
+        quarters:"Кварталы",
+        years:"Годы",
+        sourcePeriod:"Исходный период",
+        currentPeriod:"Текущий период",
+        
         // финансы
         directCost:"Прямые затраты",
         variableCost:"Переменные затраты",
@@ -101,6 +119,14 @@ export const Dict = {
 
         noData:"אין נתונים",
 
+        periodType:"סוג תקופה",
+        months:"חודשים",
+        weeks:"שבועות",
+        quarters:"רבעונים",
+        years:"שנים",
+        sourcePeriod:"תקופה מקור",
+        currentPeriod:"תקופה נוכחית",
+        
         // финансы
         directCost:"עלות ישירה",
         variableCost:"עלות משתנה",

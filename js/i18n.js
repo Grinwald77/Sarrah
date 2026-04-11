@@ -5,121 +5,126 @@ export const Dict = {
     en:{
         build:"Build",
         test:"Test",
+
         group:"Group",
         groups:"Groups",
-
-        periodType:"Period Type",
-        sourcePeriod:"Source Period",
-        currentPeriod:"Current Period",
-
-        actual:"Actual",
-        planned:"Planned",
-        past:"Past",
 
         quantity:"Quantity",
         price:"Average Price",
         revenue:"Revenue",
-        change:"Change",
         share:"Share",
 
         initial:"Initial",
         current:"Current",
+        planned:"Planned",
+        past:"Past",
+        actual:"Actual",
+
+        change:"Change",
+        percent:"Percent",
 
         total:"Total",
-        noData:"No data yet — click Build",
 
-        analysis:"Revenue Analysis",
+        analysis:"Analysis",
 
-        delta:"Δ",
-        contribution:"Contribution",
+        noData:"No data",
 
-        weeks:"Weeks",
-        months:"Months",
-        quarters:"Quarters",
-        years:"Years"
+        // будущие финансы
+        directCost:"Direct Cost",
+        variableCost:"Variable Cost",
+        margin:"Margin",
+        profit:"Profit",
+        tax:"Tax",
+        netProfit:"Net Profit"
     },
 
     ru:{
         build:"Построить",
         test:"Тест",
+
         group:"Группа",
         groups:"Группы",
-
-        periodType:"Тип периода",
-        sourcePeriod:"Исходный период",
-        currentPeriod:"Текущий период",
-
-        actual:"Факт",
-        planned:"План",
-        past:"Прошлый",
 
         quantity:"Количество",
         price:"Средняя цена",
         revenue:"Выручка",
-        change:"Изменение",
         share:"Доля",
 
         initial:"Исходный",
         current:"Текущий",
+        planned:"План",
+        past:"Прошлый",
+        actual:"Факт",
+
+        change:"Изменение",
+        percent:"Процент",
 
         total:"Итого",
-        noData:"Нет данных — нажмите Построить",
 
-        analysis:"Анализ выручки",
+        analysis:"Анализ",
 
-        delta:"Δ",
-        contribution:"Вклад",
+        noData:"Нет данных",
 
-        weeks:"Недели",
-        months:"Месяцы",
-        quarters:"Кварталы",
-        years:"Годы"
+        // финансы
+        directCost:"Прямые затраты",
+        variableCost:"Переменные затраты",
+        margin:"Маржа",
+        profit:"Прибыль",
+        tax:"Налог",
+        netProfit:"Чистая прибыль"
     },
 
     he:{
         build:"בנה",
         test:"בדיקה",
+
         group:"קבוצה",
         groups:"קבוצות",
-
-        periodType:"סוג תקופה",
-        sourcePeriod:"תקופה מקורית",
-        currentPeriod:"תקופה נוכחית",
-
-        actual:"בפועל",
-        planned:"מתוכנן",
-        past:"עבר",
 
         quantity:"כמות",
         price:"מחיר ממוצע",
         revenue:"הכנסות",
-        change:"שינוי",
-        share:"נתח",
+        share:"חלק",
 
-        initial:"מקורי",
+        initial:"ראשוני",
         current:"נוכחי",
+        planned:"מתוכנן",
+        past:"עבר",
+        actual:"בפועל",
+
+        change:"שינוי",
+        percent:"אחוז",
 
         total:"סה״כ",
-        noData:"אין נתונים — לחץ בנה",
 
-        analysis:"ניתוח הכנסות",
+        analysis:"ניתוח",
 
-        delta:"Δ",
-        contribution:"תרומה",
+        noData:"אין נתונים",
 
-        weeks:"שבועות",
-        months:"חודשים",
-        quarters:"רבעונים",
-        years:"שנים"
+        // финансы
+        directCost:"עלות ישירה",
+        variableCost:"עלות משתנה",
+        margin:"מרווח",
+        profit:"רווח",
+        tax:"מס",
+        netProfit:"רווח נקי"
     }
 };
 
+
+// =========================
+// TRANSLATION
+// =========================
 export function t(key){
-    const lang = Store.get("language");
+    const lang = Store.get("language") || "en";
     return Dict[lang]?.[key] || key;
 }
 
+
+// =========================
+// RTL SUPPORT
+// =========================
 export function applyDir(){
-    const lang = Store.get("language");
-    document.body.dir = (lang === "he") ? "rtl" : "ltr";
+    let lang = Store.get("language");
+    document.body.dir = (lang==="he") ? "rtl" : "ltr";
 }

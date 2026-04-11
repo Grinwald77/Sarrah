@@ -16,7 +16,6 @@ export const TopBlock = {
         document.getElementById("topBlock").innerHTML = `
         <div class="top-bar">
 
-            <!-- 🔥 ЯЗЫК ПЕРВЫЙ -->
             <div>
                 Language<br>
                 <select id="lang">
@@ -71,17 +70,28 @@ export const TopBlock = {
 
         this.bind();
 
-        // 🔥 заполняем периоды
+        // 🔥 сначала генерируем список
         this.fillPeriods();
 
-        // 🔥 восстанавливаем значения
+        // 🔥 потом восстанавливаем значения
         document.getElementById("lang").value = state.language;
-        document.getElementById("periodType").value = periods.type || "months";
+        document.getElementById("periodType").value = periods.periodType || "months";
 
-        if(periods.period0) document.getElementById("period0").value = periods.period0;
-        if(periods.period1) document.getElementById("period1").value = periods.period1;
-        if(periods.type0) document.getElementById("type0").value = periods.type0;
-        if(periods.type1) document.getElementById("type1").value = periods.type1;
+        if(periods.index0 !== undefined){
+            document.getElementById("period0").selectedIndex = periods.index0;
+        }
+
+        if(periods.index1 !== undefined){
+            document.getElementById("period1").selectedIndex = periods.index1;
+        }
+
+        if(periods.type0){
+            document.getElementById("type0").value = periods.type0;
+        }
+
+        if(periods.type1){
+            document.getElementById("type1").value = periods.type1;
+        }
     },
 
     bind(){
@@ -121,16 +131,14 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
-        // 🔥 СМЕНА ЯЗЫКА БЕЗ СБРОСА
         document.getElementById("lang").onchange = (e)=>{
 
-            // сохраняем текущие значения
-            this.updatePeriods();
+            this.updatePeriods(); // 🔥 сохраняем индексы
 
             Store.set("language", e.target.value);
             applyDir();
 
-            this.render(); // перерисовка без потери данных
+            this.render();
         };
 
         document.getElementById("periodType").onchange = ()=>{
@@ -153,10 +161,11 @@ export const TopBlock = {
         document.getElementById("period0").innerHTML = html;
         document.getElementById("period1").innerHTML = html;
 
-        // 🔥 если нет сохраненных — ставим 2026
         let periods = Store.get("periods");
 
-        if(!periods){
+        // если нет сохраненных — ставим 2026
+        if(!periods || periods.index0 === undefined){
+
             let index2026 = list.findIndex(x => x.endsWith("2026"));
 
             if(index2026 !== -1){
@@ -165,23 +174,18 @@ export const TopBlock = {
                     index2026 + 1 < list.length ? index2026 + 1 : index2026;
             }
         }
-
-        this.updatePeriods();
     },
 
     updatePeriods(){
 
-        const p0 = document.getElementById("period0").value;
-        const p1 = document.getElementById("period1").value;
-
-        const t0 = document.getElementById("type0").value;
-        const t1 = document.getElementById("type1").value;
-
         Store.set("periods", {
-            period0: p0,
-            period1: p1,
-            type0: t0,
-            type1: t1
+            periodType: document.getElementById("periodType").value,
+
+            index0: document.getElementById("period0").selectedIndex,
+            index1: document.getElementById("period1").selectedIndex,
+
+            type0: document.getElementById("type0").value,
+            type1: document.getElementById("type1").value
         });
     }
 };

@@ -149,43 +149,39 @@ export const TopBlock = {
 
     fillPeriods(){
 
-    let type = document.getElementById("periodType").value;
+        let type = document.getElementById("periodType").value;
 
-    const months = {
-        en:["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
-        ru:["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
-        he:["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"]
-    };
+        const months = {
+            en:["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
+            ru:["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
+            he:["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"]
+        };
 
-    let lang = Store.get("language");
+        let lang = Store.get("language");
 
-    let list = [];
+        let list = [];
 
-    // МЕСЯЦЫ
-    if(type === "months"){
-        list = months[lang]; // 🔥 БЕЗ ГОДА
-    }
+        if(type === "months"){
+            list = months[lang];
+        }
 
-    // НЕДЕЛИ
-    if(type === "weeks"){
-        list = Array.from({length:52}, (_,i)=>`W${i+1}`);
-    }
+        if(type === "weeks"){
+            list = Array.from({length:52}, (_,i)=>`W${i+1}`);
+        }
 
-    // КВАРТАЛЫ
-    if(type === "quarters"){
-        list = ["Q1","Q2","Q3","Q4"];
-    }
+        if(type === "quarters"){
+            list = ["Q1","Q2","Q3","Q4"];
+        }
 
-    // ГОДЫ (оставляем как есть)
-    if(type === "years"){
-        list = [document.getElementById("year0").value];
-    }
+        if(type === "years"){
+            list = [document.getElementById("year0").value];
+        }
 
-    let html = list.map(x=>`<option>${x}</option>`).join("");
+        let html = list.map(x=>`<option>${x}</option>`).join("");
 
-    document.getElementById("period0").innerHTML = html;
-    document.getElementById("period1").innerHTML = html;
-}
+        document.getElementById("period0").innerHTML = html;
+        document.getElementById("period1").innerHTML = html;
+    }, // ✅ ВАЖНАЯ ЗАПЯТАЯ
 
     addNavigation(){
 

@@ -14,16 +14,14 @@ export const TopBlock = {
         document.getElementById("topBlock").innerHTML = `
         <div class="top-bar">
 
-            <!-- ЛОГО -->
             <div class="logo-block">
                 <img src="assets/logo.png" class="logo">
-            <div class="logo-text">
-            <div class="logo-main">Sarrah BI Model:</div>
-            <div class="logo-sub">Revenue & Cost Factor Analysis</div>
-        </div>
-    </div>
+                <div class="logo-text">
+                    <div class="logo-main">Sarrah BI Model:</div>
+                    <div class="logo-sub">Revenue & Cost Factor Analysis</div>
+                </div>
+            </div>
 
-            <!-- БЛОК 1 -->
             <div class="top-group">
                 <span class="label">${t("language")}</span>
                 <select id="lang">
@@ -43,52 +41,42 @@ export const TopBlock = {
                     <option value="years">${t("years")}</option>
                </select>
 
-<span class="label">${t("currency")}</span>
-<select id="currency">
-    <option value="USD">$</option>
-    <option value="EUR">€</option>
-    <option value="ILS">₪</option>
-    <option value="RUB">₽</option>
-</select>
+                <span class="label">${t("currency")}</span>
+                <select id="currency">
+                    <option value="USD">$</option>
+                    <option value="EUR">€</option>
+                    <option value="ILS">₪</option>
+                    <option value="RUB">₽</option>
+                </select>
 
-<span class="label">${t("scale")}</span>
-<select id="scale">
-    <option value="units">${t("units")}</option>
-    <option value="thousands">${t("thousands")}</option>
-    <option value="millions">${t("millions")}</option>
-</select>
+                <span class="label">${t("scale")}</span>
+                <select id="scale">
+                    <option value="units">${t("units")}</option>
+                    <option value="thousands">${t("thousands")}</option>
+                    <option value="millions">${t("millions")}</option>
+                </select>
+            </div>
 
-</div>
-
-            <!-- БЛОК 2 -->
             <div class="top-group">
                 <span class="label">${t("source")}</span>
-
                 <select id="period0"></select>
                 <select id="year0"></select>
-
                 <select id="type0">
                     <option value="Actual">${t("actual")}</option>
                     <option value="Planned">${t("planned")}</option>
-
                 </select>
             </div>
 
-            <!-- БЛОК 3 -->
             <div class="top-group">
                 <span class="label">${t("current")}</span>
-                
                 <select id="period1"></select>
                 <select id="year1"></select>
-
                 <select id="type1">
                     <option value="Actual">${t("actual")}</option>
                     <option value="Planned">${t("planned")}</option>
-
                 </select>
             </div>
 
-            <!-- КНОПКИ -->
             <div class="top-group">
                 <button id="buildBtn" class="build-btn">${t("build")}</button>
                 <button id="testBtn" class="test-btn">${t("test")}</button>
@@ -99,12 +87,29 @@ export const TopBlock = {
 
         this.bind();
         this.fillYears();
+
+        // ✅ ВАЖНО: сначала применяем periodType
+        document.getElementById("periodType").value = state.periodType || "quarters";
+
         this.fillPeriods();
+
+        // ✅ ВОССТАНОВЛЕНИЕ из Store
+        const p = state.periods || {};
+
+        document.getElementById("year0").value = p.year0 || "2026";
+        document.getElementById("year1").value = p.year1 || "2026";
+
+        if(p.period0) document.getElementById("period0").value = p.period0;
+        if(p.period1) document.getElementById("period1").value = p.period1;
+
+        document.getElementById("type0").value = p.type0 || "Actual";
+        document.getElementById("type1").value = p.type1 || "Actual";
+
         this.addNavigation();
 
         document.getElementById("lang").value = state.language;
         document.getElementById("currency").value = state.currency || "ILS";
-document.getElementById("scale").value = state.scale || "units";
+        document.getElementById("scale").value = state.scale || "units";
     },
 
     bind(){
@@ -144,23 +149,17 @@ document.getElementById("scale").value = state.scale || "units";
             Store.set("groups", groups);
         };
 
-        // 🔥 ВОТ ГЛАВНЫЙ ФИКС
         document.getElementById("lang").onchange = (e)=>{
 
-            // сохраняем состояние UI
             const ui = {
-currency: document.getElementById("currency")?.value,
-scale: document.getElementById("scale")?.value,
-                
+                currency: document.getElementById("currency")?.value,
+                scale: document.getElementById("scale")?.value,
                 groupCount: document.getElementById("groupCount").value,
                 periodType: document.getElementById("periodType").value,
-
                 year0: document.getElementById("year0").value,
                 year1: document.getElementById("year1").value,
-
                 period0: document.getElementById("period0").value,
                 period1: document.getElementById("period1").value,
-
                 type0: document.getElementById("type0").value,
                 type1: document.getElementById("type1").value
             };
@@ -170,7 +169,6 @@ scale: document.getElementById("scale")?.value,
 
             this.render();
 
-            // восстанавливаем значения
             document.getElementById("groupCount").value = ui.groupCount;
             document.getElementById("periodType").value = ui.periodType;
 
@@ -186,25 +184,55 @@ scale: document.getElementById("scale")?.value,
             document.getElementById("type1").value = ui.type1;
 
             if(ui.currency) document.getElementById("currency").value = ui.currency;
-if(ui.scale) document.getElementById("scale").value = ui.scale;
+            if(ui.scale) document.getElementById("scale").value = ui.scale;
         };
 
         document.getElementById("periodType").onchange = ()=>{
+
             this.fillPeriods();
+
+            Store.set("periodType", document.getElementById("periodType").value);
+
+            Store.setPeriods({
+                period0: document.getElementById("period0").value,
+                period1: document.getElementById("period1").value
+            });
         };
 
-document.getElementById("currency").onchange = (e)=>{
-    Store.set("currency", e.target.value);
-    Store.set("refresh", Date.now());
-};
+        document.getElementById("currency").onchange = (e)=>{
+            Store.set("currency", e.target.value);
+        };
 
-document.getElementById("scale").onchange = (e)=>{
-    Store.set("scale", e.target.value);
-    Store.set("refresh", Date.now());
-};
-        
-        document.getElementById("year0").onchange = ()=>this.fillPeriods();
-        document.getElementById("year1").onchange = ()=>this.fillPeriods();
+        document.getElementById("scale").onchange = (e)=>{
+            Store.set("scale", e.target.value);
+        };
+
+        const syncPeriods = ()=>{
+
+            Store.setPeriods({
+                period0: document.getElementById("period0").value,
+                period1: document.getElementById("period1").value,
+                year0: document.getElementById("year0").value,
+                year1: document.getElementById("year1").value,
+                type0: document.getElementById("type0").value,
+                type1: document.getElementById("type1").value
+            });
+        };
+
+        document.getElementById("year0").onchange = ()=>{
+            this.fillPeriods();
+            syncPeriods();
+        };
+
+        document.getElementById("year1").onchange = ()=>{
+            this.fillPeriods();
+            syncPeriods();
+        };
+
+        document.getElementById("period0").onchange = syncPeriods;
+        document.getElementById("period1").onchange = syncPeriods;
+        document.getElementById("type0").onchange = syncPeriods;
+        document.getElementById("type1").onchange = syncPeriods;
     },
 
     fillYears(){
@@ -219,65 +247,58 @@ document.getElementById("scale").onchange = (e)=>{
         document.getElementById("year0").innerHTML = html;
         document.getElementById("year1").innerHTML = html;
 
-        document.getElementById("year0").value = 2026;
-        document.getElementById("year1").value = 2026;
+        // ✅ НЕ затираем Store
+        if(!Store.get("periods")?.year0){
+            document.getElementById("year0").value = 2026;
+        }
+        if(!Store.get("periods")?.year1){
+            document.getElementById("year1").value = 2026;
+        }
     },
 
     fillPeriods(){
 
-    let type = document.getElementById("periodType").value;
+        let type = document.getElementById("periodType").value;
 
-    const months = {
-        en:["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
-        ru:["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
-        he:["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"]
-    };
+        const months = {
+            en:["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
+            ru:["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
+            he:["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"]
+        };
 
-    let lang = Store.get("language");
+        let lang = Store.get("language");
 
-    let list = [];
+        let list = [];
 
-    const period0 = document.getElementById("period0");
-    const period1 = document.getElementById("period1");
+        const period0 = document.getElementById("period0");
+        const period1 = document.getElementById("period1");
 
-    // ===== YEARS =====
-    if(type === "years"){
+        if(type === "years"){
+            period0.innerHTML = "";
+            period1.innerHTML = "";
+            period0.disabled = true;
+            period1.disabled = true;
+            return;
+        }
 
-        // ❗ убираем значения
-        period0.innerHTML = "";
-        period1.innerHTML = "";
+        period0.disabled = false;
+        period1.disabled = false;
 
-        // ❗ делаем неактивным
-        period0.disabled = true;
-        period1.disabled = true;
+        if(type === "months") list = months[lang];
+        if(type === "weeks") list = Array.from({length:52}, (_,i)=>`W${i+1}`);
+        if(type === "quarters") list = ["Q1","Q2","Q3","Q4"];
 
-        return;
-    }
+        let prev0 = Store.get("periods")?.period0;
+        let prev1 = Store.get("periods")?.period1;
 
-    // 👉 включаем обратно если не years
-    period0.disabled = false;
-    period1.disabled = false;
+        let html = list.map(x=>`<option>${x}</option>`).join("");
 
-    // ===== MONTHS =====
-    if(type === "months"){
-        list = months[lang];
-    }
+        period0.innerHTML = html;
+        period1.innerHTML = html;
 
-    // ===== WEEKS =====
-    if(type === "weeks"){
-        list = Array.from({length:52}, (_,i)=>`W${i+1}`);
-    }
-
-    // ===== QUARTERS =====
-    if(type === "quarters"){
-        list = ["Q1","Q2","Q3","Q4"];
-    }
-
-    let html = list.map(x=>`<option>${x}</option>`).join("");
-
-    period0.innerHTML = html;
-    period1.innerHTML = html;
-},
+        if(prev0) period0.value = prev0;
+        if(prev1) period1.value = prev1;
+    },
 
     addNavigation(){
 

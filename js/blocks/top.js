@@ -182,39 +182,59 @@ export const TopBlock = {
 
     fillPeriods(){
 
-        let type = document.getElementById("periodType").value;
+    let type = document.getElementById("periodType").value;
 
-        const months = {
-            en:["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
-            ru:["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
-            he:["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"]
-        };
+    const months = {
+        en:["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
+        ru:["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
+        he:["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"]
+    };
 
-        let lang = Store.get("language");
+    let lang = Store.get("language");
 
-        let list = [];
+    let list = [];
 
-        if(type === "months"){
-            list = months[lang];
-        }
+    const period0 = document.getElementById("period0");
+    const period1 = document.getElementById("period1");
 
-        if(type === "weeks"){
-            list = Array.from({length:52}, (_,i)=>`W${i+1}`);
-        }
+    // ===== YEARS =====
+    if(type === "years"){
 
-        if(type === "quarters"){
-            list = ["Q1","Q2","Q3","Q4"];
-        }
+        // ❗ убираем значения
+        period0.innerHTML = "";
+        period1.innerHTML = "";
 
-        if(type === "years"){
-            list = [document.getElementById("year0").value];
-        }
+        // ❗ делаем неактивным
+        period0.disabled = true;
+        period1.disabled = true;
 
-        let html = list.map(x=>`<option>${x}</option>`).join("");
+        return;
+    }
 
-        document.getElementById("period0").innerHTML = html;
-        document.getElementById("period1").innerHTML = html;
-    },
+    // 👉 включаем обратно если не years
+    period0.disabled = false;
+    period1.disabled = false;
+
+    // ===== MONTHS =====
+    if(type === "months"){
+        list = months[lang];
+    }
+
+    // ===== WEEKS =====
+    if(type === "weeks"){
+        list = Array.from({length:52}, (_,i)=>`W${i+1}`);
+    }
+
+    // ===== QUARTERS =====
+    if(type === "quarters"){
+        list = ["Q1","Q2","Q3","Q4"];
+    }
+
+    let html = list.map(x=>`<option>${x}</option>`).join("");
+
+    period0.innerHTML = html;
+    period1.innerHTML = html;
+},
 
     addNavigation(){
 

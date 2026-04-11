@@ -1,191 +1,74 @@
-import { Store } from '../store.js';
-import { t, applyDir } from '../i18n.js';
-import { Periods } from '../utils/periods.js';
+body {
+    font-family:-apple-system;
+    background:#f4f6fa;
+    padding:15px;
+}
 
-export const TopBlock = {
+/* Блоки */
+.block {
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
 
-    init(){
-        this.render();
-    },
+/* 🔥 ВЕРХ В ОДНУ СТРОКУ */
+.top-bar {
+    display:flex;
+    gap:10px;
+    flex-wrap:nowrap;
+    align-items:flex-end;
+    overflow-x:auto;
+}
 
-    render(){
+.top-bar > div {
+    display:flex;
+    flex-direction:column;
+    min-width:120px;
+}
 
-        const state = Store.state;
-        const periods = Store.get("periods") || {};
+/* Таблица */
+table {
+    width:100%;
+    border-collapse:collapse;
+}
 
-        document.getElementById("topBlock").innerHTML = `
-        <div class="top-bar">
+td,th {
+    padding:6px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
 
-            <div>
-                Language<br>
-                <select id="lang">
-                    <option value="en">EN</option>
-                    <option value="ru">RU</option>
-                    <option value="he">HE</option>
-                </select>
-            </div>
+input, select {
+    width:100%;
+    padding:5px;
+}
 
-            <div>
-                ${t("groups")}<br>
-                <input id="groupCount" value="${state.groupCount}">
-            </div>
+/* Кнопки */
+button {
+    padding:8px 14px;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+}
 
-            <div>
-                ${t("periodType")}<br>
-                <select id="periodType">
-                    <option value="months">${t("months")}</option>
-                    <option value="weeks">${t("weeks")}</option>
-                    <option value="quarters">${t("quarters")}</option>
-                    <option value="years">${t("years")}</option>
-                </select>
-            </div>
+.build-btn {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color:white;
+}
 
-            <div>
-                ${t("sourcePeriod")}<br>
-                <select id="period0"></select>
-                <select id="type0">
-                    <option value="Actual">${t("actual")}</option>
-                    <option value="Planned">${t("planned")}</option>
-                    <option value="Past">${t("past")}</option>
-                </select>
-            </div>
+.test-btn {
+    background:#ffffff;
+    border:2px solid #d6dcff;
+}
 
-            <div>
-                ${t("currentPeriod")}<br>
-                <select id="period1"></select>
-                <select id="type1">
-                    <option value="Actual">${t("actual")}</option>
-                    <option value="Planned">${t("planned")}</option>
-                    <option value="Past">${t("past")}</option>
-                </select>
-            </div>
+/* Цвета */
+.green { color:green; }
+.red { color:red; }
 
-            <div style="align-self:end; display:flex; gap:8px;">
-                <button id="buildBtn" class="build-btn">${t("build")}</button>
-                <button id="testBtn" class="test-btn">${t("test")}</button>
-            </div>
-
-        </div>
-        `;
-
-        this.bind();
-
-        // 🔥 сначала генерируем список
-        this.fillPeriods();
-
-        // 🔥 потом восстанавливаем значения
-        document.getElementById("lang").value = state.language;
-        document.getElementById("periodType").value = periods.periodType || "months";
-
-        if(periods.index0 !== undefined){
-            document.getElementById("period0").selectedIndex = periods.index0;
-        }
-
-        if(periods.index1 !== undefined){
-            document.getElementById("period1").selectedIndex = periods.index1;
-        }
-
-        if(periods.type0){
-            document.getElementById("type0").value = periods.type0;
-        }
-
-        if(periods.type1){
-            document.getElementById("type1").value = periods.type1;
-        }
-    },
-
-    bind(){
-
-        document.getElementById("buildBtn").onclick = () => {
-
-            let n = +document.getElementById("groupCount").value || 1;
-
-            let groups = [];
-
-            for(let i=0;i<n;i++){
-                groups.push({
-                    name: `${t("group")} ${i+1}`,
-                    quantity0:0,
-                    quantity1:0,
-                    price0:0,
-                    price1:0
-                });
-            }
-
-            Store.set("groupCount", n);
-            Store.set("groups", groups);
-        };
-
-        document.getElementById("testBtn").onclick = () => {
-
-            let groups = Store.get("groups");
-            if(!groups || !groups.length) return;
-
-            groups.forEach(g=>{
-                g.quantity0 = Math.floor(Math.random()*10)+1;
-                g.quantity1 = Math.floor(Math.random()*10)+1;
-                g.price0 = Math.floor(Math.random()*10000)+1000;
-                g.price1 = Math.floor(Math.random()*10000)+1000;
-            });
-
-            Store.set("groups", groups);
-        };
-
-        document.getElementById("lang").onchange = (e)=>{
-
-            this.updatePeriods(); // 🔥 сохраняем индексы
-
-            Store.set("language", e.target.value);
-            applyDir();
-
-            this.render();
-        };
-
-        document.getElementById("periodType").onchange = ()=>{
-            this.fillPeriods();
-        };
-
-        document.getElementById("period0").onchange = ()=>this.updatePeriods();
-        document.getElementById("period1").onchange = ()=>this.updatePeriods();
-        document.getElementById("type0").onchange = ()=>this.updatePeriods();
-        document.getElementById("type1").onchange = ()=>this.updatePeriods();
-    },
-
-    fillPeriods(){
-
-        let type = document.getElementById("periodType").value;
-        let list = Periods.generate(type);
-
-        let html = list.map(x=>`<option>${x}</option>`).join("");
-
-        document.getElementById("period0").innerHTML = html;
-        document.getElementById("period1").innerHTML = html;
-
-        let periods = Store.get("periods");
-
-        // если нет сохраненных — ставим 2026
-        if(!periods || periods.index0 === undefined){
-
-            let index2026 = list.findIndex(x => x.endsWith("2026"));
-
-            if(index2026 !== -1){
-                document.getElementById("period0").selectedIndex = index2026;
-                document.getElementById("period1").selectedIndex =
-                    index2026 + 1 < list.length ? index2026 + 1 : index2026;
-            }
-        }
-    },
-
-    updatePeriods(){
-
-        Store.set("periods", {
-            periodType: document.getElementById("periodType").value,
-
-            index0: document.getElementById("period0").selectedIndex,
-            index1: document.getElementById("period1").selectedIndex,
-
-            type0: document.getElementById("type0").value,
-            type1: document.getElementById("type1").value
-        });
-    }
-};
+/* Итог */
+.total {
+    background:#eef2ff;
+    font-weight:bold;
+}

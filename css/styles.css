@@ -1,208 +1,102 @@
-/* ===== ОСНОВА ===== */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f4f6fa;
-    margin: 0;
-    color: #1f2937;
+/* ============================= */
+/* 🔥 BIG TOP BAR (x2 UI SCALE) */
+/* ============================= */
+
+.top-bar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:24px;
+    padding:20px 24px;
+    background:#ffffff;
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.08);
+    margin-bottom:20px;
 }
 
-/* ===== TOP BAR ===== */
-.top-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-
-    background: white;
-    padding: 14px 18px;
-    border-bottom: 1px solid #e5e7eb;
-
-    position: sticky;
-    top: 0;
-    z-index: 10;
+/* группы */
+.top-group{
+    display:flex;
+    align-items:center;
+    gap:14px;
 }
 
-/* ===== ЛОГО ===== */
-.logo-block {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-right: 20px;
+/* лейблы */
+.top-bar .label{
+    font-size:16px;
+    font-weight:600;
+    color:#555;
 }
 
-.logo {
-    height: 36px;
-}
-
-.logo-main {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.logo-sub {
-    font-size: 11px;
-    color: #6b7280;
-}
-
-/* ===== ГРУППЫ ===== */
-.top-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    background: #f9fafb;
-    padding: 6px 10px;
-    border-radius: 10px;
-    border: 1px solid #e5e7eb;
-}
-
-/* ===== LABEL ===== */
-.label {
-    font-size: 11px;
-    color: #6b7280;
-    margin-right: 2px;
-}
-
-/* ===== INPUT / SELECT ===== */
+/* inputs + selects */
 .top-bar input,
-.top-bar select {
-    height: 28px;
-    padding: 2px 6px;
-
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-
-    background: white;
-    font-size: 12px;
-
-    transition: all 0.15s ease;
+.top-bar select{
+    font-size:16px;
+    padding:10px 14px;
+    height:42px;
+    border-radius:10px;
+    border:1px solid #dcdfe6;
+    background:#fff;
+    transition:all 0.2s;
 }
 
+/* фокус */
 .top-bar input:focus,
-.top-bar select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
+.top-bar select:focus{
+    outline:none;
+    border-color:#4a90e2;
+    box-shadow:0 0 0 2px rgba(74,144,226,0.15);
 }
 
-/* ===== КНОПКИ ===== */
-button {
-    border: none;
-    border-radius: 8px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.15s ease;
+/* кнопки */
+.top-bar button{
+    font-size:16px;
+    padding:12px 20px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    transition:all 0.2s;
 }
 
-.build-btn {
-    background: #3b82f6;
-    color: white;
+/* build */
+.build-btn{
+    background:#4a90e2;
+    color:#fff;
 }
 
-.build-btn:hover {
-    background: #2563eb;
+.build-btn:hover{
+    background:#357abd;
 }
 
-.test-btn {
-    background: #10b981;
-    color: white;
+/* test */
+.test-btn{
+    background:#eaeef5;
+    color:#333;
 }
 
-.test-btn:hover {
-    background: #059669;
+.test-btn:hover{
+    background:#d5dbe6;
 }
 
-/* ===== TABLE TITLE ===== */
-.table-title {
-    margin: 16px 16px 6px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #374151;
+/* ===== LOGO BLOCK ===== */
+
+.logo-block{
+    display:flex;
+    align-items:center;
+    gap:14px;
 }
 
-/* ===== TABLE ===== */
-table {
-    width: calc(100% - 32px);
-    margin: 0 16px 20px;
-
-    border-collapse: collapse;
-    background: white;
-
-    border-radius: 12px;
-    overflow: hidden;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+.logo{
+    height:48px;
 }
 
-/* ===== HEADER ===== */
-th {
-    background: #f9fafb;
-    font-weight: 600;
-    font-size: 12px;
-    color: #374151;
-
-    padding: 8px;
-    border-bottom: 1px solid #e5e7eb;
+.logo-main{
+    font-size:20px;
+    font-weight:700;
 }
 
-/* ===== CELLS ===== */
-td {
-    padding: 6px 8px;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 12px;
-}
-
-/* ===== INPUT В ТАБЛИЦЕ ===== */
-td input {
-    width: 100%;
-    border: 1px solid transparent;
-    background: transparent;
-    padding: 4px;
-    font-size: 12px;
-}
-
-td input:focus {
-    background: #eef2ff;
-    border: 1px solid #c7d2fe;
-    outline: none;
-}
-
-/* ===== HOVER ===== */
-tr:hover td {
-    background: #f9fafb;
-}
-
-/* ===== TOTAL ===== */
-tr.total {
-    background: #f1f5f9;
-    font-weight: 600;
-}
-
-/* ===== ЦВЕТА ===== */
-.green {
-    color: #059669;
-    font-weight: 500;
-}
-
-.red {
-    color: #dc2626;
-    font-weight: 500;
-}
-
-/* ===== ЧИСЛА ВПРАВО ===== */
-td:nth-child(n+6) {
-    text-align: right;
-}
-
-/* ===== АДАПТИВ ===== */
-@media (max-width: 900px) {
-    .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    table {
-        font-size: 11px;
-    }
+.logo-sub{
+    font-size:14px;
+    color:#777;
 }

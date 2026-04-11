@@ -1,102 +1,169 @@
 body {
-    font-family:-apple-system;
-    background:#f4f6fa;
-    padding:15px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f6f8fc;
+    padding: 20px;
+    color: #1f2937;
 }
 
 /* =========================
    БЛОКИ
 ========================= */
 .block {
-    background:white;
-    padding:12px;
-    border-radius:12px;
-    margin-bottom:15px;
+    background: #ffffff;
+    padding: 16px 18px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
 }
 
 /* =========================
-   🔥 TOP BAR — ОДНА СТРОКА
+   TOP BAR
 ========================= */
 .top-bar {
-    display:flex;
-    align-items:center;
-    gap:25px;
-    flex-wrap:nowrap;
-    overflow-x:auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
 }
 
-/* группы (Language / Source / Current) */
+/* группы */
 .top-group {
-    display:flex;
-    flex-direction:row;       /* 🔥 строго горизонтально */
-    align-items:center;
-    gap:6px;
-    white-space:nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
 }
 
 /* подписи */
 .label {
-    font-size:12px;
-    color:#666;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
 }
 
 /* =========================
-   🔥 ГЛАВНЫЙ ФИКС ПРОБЛЕМЫ
+   INPUTS / SELECTS
 ========================= */
-
-/* ❌ убрали width:100% */
 input, select {
-    padding:6px;
-    border-radius:6px;
-    border:1px solid #ddd;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #fafbff;
+    font-size: 13px;
+    color: #111827;
 
-    width:auto;              /* 🔥 КРИТИЧНО */
-    min-width:70px;
+    width: auto;
+    min-width: 70px;
+    display: inline-block;
 
-    display:inline-block;    /* 🔥 чтобы не падали вниз */
+    transition: all 0.15s ease;
+}
+
+/* hover */
+input:hover, select:hover {
+    border-color: #c7d2fe;
+}
+
+/* focus */
+input:focus, select:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
 }
 
 /* =========================
    КНОПКИ
 ========================= */
 button {
-    padding:8px 14px;
-    border:none;
-    border-radius:8px;
-    font-weight:600;
-    cursor:pointer;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
 }
 
+/* BUILD */
 .build-btn {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    color:white;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    border: none;
 }
 
+.build-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(79,70,229,0.25);
+}
+
+/* TEST */
 .test-btn {
-    background:white;
-    border:2px solid #d6dcff;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+}
+
+.test-btn:hover {
+    background: #f3f4f6;
 }
 
 /* =========================
    ТАБЛИЦА
 ========================= */
 table {
-    width:100%;
-    border-collapse:collapse;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
 }
 
-td, th {
-    padding:6px;
-    text-align:center;
-    border-bottom:1px solid #eee;
+th {
+    background: #f9fafb;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 10px 6px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-/* цвета */
-.green { color:green; }
-.red { color:red; }
+td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #f1f5f9;
+}
 
-/* итог */
-.total {
-    background:#eef2ff;
-    font-weight:bold;
+/* hover строки */
+tr:hover td {
+    background: #f9fbff;
+}
+
+/* =========================
+   ЦВЕТА
+========================= */
+.green {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.red {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+/* =========================
+   TOTAL
+========================= */
+.total td {
+    background: #eef2ff;
+    font-weight: 600;
+}
+
+/* =========================
+   СКРОЛЛ (тонкий)
+========================= */
+::-webkit-scrollbar {
+    height: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 6px;
 }

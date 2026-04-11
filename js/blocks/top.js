@@ -14,21 +14,18 @@ export const TopBlock = {
         document.getElementById("topBlock").innerHTML = `
         <div class="top-bar">
 
-            <div>
+            <!-- БЛОК 1 -->
+            <div class="top-group">
                 <span class="label">${t("language")}</span>
                 <select id="lang">
                     <option value="en">EN</option>
                     <option value="ru">RU</option>
                     <option value="he">HE</option>
                 </select>
-            </div>
 
-            <div>
                 <span class="label">${t("groups")}</span>
                 <input id="groupCount" value="${state.groupCount}">
-            </div>
 
-            <div>
                 <span class="label">${t("periodType")}</span>
                 <select id="periodType">
                     <option value="months">${t("months")}</option>
@@ -38,10 +35,13 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <div>
+            <!-- БЛОК 2 -->
+            <div class="top-group">
                 <span class="label">${t("source")}</span>
+
                 <select id="year0"></select>
                 <select id="period0"></select>
+
                 <select id="type0">
                     <option value="Actual">${t("actual")}</option>
                     <option value="Planned">${t("planned")}</option>
@@ -49,10 +49,13 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <div>
+            <!-- БЛОК 3 -->
+            <div class="top-group">
                 <span class="label">${t("current")}</span>
+
                 <select id="year1"></select>
                 <select id="period1"></select>
+
                 <select id="type1">
                     <option value="Actual">${t("actual")}</option>
                     <option value="Planned">${t("planned")}</option>
@@ -60,8 +63,11 @@ export const TopBlock = {
                 </select>
             </div>
 
-            <button id="buildBtn" class="build-btn">${t("build")}</button>
-            <button id="testBtn" class="test-btn">${t("test")}</button>
+            <!-- КНОПКИ -->
+            <div class="top-group">
+                <button id="buildBtn" class="build-btn">${t("build")}</button>
+                <button id="testBtn" class="test-btn">${t("test")}</button>
+            </div>
 
         </div>
         `;

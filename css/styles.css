@@ -1,188 +1,158 @@
+/* ===== BASE ===== */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f6f8fc;
-    padding: 20px;
-    color: #1f2937;
+    background:#f5f7fb;
+    padding:16px;
+    color:#1f2a44;
+    margin:0;
 }
 
-/* =========================
-   БЛОКИ
-========================= */
+/* ===== BLOCKS ===== */
 .block {
-    background: #ffffff;
-    padding: 16px 18px;
-    border-radius: 14px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    background:white;
+    padding:16px;
+    border-radius:12px;
+    margin-bottom:16px;
+    border:1px solid #e5e9f2;
 }
 
+/* ===== TOP BAR ===== */
+.top-bar {
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-wrap:nowrap;
+
+    background:#ffffff;
+    padding:12px 16px;
+    border-radius:12px;
+    border:1px solid #e5e9f2;
+}
+
+/* ===== LOGO ===== */
 .logo-block {
     display:flex;
     align-items:center;
-    gap:8px;
-    margin-right:12px;
+    gap:10px;
+    margin-right:16px;
 }
 
 .logo {
-    width:28px;
-    height:28px;
+    width:36px;
+    height:36px;
 }
 
 .logo-text {
     font-weight:700;
-    font-size:16px;
-}
-/* =========================
-   TOP BAR
-========================= */
-.top-bar {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    font-size:18px;
+    color:#1f2a44;
+    letter-spacing:0.3px;
 }
 
-/* группы */
+/* ===== GROUPS ===== */
 .top-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
+    display:flex;
+    align-items:center;
+    gap:6px;
 }
 
-/* подписи */
+/* ===== LABELS ===== */
 .label {
-    font-size: 12px;
-    color: #6b7280;
-    font-weight: 500;
+    font-size:12px;
+    color:#6b7280;
 }
+
+/* ===== INPUTS ===== */
+select, input {
+    height:30px;
+    padding:4px 8px;
+    border:1px solid #d1d5db;
+    border-radius:6px;
+    background:white;
+    font-size:13px;
+}
+
+/* disabled (например years) */
 select:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-/* =========================
-   INPUTS / SELECTS
-========================= */
-input, select {
-    padding: 7px 10px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    background: #fafbff;
-    font-size: 13px;
-    color: #111827;
-
-    width: auto;
-    min-width: 70px;
-    display: inline-block;
-
-    transition: all 0.15s ease;
+    opacity:0.5;
+    cursor:not-allowed;
 }
 
-/* hover */
-input:hover, select:hover {
-    border-color: #c7d2fe;
-}
-
-/* focus */
-input:focus, select:focus {
-    outline: none;
-    border-color: #6366f1;
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
-}
-
-/* =========================
-   КНОПКИ
-========================= */
+/* ===== BUTTONS ===== */
 button {
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
+    cursor:pointer;
+    transition:0.15s;
 }
 
-/* BUILD */
 .build-btn {
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    color: white;
-    border: none;
+    background:#2563eb;
+    color:white;
+    font-weight:600;
+    border:none;
+    border-radius:8px;
+    padding:8px 14px;
 }
 
 .build-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(79,70,229,0.25);
+    background:#1e4fd6;
 }
 
-/* TEST */
 .test-btn {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    color: #374151;
+    background:#f3f4f6;
+    color:#374151;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    padding:8px 14px;
 }
 
 .test-btn:hover {
-    background: #f3f4f6;
+    background:#e5e7eb;
 }
 
-/* =========================
-   ТАБЛИЦА
-========================= */
+/* ===== TABLE ===== */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
 }
 
 th {
-    background: #f9fafb;
-    color: #6b7280;
-    font-weight: 600;
-    font-size: 12px;
-    padding: 10px 6px;
-    border-bottom: 1px solid #e5e7eb;
+    background:#f9fafb;
+    font-weight:600;
+    border-bottom:1px solid #e5e9f2;
+    padding:8px;
 }
 
 td {
-    padding: 8px 6px;
-    border-bottom: 1px solid #f1f5f9;
+    padding:8px;
+    border-bottom:1px solid #eef1f6;
+    text-align:center;
 }
 
-/* hover строки */
+/* hover строк */
 tr:hover td {
-    background: #f9fbff;
+    background:#f5f7fb;
 }
 
-/* =========================
-   ЦВЕТА
-========================= */
+/* ===== COLORS ===== */
 .green {
-    color: #16a34a;
-    font-weight: 600;
+    color:#16a34a;
+    font-weight:600;
 }
 
 .red {
-    color: #dc2626;
-    font-weight: 600;
+    color:#dc2626;
+    font-weight:600;
 }
 
-/* =========================
-   TOTAL
-========================= */
-.total td {
-    background: #eef2ff;
-    font-weight: 600;
+/* ===== TOTAL ROW ===== */
+.total {
+    background:#f3f4f6;
+    font-weight:700;
 }
 
-/* =========================
-   СКРОЛЛ (тонкий)
-========================= */
-::-webkit-scrollbar {
-    height: 6px;
-}
-::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 6px;
+/* ===== ANALYSIS ===== */
+#analysisBlock {
+    font-size:14px;
+    line-height:1.6;
 }

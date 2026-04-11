@@ -3,153 +3,94 @@ import { Store } from './store.js';
 export const Dict = {
 
     en:{
-        build:"Build",
-        test:"Test",
-
-        group:"Group",
+        language:"Language",
         groups:"Groups",
+        group:"Group",
 
-        quantity:"Quantity",
-        price:"Average Price",
-        revenue:"Revenue",
-        share:"Share",
-
-        initial:"Initial",
-        current:"Current",
-        planned:"Planned",
-        past:"Past",
-        actual:"Actual",
-
-        change:"Change",
-        percent:"Percent",
-
-        total:"Total",
-
-        analysis:"Analysis",
-
-        noData:"No data",
-
-        periodType:"Period Type",
+        periodType:"Period",
         months:"Months",
         weeks:"Weeks",
         quarters:"Quarters",
         years:"Years",
-        sourcePeriod:"Source Period",
-        currentPeriod:"Current Period",
-        
-        // будущие финансы
-        directCost:"Direct Cost",
-        variableCost:"Variable Cost",
-        margin:"Margin",
-        profit:"Profit",
-        tax:"Tax",
-        netProfit:"Net Profit"
+
+        source:"Source",
+        current:"Current",
+
+        actual:"Actual",
+        planned:"Planned",
+        past:"Past",
+
+        quantity:"Quantity",
+        price:"Price",
+        revenue:"Revenue",
+        analysis:"Analysis",
+
+        build:"Build",
+        test:"Test",
+        total:"Total"
     },
 
     ru:{
-        build:"Построить",
-        test:"Тест",
-
-        group:"Группа",
+        language:"Язык",
         groups:"Группы",
+        group:"Группа",
 
-        quantity:"Количество",
-        price:"Средняя цена",
-        revenue:"Выручка",
-        share:"Доля",
-
-        initial:"Исходный",
-        current:"Текущий",
-        planned:"План",
-        past:"Прошлый",
-        actual:"Факт",
-
-        change:"Изменение",
-        percent:"Процент",
-
-        total:"Итого",
-
-        analysis:"Анализ",
-
-        noData:"Нет данных",
-
-
-        periodType:"Тип периода",
-        
+        periodType:"Период",
         months:"Месяцы",
         weeks:"Недели",
         quarters:"Кварталы",
         years:"Годы",
-        sourcePeriod:"Исходный период",
-        currentPeriod:"Текущий период",
-        
-        // финансы
-        directCost:"Прямые затраты",
-        variableCost:"Переменные затраты",
-        margin:"Маржа",
-        profit:"Прибыль",
-        tax:"Налог",
-        netProfit:"Чистая прибыль"
+
+        source:"Исходный",
+        current:"Текущий",
+
+        actual:"Факт",
+        planned:"План",
+        past:"Прошлый",
+
+        quantity:"Количество",
+        price:"Цена",
+        revenue:"Выручка",
+        analysis:"Анализ",
+
+        build:"Построить",
+        test:"Тест",
+        total:"Итого"
     },
 
     he:{
-        build:"בנה",
-        test:"בדיקה",
-
-        group:"קבוצה",
+        language:"שפה",
         groups:"קבוצות",
+        group:"קבוצה",
 
-        quantity:"כמות",
-        price:"מחיר ממוצע",
-        revenue:"הכנסות",
-        share:"חלק",
-
-        initial:"ראשוני",
-        current:"נוכחי",
-        planned:"מתוכנן",
-        past:"עבר",
-        actual:"בפועל",
-
-        change:"שינוי",
-        percent:"אחוז",
-
-        total:"סה״כ",
-
-        analysis:"ניתוח",
-
-        noData:"אין נתונים",
-
-        periodType:"סוג תקופה",
+        periodType:"תקופה",
         months:"חודשים",
         weeks:"שבועות",
         quarters:"רבעונים",
         years:"שנים",
-        sourcePeriod:"תקופה מקור",
-        currentPeriod:"תקופה נוכחית",
-        
-        // финансы
-        directCost:"עלות ישירה",
-        variableCost:"עלות משתנה",
-        margin:"מרווח",
-        profit:"רווח",
-        tax:"מס",
-        netProfit:"רווח נקי"
+
+        source:"מקור",
+        current:"נוכחי",
+
+        actual:"בפועל",
+        planned:"מתוכנן",
+        past:"עבר",
+
+        quantity:"כמות",
+        price:"מחיר",
+        revenue:"הכנסות",
+        analysis:"ניתוח",
+
+        build:"בנה",
+        test:"בדיקה",
+        total:"סה״כ"
     }
 };
 
-
-// =========================
-// TRANSLATION
-// =========================
-export function t(key){
-    const lang = Store.get("language") || "en";
-    return Dict[lang]?.[key] || key;
+export function t(k){
+    return Dict[Store.get("language")][k] || k;
 }
 
-
-// =========================
-// RTL SUPPORT
-// =========================
 export function applyDir(){
     let lang = Store.get("language");
     document.body.dir = (lang==="he") ? "rtl" : "ltr";

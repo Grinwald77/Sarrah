@@ -41,8 +41,24 @@ export const TopBlock = {
                     <option value="weeks">${t("weeks")}</option>
                     <option value="quarters">${t("quarters")}</option>
                     <option value="years">${t("years")}</option>
-                </select>
-            </div>
+               </select>
+
+<span class="label">${t("currency")}</span>
+<select id="currency">
+    <option value="USD">$</option>
+    <option value="EUR">€</option>
+    <option value="ILS">₪</option>
+    <option value="RUB">₽</option>
+</select>
+
+<span class="label">${t("scale")}</span>
+<select id="scale">
+    <option value="units">${t("units")}</option>
+    <option value="thousands">${t("thousands")}</option>
+    <option value="millions">${t("millions")}</option>
+</select>
+
+</div>
 
             <!-- БЛОК 2 -->
             <div class="top-group">
@@ -54,7 +70,7 @@ export const TopBlock = {
                 <select id="type0">
                     <option value="Actual">${t("actual")}</option>
                     <option value="Planned">${t("planned")}</option>
-                    <option value="Past">${t("past")}</option>
+
                 </select>
             </div>
 
@@ -68,7 +84,7 @@ export const TopBlock = {
                 <select id="type1">
                     <option value="Actual">${t("actual")}</option>
                     <option value="Planned">${t("planned")}</option>
-                    <option value="Past">${t("past")}</option>
+
                 </select>
             </div>
 
@@ -87,6 +103,8 @@ export const TopBlock = {
         this.addNavigation();
 
         document.getElementById("lang").value = state.language;
+        document.getElementById("currency").value = state.currency || "ILS";
+document.getElementById("scale").value = state.scale || "units";
     },
 
     bind(){
@@ -131,6 +149,9 @@ export const TopBlock = {
 
             // сохраняем состояние UI
             const ui = {
+currency: document.getElementById("currency")?.value,
+scale: document.getElementById("scale")?.value,
+                
                 groupCount: document.getElementById("groupCount").value,
                 periodType: document.getElementById("periodType").value,
 
@@ -163,12 +184,25 @@ export const TopBlock = {
 
             document.getElementById("type0").value = ui.type0;
             document.getElementById("type1").value = ui.type1;
+
+            if(ui.currency) document.getElementById("currency").value = ui.currency;
+if(ui.scale) document.getElementById("scale").value = ui.scale;
         };
 
         document.getElementById("periodType").onchange = ()=>{
             this.fillPeriods();
         };
 
+document.getElementById("currency").onchange = (e)=>{
+    Store.set("currency", e.target.value);
+    Store.set("refresh", Date.now());
+};
+
+document.getElementById("scale").onchange = (e)=>{
+    Store.set("scale", e.target.value);
+    Store.set("refresh", Date.now());
+};
+        
         document.getElementById("year0").onchange = ()=>this.fillPeriods();
         document.getElementById("year1").onchange = ()=>this.fillPeriods();
     },

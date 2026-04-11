@@ -1,130 +1,156 @@
-import { Store } from './store.js';
+import { Store } from '../store.js';
+import { t } from '../i18n.js';
 
-export const Dict = {
+export const TableBlock = {
 
-    en:{
-        build:"Build",
-        test:"Test",
-
-        group:"Group",
-        groups:"Groups",
-
-        quantity:"Quantity",
-        price:"Average Price",
-        revenue:"Revenue",
-        share:"Share",
-
-        initial:"Initial",
-        current:"Current",
-        planned:"Planned",
-        past:"Past",
-        actual:"Actual",
-
-        change:"Change",
-        percent:"Percent",
-
-        total:"Total",
-
-        analysis:"Analysis",
-
-        noData:"No data",
-
-        // будущие финансы
-        directCost:"Direct Cost",
-        variableCost:"Variable Cost",
-        margin:"Margin",
-        profit:"Profit",
-        tax:"Tax",
-        netProfit:"Net Profit"
+    init(){
+        Store.subscribe(()=>this.render());
     },
 
-    ru:{
-        build:"Построить",
-        test:"Тест",
+    render(){
 
-        group:"Группа",
-        groups:"Группы",
+        let groups = Store.get("groups");
+        let periods = Store.get("periods") || {};
 
-        quantity:"Количество",
-        price:"Средняя цена",
-        revenue:"Выручка",
-        share:"Доля",
+        if(!groups || !groups.length) return;
 
-        initial:"Исходный",
-        current:"Текущий",
-        planned:"План",
-        past:"Прошлый",
-        actual:"Факт",
+        const {
+            period0 = "",
+            period1 = "",
+            type0 = "",
+            type1 = ""
+        } = periods;
 
-        change:"Изменение",
-        percent:"Процент",
+        // 🔥 формируем подписи
+        const label0 = `${period0} (${t(type0?.toLowerCase?.() || "")})`;
+        const label1 = `${period1} (${t(type1?.toLowerCase?.() || "")})`;
 
-        total:"Итого",
+        const headerType = `${t(type0?.toLowerCase?.() || "")} → ${t(type1?.toLowerCase?.() || "")}`;
 
-        analysis:"Анализ",
+        let html = `
+        <table>
+        <tr>
+            <th rowspan="2">${t("group")}</th>
 
-        noData:"Нет данных",
+            <th colspan="2">${t("quantity")} (${headerType})</th>
+            <th colspan="2">${t("price")} (${headerType})</th>
+            <th colspan="4">${t("revenue")} (${headerType})</th>
+            <th colspan="3">${t("share")}</th>
+        </tr>
 
-        // финансы
-        directCost:"Прямые затраты",
-        variableCost:"Переменные затраты",
-        margin:"Маржа",
-        profit:"Прибыль",
-        tax:"Налог",
-        netProfit:"Чистая прибыль"
-    },
+        <tr>
+            <th>${label0}</th>
+            <th>${label1}</th>
 
-    he:{
-        build:"בנה",
-        test:"בדיקה",
+            <th>${label0}</th>
+            <th>${label1}</th>
 
-        group:"קבוצה",
-        groups:"קבוצות",
+            <th>${label0}</th>
+            <th>${label1}</th>
+            <th>${t("change")}</th>
+            <th>%</th>
 
-        quantity:"כמות",
-        price:"מחיר ממוצע",
-        revenue:"הכנסות",
-        share:"חלק",
+            <th>${label0}</th>
+            <th>${label1}</th>
+            <th>${t("change")}</th>
+        </tr>
+        `;
 
-        initial:"ראשוני",
-        current:"נוכחי",
-        planned:"מתוכנן",
-        past:"עבר",
-        actual:"בפועל",
+        let R0=0, R1=0;
+        let r0=[], r1=[];
 
-        change:"שינוי",
-        percent:"אחוז",
+        groups.forEach((g,i)=>{
+            let q0 = g.quantity0 || 0;
+            let q1 = g.quantity1 || 0;
+            let p0 = g.price0 || 0;
+            let p1 = g.price1 || 0;
 
-        total:"סה״כ",
+            r0[i] = q0 * p0;
+            r1[i] = q1 * p1;
 
-        analysis:"ניתוח",
+            R0 += r0[i];
+            R1 += r1[i];
+        });
 
-        noData:"אין נתונים",
+        let dR = R1 - R0;
 
-        // финансы
-        directCost:"עלות ישירה",
-        variableCost:"עלות משתנה",
-        margin:"מרווח",
-        profit:"רווח",
-        tax:"מס",
-        netProfit:"רווח נקי"
+        groups.forEach((g,i)=>{
+
+            let delta = r1[i] - r0[i];
+            let percent = r0[i] ? (delta / r0[i] * 100) : 0;
+
+            let s0 = R0 ? r0[i]/R0*100 : 0;
+            let s1 = R1 ? r1[i]/R1*100 : 0;
+            let ds = s1 - s0;
+
+            html += `
+            <tr>
+                <td>${g.name}</td>
+
+                <td>${g.quantity0}</td>
+                <td>${g.quantity1}</td>
+
+                <td>${g.price0}</td>
+                <td>${g.price1}</td>
+
+                <td>${Math.round(r0[i])}</td>
+                <td>${Math.round(r1[i])}</td>
+
+                <td class="${delta>=0?'green':'red'}">
+                    ${Math.round(delta)}
+                </td>
+
+                <td class="${percent>=0?'green':'red'}">
+                    ${percent.toFixed(1)}%
+                </td>
+
+                <td>${s0.toFixed(1)}%</td>
+                <td>${s1.toFixed(1)}%</td>
+
+                <td class="${ds>=0?'green':'red'}">
+                    ${ds.toFixed(1)} pp
+                </td>
+            </tr>
+            `;
+        });
+
+        let totalQ0 = groups.reduce((s,g)=>s+(+g.quantity0||0),0);
+        let totalQ1 = groups.reduce((s,g)=>s+(+g.quantity1||0),0);
+
+        let avgP0 = totalQ0 ? R0/totalQ0 : 0;
+        let avgP1 = totalQ1 ? R1/totalQ1 : 0;
+
+        let totalPercent = R0 ? (dR / R0 * 100) : 0;
+
+        html += `
+        <tr class="total">
+            <td>${t("total")}</td>
+
+            <td>${totalQ0}</td>
+            <td>${totalQ1}</td>
+
+            <td>${Math.round(avgP0)}</td>
+            <td>${Math.round(avgP1)}</td>
+
+            <td>${Math.round(R0)}</td>
+            <td>${Math.round(R1)}</td>
+
+            <td class="${dR>=0?'green':'red'}">
+                ${Math.round(dR)}
+            </td>
+
+            <td class="${totalPercent>=0?'green':'red'}">
+                ${totalPercent.toFixed(1)}%
+            </td>
+
+            <td>100%</td>
+            <td>100%</td>
+            <td>0</td>
+        </tr>
+        `;
+
+        html += `</table>`;
+
+        document.getElementById("tableBlock").innerHTML = html;
     }
 };
-
-
-// =========================
-// TRANSLATION
-// =========================
-export function t(key){
-    const lang = Store.get("language") || "en";
-    return Dict[lang]?.[key] || key;
-}
-
-
-// =========================
-// RTL SUPPORT
-// =========================
-export function applyDir(){
-    let lang = Store.get("language");
-    document.body.dir = (lang==="he") ? "rtl" : "ltr";
-}

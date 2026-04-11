@@ -134,9 +134,13 @@ export const TopBlock = {
         document.getElementById("period0").innerHTML = html;
         document.getElementById("period1").innerHTML = html;
 
-        if(list.length > 1){
-            document.getElementById("period1").selectedIndex = 1;
-        }
+// 🔥 выбираем 2026
+let index2026 = list.findIndex(x => x.includes("2026"));
+
+if(index2026 !== -1){
+    document.getElementById("period0").selectedIndex = index2026;
+    document.getElementById("period1").selectedIndex = index2026 + 1 < list.length ? index2026 + 1 : index2026;
+}
 
         this.updatePeriods();
     },

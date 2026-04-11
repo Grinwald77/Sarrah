@@ -1,6 +1,37 @@
 import { Store } from '../store.js';
 import { t } from '../i18n.js';
 
+/* ===== FORMAT ===== */
+
+function getDiv(){
+    let s = Store.get("scale");
+    if(s==="thousands") return 1000;
+    if(s==="millions") return 1000000;
+    return 1;
+}
+
+function getSymbol(){
+    return {
+        USD:"$",
+        EUR:"€",
+        ILS:"₪",
+        RUB:"₽"
+    }[Store.get("currency")] || "";
+}
+
+function getScaleShort(){
+    let s = Store.get("scale");
+    if(s==="thousands") return "Thnds";
+    if(s==="millions") return "Mln";
+    return "";
+}
+
+function formatNum(v){
+    return (v / getDiv()).toFixed(2);
+}
+
+/* ===== COMPONENT ===== */
+
 export const TableBlock = {
 
     init(){
@@ -12,7 +43,20 @@ export const TableBlock = {
         let groups = Store.get("groups");
         if(!groups || !groups.length) return;
 
-        let html = `
+        let p = Store.get("periods") || {};
+
+        let type = `${t(p.type0 || "actual")}-${t(p.type1 || "actual")}`;
+
+        let title = `
+        <div class="table-title">
+            ${t("revenue")} 
+            (${p.period0 || ""} – ${p.period1 || ""}, 
+            ${type}, 
+            ${getSymbol()} ${getScaleShort()})
+        </div>
+        `;
+
+        let html = title + `
         <table>
         <tr>
             <th rowspan="2">${t("group")}</th>
@@ -84,10 +128,10 @@ export const TableBlock = {
                 <td><input data-field="price0" data-i="${i}" value="${g.price0 || ""}"></td>
                 <td><input data-field="price1" data-i="${i}" value="${g.price1 || ""}"></td>
 
-                <td>${Math.round(r0[i])}</td>
-                <td>${Math.round(r1[i])}</td>
+                <td>${formatNum(r0[i])}</td>
+                <td>${formatNum(r1[i])}</td>
 
-                <td class="${delta>=0?'green':'red'}">${Math.round(delta)}</td>
+                <td class="${delta>=0?'green':'red'}">${formatNum(delta)}</td>
                 <td>${percent.toFixed(1)}%</td>
 
                 <td>${s0.toFixed(1)}%</td>
@@ -108,18 +152,20 @@ export const TableBlock = {
 
         html += `
         <tr class="total">
-            <td>${t("total")}</td>
+            <td>
+                ${t("totalRevenue")} (${getSymbol()} ${getScaleShort()})
+            </td>
 
             <td>${totalQ0}</td>
             <td>${totalQ1}</td>
 
-            <td>${Math.round(avgP0)}</td>
-            <td>${Math.round(avgP1)}</td>
+            <td>${formatNum(avgP0)}</td>
+            <td>${formatNum(avgP1)}</td>
 
-            <td>${Math.round(R0)}</td>
-            <td>${Math.round(R1)}</td>
+            <td>${formatNum(R0)}</td>
+            <td>${formatNum(R1)}</td>
 
-            <td class="${dR>=0?'green':'red'}">${Math.round(dR)}</td>
+            <td class="${dR>=0?'green':'red'}">${formatNum(dR)}</td>
             <td>100%</td>
 
             <td>100%</td>
@@ -136,9 +182,6 @@ export const TableBlock = {
         this.enablePaste();
     },
 
-    // =========================
-    // INPUT → STORE
-    // =========================
     bindInputs(){
 
         document.querySelectorAll("#tableBlock input").forEach(input=>{
@@ -158,9 +201,6 @@ export const TableBlock = {
         });
     },
 
-    // =========================
-    // 🔥 EXCEL PASTE (ФИКС)
-    // =========================
     enablePaste(){
 
         document.querySelectorAll("#tableBlock input").forEach(input=>{
@@ -189,7 +229,6 @@ export const TableBlock = {
                     groups[i].price1 = +c[4] || 0;
                 });
 
-                // 🔥 ключевой фикс
                 setTimeout(()=>{
                     Store.set("groups", groups);
                 }, 0);

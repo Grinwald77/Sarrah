@@ -3,6 +3,37 @@ import { t } from '../i18n.js';
 
 export const TableBlock = {
 
+    getScaleDiv(){
+    let s = Store.get("scale");
+    if(s==="thousands") return 1000;
+    if(s==="millions") return 1000000;
+    return 1;
+},
+
+getCurrencySymbol(){
+    let c = Store.get("currency");
+    return {
+        USD:"$",
+        EUR:"€",
+        ILS:"₪",
+        RUB:"₽"
+    }[c] || "";
+},
+
+getScaleShort(){
+    let s = Store.get("scale");
+    if(s==="thousands") return "Thnds";
+    if(s==="millions") return "Mlns";
+    return "";
+},
+
+format(v){
+    let div = this.getScaleDiv();
+    let val = v/div;
+return val.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+});},
     init(){
         Store.subscribe(()=>this.render());
     },
@@ -12,8 +43,22 @@ export const TableBlock = {
         let groups = Store.get("groups");
         if(!groups || !groups.length) return;
 
-        let html = `
-        <table>
+let p = Store.get("periods") || {};
+
+let type = `${t((p.type0||"actual").toLowerCase())}-${t((p.type1||"actual").toLowerCase())}`;
+
+let title = `
+<div class="table-title">
+${t("revenue")} (
+${p.period0 ? p.period0 + " " : ""}${p.year0 || ""} – 
+${p.period1 ? p.period1 + " " : ""}${p.year1 || ""},
+${type},
+${this.getCurrencySymbol()} ${this.getScaleShort()}
+)
+</div>
+`;
+
+let html = title + `        <table>
         <tr>
             <th rowspan="2">${t("group")}</th>
 
@@ -84,10 +129,10 @@ export const TableBlock = {
                 <td><input data-field="price0" data-i="${i}" value="${g.price0 || ""}"></td>
                 <td><input data-field="price1" data-i="${i}" value="${g.price1 || ""}"></td>
 
-                <td>${Math.round(r0[i])}</td>
-                <td>${Math.round(r1[i])}</td>
+<td>${this.format(r0[i])}</td>
+<td>${this.format(r1[i])}</td>
 
-                <td class="${delta>=0?'green':'red'}">${Math.round(delta)}</td>
+<td class="${delta>=0?'green':'red'}">${this.format(delta)}</td>
                 <td>${percent.toFixed(1)}%</td>
 
                 <td>${s0.toFixed(1)}%</td>
@@ -108,7 +153,7 @@ export const TableBlock = {
 
         html += `
         <tr class="total">
-            <td>${t("total")}</td>
+<td>${t("total")} ${t("revenue")} (${this.getCurrencySymbol()} ${this.getScaleShort()})</td>
 
             <td>${totalQ0}</td>
             <td>${totalQ1}</td>
@@ -116,10 +161,10 @@ export const TableBlock = {
             <td>${Math.round(avgP0)}</td>
             <td>${Math.round(avgP1)}</td>
 
-            <td>${Math.round(R0)}</td>
-            <td>${Math.round(R1)}</td>
+<td>${this.format(R0)}</td>
+<td>${this.format(R1)}</td>
 
-            <td class="${dR>=0?'green':'red'}">${Math.round(dR)}</td>
+<td class="${dR>=0?'green':'red'}">${this.format(dR)}</td>
             <td>100%</td>
 
             <td>100%</td>

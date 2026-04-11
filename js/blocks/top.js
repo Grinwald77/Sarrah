@@ -39,8 +39,8 @@ export const TopBlock = {
             <div class="top-group">
                 <span class="label">${t("source")}</span>
 
-                <select id="year0"></select>
                 <select id="period0"></select>
+                <select id="year0"></select>
 
                 <select id="type0">
                     <option value="Actual">${t("actual")}</option>
@@ -52,9 +52,9 @@ export const TopBlock = {
             <!-- БЛОК 3 -->
             <div class="top-group">
                 <span class="label">${t("current")}</span>
-
-                <select id="year1"></select>
+                
                 <select id="period1"></select>
+                <select id="year1"></select>
 
                 <select id="type1">
                     <option value="Actual">${t("actual")}</option>

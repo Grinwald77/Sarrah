@@ -117,10 +117,43 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
+        // 🔥 ВОТ ГЛАВНЫЙ ФИКС
         document.getElementById("lang").onchange = (e)=>{
+
+            // сохраняем состояние UI
+            const ui = {
+                groupCount: document.getElementById("groupCount").value,
+                periodType: document.getElementById("periodType").value,
+
+                year0: document.getElementById("year0").value,
+                year1: document.getElementById("year1").value,
+
+                period0: document.getElementById("period0").value,
+                period1: document.getElementById("period1").value,
+
+                type0: document.getElementById("type0").value,
+                type1: document.getElementById("type1").value
+            };
+
             Store.set("language", e.target.value);
             applyDir();
+
             this.render();
+
+            // восстанавливаем значения
+            document.getElementById("groupCount").value = ui.groupCount;
+            document.getElementById("periodType").value = ui.periodType;
+
+            document.getElementById("year0").value = ui.year0;
+            document.getElementById("year1").value = ui.year1;
+
+            this.fillPeriods();
+
+            document.getElementById("period0").value = ui.period0;
+            document.getElementById("period1").value = ui.period1;
+
+            document.getElementById("type0").value = ui.type0;
+            document.getElementById("type1").value = ui.type1;
         };
 
         document.getElementById("periodType").onchange = ()=>{
@@ -181,7 +214,7 @@ export const TopBlock = {
 
         document.getElementById("period0").innerHTML = html;
         document.getElementById("period1").innerHTML = html;
-    }, // ✅ ВАЖНАЯ ЗАПЯТАЯ
+    },
 
     addNavigation(){
 

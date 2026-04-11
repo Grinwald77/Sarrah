@@ -36,13 +36,28 @@ export const TopBlock = {
                 <input id="groupCount" value="${state.groupCount}">
 
                 <span class="label">${t("periodType")}</span>
-                <select id="periodType">
-                    <option value="months">${t("months")}</option>
-                    <option value="weeks">${t("weeks")}</option>
-                    <option value="quarters">${t("quarters")}</option>
+                    <select id="periodType">
+                        <option value="months">${t("months")}</option>
+                        <option value="weeks">${t("weeks")}</option>
+                        <option value="quarters">${t("quarters")}</option>
                     <option value="years">${t("years")}</option>
                 </select>
-            </div>
+
+                <span class="label">${t("currency")}</span>
+                    <select id="currency">
+                        <option value="USD">$</option>
+                        <option value="EUR">€</option>
+                        <option value="ILS">₪</option>
+                        <option value="RUB">₽</option>
+                </select>
+
+            <span class="label">${t("scale")}</span>
+                <select id="scale">
+                    <option value="units">${t("units")}</option>
+                    <option value="thousands">${t("thousands")}</option>
+                    <option value="millions">${t("millions")}</option>
+                </select>
+        </div>
 
             <!-- БЛОК 2 -->
             <div class="top-group">
@@ -54,7 +69,6 @@ export const TopBlock = {
                 <select id="type0">
                     <option value="Actual">${t("actual")}</option>
                     <option value="Planned">${t("planned")}</option>
-                    <option value="Past">${t("past")}</option>
                 </select>
             </div>
 
@@ -68,7 +82,6 @@ export const TopBlock = {
                 <select id="type1">
                     <option value="Actual">${t("actual")}</option>
                     <option value="Planned">${t("planned")}</option>
-                    <option value="Past">${t("past")}</option>
                 </select>
             </div>
 
@@ -111,6 +124,14 @@ export const TopBlock = {
             Store.set("groups", groups);
         };
 
+        document.getElementById("currency").onchange = e=>{
+            Store.set("currency", e.target.value);
+        };
+
+        document.getElementById("scale").onchange = e=>{
+            Store.set("scale", e.target.value);
+        };
+        
         document.getElementById("testBtn").onclick = () => {
 
             let groups = Store.get("groups");

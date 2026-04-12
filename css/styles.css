@@ -237,10 +237,193 @@ button:active { transform: scale(0.97); }
     flex-shrink: 0;
 }
 
+/* ===== TABLE BLOCK ===== */
+#tableBlock {
+    padding: 0 24px 24px;
+}
+
 /* ===== TABLE ===== */
 table {
-    width: calc(100% - 48px);
-    margin: 0 24px 24px;
+    width: 100%;
+    margin: 0;
     border-collapse: collapse;
     background: #fff;
-    border
+    border: 1px solid #c8d4e8;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(100,140,200,0.06),
+        0 4px 20px rgba(26,54,96,0.08),
+        0 1px 4px rgba(26,54,96,0.06);
+}
+
+/* ===== HEADER ===== */
+thead tr:first-child th {
+    background: #e8eef8;
+    border-bottom: 1px solid #c8d4e8;
+}
+thead tr:last-child th {
+    background: #f0f4fb;
+    border-bottom: 1px solid #d4dff0;
+}
+
+th {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 10px;
+    color: #5a7aaa;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 9px 10px;
+    border-right: 1px solid #d4dff0;
+    white-space: nowrap;
+}
+th:last-child { border-right: none; }
+th[colspan="2"], th[colspan="4"], th[colspan="3"] {
+    text-align: center;
+    color: #3a5a8a;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+}
+
+/* ===== CELLS ===== */
+td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #edf1f8;
+    border-right: 1px solid #edf1f8;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text2);
+    transition: background 0.1s;
+}
+td:last-child { border-right: none; }
+td:first-child {
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+}
+
+/* ===== INPUT В ТАБЛИЦЕ ===== */
+td input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text);
+    transition: all 0.14s;
+}
+td:first-child input { font-family: var(--font-body); font-size: 13px; }
+td input:hover {
+    border-color: #b0c4e8;
+    background: #f0f5ff;
+}
+td input:focus {
+    background: #e8f0ff;
+    border-color: #5b8dee;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(91,141,238,0.18);
+    color: #1a2e4a;
+}
+
+/* ===== ROW HOVER ===== */
+tbody tr:hover td {
+    background: #f0f4fb;
+}
+tbody tr:hover td input {
+    background: transparent;
+}
+
+/* ===== ACTIVE ROW ===== */
+tbody tr:focus-within td {
+    background: #e6edfa;
+    border-bottom-color: #c0d0ee;
+}
+tbody tr:focus-within td input:not(:focus) {
+    color: #1a2e4a;
+}
+
+/* ===== TOTAL ===== */
+tr.total td {
+    background: #1a3660;
+    border-top: 2px solid #1a3660;
+    border-bottom: none;
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+    font-size: 11px;
+}
+tr.total td:first-child {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+tr.total .green {
+    color: #6ee7a8 !important;
+    background: rgba(110,231,168,0.12);
+}
+tr.total .red {
+    color: #fca5a5 !important;
+    background: rgba(252,165,165,0.12);
+}
+
+/* ===== ЦВЕТА ===== */
+.green {
+    color: var(--green) !important;
+    background: var(--green-bg);
+    border-radius: 3px;
+    padding: 2px 6px;
+}
+.red {
+    color: var(--red) !important;
+    background: var(--red-bg);
+    border-radius: 3px;
+    padding: 2px 6px;
+}
+
+/* ===== ЧИСЛА ВПРАВО ===== */
+td:nth-child(n+6) { text-align: right; }
+
+/* ===== ANALYSIS BLOCK ===== */
+#analysisBlock {
+    margin: 0 24px 28px;
+    padding: 24px 36px;
+    background: var(--bg2);
+    border: 1px solid #c8d4e8;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 10px rgba(26,54,96,0.06);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 2.4;
+}
+#analysisBlock b {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    display: block;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #d4dff0;
+    margin-bottom: 8px;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+
+/* ===== SELECTION ===== */
+::selection { background: #e8e8e8; color: var(--text); }
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 900px) {
+    .top-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    table { font-size: 11px; margin: 0 12px 16px; width: calc(100% - 24px); }
+    .table-title { margin: 16px 12px 6px; }
+}

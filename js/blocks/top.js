@@ -30,10 +30,6 @@ export const TopBlock = {
                     <option value="he">HE</option>
                 </select>
 
-//* ===== удалил сам ===== */
-//                <span class="label">${t("groups")}</span>
-//               <input id="groupCount" value="${state.groupCount}">
-
                 <span class="label">${t("periodType")}</span>
                 <select id="periodType">
                     <option value="months">${t("months")}</option>

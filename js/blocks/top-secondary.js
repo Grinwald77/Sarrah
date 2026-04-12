@@ -1,40 +1,50 @@
-export function renderTopSecondary(container, store, onChange) {
-    container.innerHTML = `
-        <div class="top-secondary">
-            
-            <div class="top-secondary__field">
-                <label>Название вида деятельности</label>
-                <input 
-                    type="text" 
-                    value="${store.activityName || ''}" 
-                    data-field="activityName"
-                />
+export const TopSecondaryBlock = {
+
+    init() {
+        this.container = document.getElementById('top-secondary');
+        this.render();
+        this.bind();
+    },
+
+    render() {
+        const store = window.store || {};
+
+        this.container.innerHTML = `
+            <div class="top-secondary">
+
+                <div class="top-secondary__field">
+                    <label>Название вида деятельности</label>
+                    <input 
+                        type="text" 
+                        id="activityName"
+                        value="${store.activityName || ''}"
+                    />
+                </div>
+
+                <div class="top-secondary__field">
+                    <label>Количество групп</label>
+                    <input 
+                        type="number" 
+                        id="groupCount"
+                        min="1"
+                        max="50"
+                        value="${store.groupCount || 5}"
+                    />
+                </div>
+
             </div>
+        `;
+    },
 
-            <div class="top-secondary__field">
-                <label>Количество групп</label>
-                <input 
-                    type="number" 
-                    min="1" 
-                    max="50"
-                    value="${store.groupCount || 5}" 
-                    data-field="groupCount"
-                />
-            </div>
+    bind() {
+        document.getElementById('activityName')
+            .addEventListener('input', (e) => {
+                window.store.activityName = e.target.value;
+            });
 
-        </div>
-    `;
-
-    container.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', (e) => {
-            const field = e.target.dataset.field;
-            let value = e.target.value;
-
-            if (field === 'groupCount') {
-                value = parseInt(value) || 1;
-            }
-
-            onChange(field, value);
-        });
-    });
-}
+        document.getElementById('groupCount')
+            .addEventListener('input', (e) => {
+                window.store.groupCount = parseInt(e.target.value) || 1;
+            });
+    }
+};

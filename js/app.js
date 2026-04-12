@@ -8,10 +8,10 @@ import { applyDir } from './i18n.js';
 
 function init(){
 
-    TopBlock.init();
-    TopSecondaryBlock.init();
-    TableBlock.init();
-    AnalysisBlock.init();
+TopBlock.init();
+TopSecondaryBlock.init();
+TableBlock.init();
+AnalysisBlock.init();
 
     applyDir();
 }

@@ -1,7 +1,7 @@
 export const TopSecondaryBlock = {
 
     init() {
-        this.container = document.getElementById('top-secondary');
+    this.container = document.getElementById('topSecondaryBlock');
         this.render();
         this.bind();
     },

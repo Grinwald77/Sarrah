@@ -55,9 +55,10 @@ body {
     gap: 10px;
     align-items: center;
 
-    background: #fff;
-    padding: 10px 24px;
-    border-bottom: 1px solid var(--border);
+    background: #1a3660;
+    padding: 12px 24px;
+    border-bottom: none;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.22);
 
     position: sticky;
     top: 0;
@@ -71,27 +72,27 @@ body {
     gap: 14px;
     margin-right: 20px;
     padding-right: 20px;
-    border-right: 1px solid var(--border);
+    border-right: 1px solid rgba(255,255,255,0.15);
 }
 
-.logo { height: 52px; }
+.logo { height: 68px; }
 
 .logo-main {
     font-family: var(--font-head);
     font-weight: 600;
-    font-size: 26px;
-    letter-spacing: -0.5px;
-    color: var(--text);
+    font-size: 32px;
+    letter-spacing: -0.8px;
+    color: #ffffff;
     line-height: 1.1;
 }
 
 .logo-sub {
     font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text3);
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 /* ===== ГРУППЫ ===== */
@@ -99,20 +100,21 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg2);
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.09);
 }
 .top-group:hover {
-    border-color: var(--border2);
+    background: rgba(255,255,255,0.13);
+    border-color: rgba(255,255,255,0.22);
 }
 
 /* ===== LABEL ===== */
 .label {
     font-family: var(--font-mono);
     font-size: 10px;
-    color: var(--text3);
+    color: rgba(255,255,255,0.45);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
@@ -124,66 +126,85 @@ body {
     height: 28px;
     padding: 0 8px;
 
-    background: #fff;
-    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: var(--radius);
 
-    color: var(--text);
+    color: #1a2e4a;
     font-family: var(--font-mono);
     font-size: 12px;
 
     cursor: pointer;
-    transition: border-color 0.12s;
+    transition: all 0.12s;
     appearance: none;
     -webkit-appearance: none;
 }
 
 .top-bar select {
     padding-right: 20px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%231a2e4a'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 7px center;
+    background-color: rgba(255,255,255,0.92);
 }
 
 .top-bar input:focus,
 .top-bar select:focus {
     outline: none;
-    border-color: var(--text);
+    border-color: #93c5fd;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(147,197,253,0.35);
 }
 .top-bar input:hover,
-.top-bar select:hover { border-color: var(--border2); }
+.top-bar select:hover {
+    background: #fff;
+    border-color: rgba(255,255,255,0.5);
+}
 
 /* ===== КНОПКИ ===== */
 button {
     border: none;
     border-radius: var(--radius);
-    padding: 7px 18px;
+    padding: 7px 20px;
     cursor: pointer;
     font-family: var(--font-head);
     font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    transition: all 0.14s;
+    transition: all 0.18s ease;
 }
 button:active { transform: scale(0.97); }
 
 .build-btn {
-    background: var(--text);
+    background: #1d4ed8;
     color: #fff;
+    border: 1px solid #1e40af;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.12) inset,
+        0 4px 12px rgba(29,78,216,0.45),
+        0 1px 3px rgba(0,0,0,0.2);
 }
 .build-btn:hover {
-    background: #333;
+    background: #2563eb;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.16) inset,
+        0 6px 20px rgba(37,99,235,0.55),
+        0 2px 6px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
 }
 
 .test-btn {
-    background: #fff;
-    color: var(--text2);
-    border: 1px solid var(--border2);
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 1px 3px rgba(29,78,216,0.1);
 }
 .test-btn:hover {
-    border-color: var(--text);
-    color: var(--text);
+    background: #dbeafe;
+    border-color: #93c5fd;
+    box-shadow: 0 2px 8px rgba(29,78,216,0.18);
+    transform: translateY(-1px);
 }
 
 /* ===== АНИМАЦИЯ БЛОКОВ ===== */
@@ -222,147 +243,4 @@ table {
     margin: 0 24px 24px;
     border-collapse: collapse;
     background: #fff;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-}
-
-/* ===== HEADER ===== */
-thead tr:first-child th {
-    background: var(--bg3);
-    border-bottom: 1px solid var(--border);
-}
-thead tr:last-child th {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border2);
-}
-
-th {
-    font-family: var(--font-mono);
-    font-weight: 500;
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 8px 10px;
-    border-right: 1px solid var(--border);
-    white-space: nowrap;
-}
-th:last-child { border-right: none; }
-th[colspan="2"], th[colspan="4"], th[colspan="3"] {
-    text-align: center;
-    color: var(--text2);
-    font-size: 9px;
-}
-
-/* ===== CELLS ===== */
-td {
-    padding: 5px 10px;
-    border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    font-size: 12px;
-    font-family: var(--font-mono);
-    color: var(--text2);
-}
-td:last-child { border-right: none; }
-td:first-child {
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 13px;
-}
-
-/* ===== INPUT В ТАБЛИЦЕ ===== */
-td input {
-    width: 100%;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    padding: 3px 5px;
-    font-size: 12px;
-    font-family: var(--font-mono);
-    color: var(--text);
-    transition: all 0.12s;
-}
-td:first-child input { font-family: var(--font-body); font-size: 13px; }
-td input:hover { border-color: var(--border2); background: var(--bg3); }
-td input:focus {
-    background: var(--bg2);
-    border-color: var(--text);
-    outline: none;
-}
-
-/* ===== HOVER ===== */
-tbody tr:hover td { background: var(--bg2); }
-
-/* ===== TOTAL ===== */
-tr.total td {
-    background: var(--bg3);
-    border-top: 1px solid var(--border2);
-    color: var(--text);
-    font-weight: 500;
-    font-size: 11px;
-}
-tr.total td:first-child {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: 0.01em;
-}
-
-/* ===== ЦВЕТА ===== */
-.green {
-    color: var(--green) !important;
-    background: var(--green-bg);
-    border-radius: 3px;
-    padding: 2px 6px;
-}
-.red {
-    color: var(--red) !important;
-    background: var(--red-bg);
-    border-radius: 3px;
-    padding: 2px 6px;
-}
-
-/* ===== ЧИСЛА ВПРАВО ===== */
-td:nth-child(n+6) { text-align: right; }
-
-/* ===== ANALYSIS BLOCK ===== */
-#analysisBlock {
-    margin: 0 24px 28px;
-    padding: 20px 24px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text2);
-    line-height: 2.2;
-}
-#analysisBlock b {
-    font-family: var(--font-head);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: 0.02em;
-    display: block;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border2);
-    margin-bottom: 6px;
-}
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border2); }
-
-/* ===== SELECTION ===== */
-::selection { background: #e8e8e8; color: var(--text); }
-
-/* ===== АДАПТИВ ===== */
-@media (max-width: 900px) {
-    .top-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
-    table { font-size: 11px; margin: 0 12px 16px; width: calc(100% - 24px); }
-    .table-title { margin: 16px 12px 6px; }
-}
+    border

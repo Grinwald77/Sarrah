@@ -2,37 +2,28 @@ export const Store = {
 
     state: (() => {
 
-        let saved = localStorage.getItem("bi_state");
+        let saved = localStorage.getItem("bi_state_v2");
 
         if(saved){
-            try{
-                return JSON.parse(saved);
-            }catch(e){}
+            try{ return JSON.parse(saved); }catch(e){}
         }
 
         return {
-            groups:[],
-            groupCount:5,
+            activities: [],          // массив видов деятельности
+            activityCount: 2,        // сколько видов деятельности (1-5)
 
-            language:"en",
+            language:   "en",
+            currency:   "ILS",
+            scale:      "units",
+            periodType: "quarters",
 
-            // 💰 валюта и масштаб
-            currency:"ILS",
-            scale:"units",
-
-            // 📊 тип периода по умолчанию
-            periodType:"quarters",
-
-            // 📅 периоды (дефолт Q1 2026)
             periods:{
-                period0:"Q1",
-                period1:"Q1",
-
-                year0:"2026",
-                year1:"2026",
-
-                type0:"Actual",
-                type1:"Actual"
+                period0: "Q1",
+                period1: "Q1",
+                year0:   "2026",
+                year1:   "2026",
+                type0:   "Actual",
+                type1:   "Actual"
             }
         };
 
@@ -40,11 +31,9 @@ export const Store = {
 
     listeners:[],
 
-    set(key,val){
+    set(key, val){
         this.state[key] = val;
-
-        localStorage.setItem("bi_state", JSON.stringify(this.state));
-
+        this._save();
         this.emit();
     },
 
@@ -52,16 +41,32 @@ export const Store = {
         return this.state[key];
     },
 
-    // ✅ ВОТ ОН — ОТДЕЛЬНО
     setPeriods(patch){
-        this.state.periods = {
-            ...this.state.periods,
-            ...patch
-        };
-
-        localStorage.setItem("bi_state", JSON.stringify(this.state));
-
+        this.state.periods = { ...this.state.periods, ...patch };
+        this._save();
         this.emit();
+    },
+
+    // обновить один вид деятельности (по индексу)
+    setActivity(idx, patch){
+        let acts = [...this.state.activities];
+        acts[idx] = { ...acts[idx], ...patch };
+        this.state.activities = acts;
+        this._save();
+        this.emit();
+    },
+
+    // обновить группы внутри вида деятельности
+    setActivityGroups(idx, groups){
+        let acts = [...this.state.activities];
+        acts[idx] = { ...acts[idx], groups };
+        this.state.activities = acts;
+        this._save();
+        this.emit();
+    },
+
+    _save(){
+        localStorage.setItem("bi_state_v2", JSON.stringify(this.state));
     },
 
     subscribe(fn){
@@ -69,6 +74,6 @@ export const Store = {
     },
 
     emit(){
-        this.listeners.forEach(fn=>fn(this.state));
+        this.listeners.forEach(fn => fn(this.state));
     }
 };

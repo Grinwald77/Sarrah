@@ -3,80 +3,168 @@ import { Store } from './store.js';
 export const Dict = {
 
     en:{
-        group:"Group",
-        quantity:"Quantity",
-        price:"Price",
-        revenue:"Revenue",
-        share:"Share",
+        // top bar
+        language:       "Language",
+        activityCount:  "Activities",
+        periodType:     "Period",
+        currency:       "Currency",
+        scale:          "Scale",
+        source:         "Source",
+        current:        "Current",
+        build:          "Build",
+        test:           "Test",
 
-        initial:"Initial",
-        current:"Current",
+        // period types
+        months:         "Months",
+        weeks:          "Weeks",
+        quarters:       "Quarters",
+        years:          "Years",
 
-        actual:"Actual",
-        planned:"Planned",
+        // scale
+        units:          "Units",
+        thousands:      "Thousands",
+        millions:       "Millions",
 
-        currency:"Currency",
-        scale:"Scale",
+        // period labels
+        actual:         "Actual",
+        planned:        "Planned",
 
-        units:"Units",
-        thousands:"Thousands",
-        millions:"Millions",
+        // table columns
+        group:          "Group",
+        quantity:       "Qty",
+        price:          "Price",
+        revenue:        "Revenue",
+        share:          "Share",
+        initial:        "Initial",
+        change:         "Δ",
+        changePct:      "%",
 
-        totalRevenue:"Total Revenue"
+        // activity block
+        activityName:   "Activity name",
+        groupCount:     "Groups",
+        singleFactor:   "Single-factor",
+
+        // section titles
+        revenueBy:      "Revenue by activities",
+        revenueOf:      "Revenue",
+        by:             "by",
+
+        // totals
+        total:          "Total",
+        totalRevenue:   "Total Revenue",
+        grandTotal:     "Grand Total",
+
+        // analysis
+        analysis:       "Factor Analysis",
+        factorQty:      "Volume effect",
+        factorPrice:    "Price effect",
     },
 
     ru:{
-        group:"Группа",
-        quantity:"Количество",
-        price:"Цена",
-        revenue:"Выручка",
-        share:"Доля",
+        language:       "Язык",
+        activityCount:  "Виды деят.",
+        periodType:     "Период",
+        currency:       "Валюта",
+        scale:          "Масштаб",
+        source:         "Источник",
+        current:        "Текущий",
+        build:          "Построить",
+        test:           "Тест",
 
-        initial:"Исходный",
-        current:"Текущий",
+        months:         "Месяцы",
+        weeks:          "Недели",
+        quarters:       "Кварталы",
+        years:          "Годы",
 
-        actual:"Факт",
-        planned:"План",
+        units:          "Единицы",
+        thousands:      "Тысячи",
+        millions:       "Миллионы",
 
-        currency:"Валюта",
-        scale:"Масштаб",
+        actual:         "Факт",
+        planned:        "План",
 
-        units:"Единицы",
-        thousands:"Тысячи",
-        millions:"Миллионы",
+        group:          "Группа",
+        quantity:       "Кол-во",
+        price:          "Цена",
+        revenue:        "Выручка",
+        share:          "Доля",
+        initial:        "Исходный",
+        change:         "Δ",
+        changePct:      "%",
 
-        totalRevenue:"Итого выручка"
+        activityName:   "Вид деятельности",
+        groupCount:     "Групп",
+        singleFactor:   "Однофакторная",
+
+        revenueBy:      "Выручка по видам деятельности",
+        revenueOf:      "Выручка",
+        by:             "по",
+
+        total:          "Итого",
+        totalRevenue:   "Итого выручка",
+        grandTotal:     "Общий итог",
+
+        analysis:       "Факторный анализ",
+        factorQty:      "Эффект объёма",
+        factorPrice:    "Эффект цены",
     },
 
     he:{
-        group:"קבוצה",
-        quantity:"כמות",
-        price:"מחיר",
-        revenue:"הכנסות",
-        share:"נתח",
+        language:       "שפה",
+        activityCount:  "פעילויות",
+        periodType:     "תקופה",
+        currency:       "מטבע",
+        scale:          "קנה מידה",
+        source:         "מקור",
+        current:        "נוכחי",
+        build:          "בנה",
+        test:           "בדיקה",
 
-        initial:"תחלתי",
-        current:"נוכחי",
+        months:         "חודשים",
+        weeks:          "שבועות",
+        quarters:       "רבעונים",
+        years:          "שנים",
 
-        actual:"בפועל",
-        planned:"מתוכנן",
+        units:          "יחידות",
+        thousands:      "אלפים",
+        millions:       "מיליונים",
 
-        currency:"מטבע",
-        scale:"קנה מידה",
+        actual:         "בפועל",
+        planned:        "מתוכנן",
 
-        units:"יחידות",
-        thousands:"אלפים",
-        millions:"מיליונים",
+        group:          "קבוצה",
+        quantity:       "כמות",
+        price:          "מחיר",
+        revenue:        "הכנסות",
+        share:          "נתח",
+        initial:        "ראשוני",
+        change:         "Δ",
+        changePct:      "%",
 
-        totalRevenue:"סה״כ הכנסות"
+        activityName:   "סוג פעילות",
+        groupCount:     "קבוצות",
+        singleFactor:   "חד-גורמי",
+
+        revenueBy:      "הכנסות לפי פעילויות",
+        revenueOf:      "הכנסות",
+        by:             "לפי",
+
+        total:          "סה״כ",
+        totalRevenue:   "סה״כ הכנסות",
+        grandTotal:     "סה״כ כולל",
+
+        analysis:       "ניתוח גורמים",
+        factorQty:      "השפעת נפח",
+        factorPrice:    "השפעת מחיר",
     }
 };
 
 export function t(k){
-    return Dict[Store.get("language")][k] || k;
+    const lang = Store.get("language") || "en";
+    return (Dict[lang] && Dict[lang][k]) ?? (Dict.en[k] ?? k);
 }
 
 export function applyDir(){
-    let lang = Store.get("language");
-    document.body.dir = (lang==="he") ? "rtl" : "ltr";
+    const lang = Store.get("language");
+    document.body.dir = (lang === "he") ? "rtl" : "ltr";
 }

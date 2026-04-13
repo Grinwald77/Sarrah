@@ -28,13 +28,14 @@ function fmt(v){
     return val.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
 }
 
+// "Planned, Q1 '26"  or  "Actual, Q1 '26"
 function periodLabel(typeKey, periodKey, yearKey){
     const p      = Store.get("periods") || {};
     const type   = p[typeKey] || "Actual";
     const per    = p[periodKey] || "";
     const year   = (p[yearKey] || "").toString().slice(-2);
     const typeStr = type === "Planned" ? t("planned") : t("actual");
-    return per ? `${typeStr}, ${per} '${year}` : `${typeStr}, ${p[yearKey] || ""}`;
+    return per ? `${typeStr}, ${per} '${year}` : `${typeStr} '${year}`;
 }
 
 function sectionMeta(){
@@ -43,8 +44,8 @@ function sectionMeta(){
     const sc  = getScaleShort();
     const t0  = p.type0 === "Planned" ? t("planned") : t("actual");
     const t1  = p.type1 === "Planned" ? t("planned") : t("actual");
-    const p0  = p.period0 ? `${p.period0} '${(p.year0||"").slice(-2)}` : (p.year0||"");
-    const p1  = p.period1 ? `${p.period1} '${(p.year1||"").slice(-2)}` : (p.year1||"");
+    const p0  = p.period0 ? `${p.period0} '${(p.year0||"").slice(-2)}` : `'${(p.year0||"").slice(-2)}`;
+    const p1  = p.period1 ? `${p.period1} '${(p.year1||"").slice(-2)}` : `'${(p.year1||"").slice(-2)}`;
     const parts = [`${t0}–${t1}`, `${p0}–${p1}`];
     if(sym) parts.push(sym);
     if(sc)  parts.push(sc);
@@ -56,6 +57,9 @@ function sectionMeta(){
 // ─────────────────────────────────────────────
 
 export const TableBlock = {
+
+    // Track collapsed state per activity index
+    _collapsed: {},
 
     init(){
         Store.subscribe(() => this.render());
@@ -73,21 +77,26 @@ export const TableBlock = {
         const col0 = periodLabel("type0","period0","year0");
         const col1 = periodLabel("type1","period1","year1");
 
+        // Section header with collapse-all / expand-all
         let html = `
         <div class="section-header">
             <div class="section-title">${t("revenueBy")}</div>
             <div class="section-meta">${meta}</div>
+            <div class="collapse-all-btns">
+                <button class="collapse-all-btn" id="collapseAllBtn">${t("collapseAll")}</button>
+                <button class="collapse-all-btn" id="expandAllBtn">${t("expandAll")}</button>
+            </div>
         </div>
         `;
 
-        const grandR   = { R0:0, R1:0 };
+        const grandR    = { R0:0, R1:0 };
         const actTotals = [];
 
-        // ── Per-activity blocks ──
         activities.forEach((act, ai) => {
 
-            const groups = act.groups || [];
-            const single = !!act.singleFactor;
+            const groups  = act.groups || [];
+            const single  = !!act.singleFactor;
+            const collapsed = !!this._collapsed[ai];
 
             let R0=0, R1=0, totalQ0=0, totalQ1=0;
             const r0=[], r1=[];
@@ -107,34 +116,32 @@ export const TableBlock = {
             const avgP0 = totalQ0 ? R0/totalQ0 : 0;
             const avgP1 = totalQ1 ? R1/totalQ1 : 0;
 
+            // Column headers — Share columns show just period label (no "Share" prefix)
             const qpCols       = !single ? `<th colspan="2">${t("quantity")}</th><th colspan="2">${t("price")}</th>` : "";
             const colsQP       = !single ? `<th>${col0}</th><th>${col1}</th><th>${col0}</th><th>${col1}</th>` : "";
             const colsRevHdr   = `<th>${col0}</th><th>${col1}</th><th>${t("change")}</th><th>${t("changePct")}</th>`;
-            const colsShareHdr = `<th>${t("share")} ${col0}</th><th>${t("share")} ${col1}</th><th>Δ ${t("share")}</th>`;
+            const colsShareHdr = `<th>${col0}</th><th>${col1}</th><th>${t("deltaShare")}</th>`;
 
-            const actName = act.name || "";
+            const actName    = act.name || "";
+            const collapseIcon = collapsed ? "+" : "−";
+            const bodyDisplay  = collapsed ? `style="display:none"` : "";
 
             html += `
             <div class="activity-block" data-ai="${ai}">
 
-                <!-- ── Activity header: name input LEFT, controls RIGHT ── -->
                 <div class="activity-header">
-
                     <div class="activity-title-row">
+                        <div class="activity-title-text">${t("revenueOf")} ${t("by")}</div>
                         <input
-                            class="act-name act-name-inline"
+                            class="act-name-inline"
                             data-ai="${ai}"
                             value="${actName}"
                             placeholder="${t("activityName")}…"
                             spellcheck="false"
                             autocomplete="off"
                         >
-                        <div class="activity-title-text">
-                            ${t("revenueOf")} ${t("by")} <span class="activity-name-display">${actName}</span>
-                        </div>
                         <div class="section-meta">${meta}</div>
                     </div>
-
                     <div class="activity-controls">
                         <label class="ctrl-label">${t("groupCount")}:</label>
                         <input class="act-groups" type="number" min="1" max="20" data-ai="${ai}" value="${act.groupCount||groups.length}" style="width:44px">
@@ -142,11 +149,15 @@ export const TableBlock = {
                             <input type="checkbox" class="act-single" data-ai="${ai}" ${single?"checked":""}>
                             <span>${t("singleFactor")}</span>
                         </label>
+                        <button class="collapse-btn" data-ai="${ai}" title="${collapsed ? t("expandAll") : t("collapseAll")}">
+                            <span class="collapse-bracket collapse-bracket-top"></span>
+                            <span class="collapse-icon-box">${collapseIcon}</span>
+                            <span class="collapse-bracket collapse-bracket-bot"></span>
+                        </button>
                     </div>
-
                 </div>
 
-                <!-- ── Data table ── -->
+                <div class="table-body-wrap" ${bodyDisplay}>
                 <table>
                     <thead>
                         <tr>
@@ -172,8 +183,8 @@ export const TableBlock = {
                     <td><input data-field="quantity1" data-ai="${ai}" data-gi="${gi}" value="${g.quantity1||""}"></td>
                     <td><input data-field="price0"    data-ai="${ai}" data-gi="${gi}" value="${g.price0||""}"></td>
                     <td><input data-field="price1"    data-ai="${ai}" data-gi="${gi}" value="${g.price1||""}"></td>
-                    <td class="num">${fmt(r0[gi])}</td>
-                    <td class="num">${fmt(r1[gi])}</td>
+                    <td>${fmt(r0[gi])}</td>
+                    <td>${fmt(r1[gi])}</td>
                 ` : `
                     <td><input data-field="revenue0" data-ai="${ai}" data-gi="${gi}" value="${g.revenue0||""}"></td>
                     <td><input data-field="revenue1" data-ai="${ai}" data-gi="${gi}" value="${g.revenue1||""}"></td>
@@ -184,9 +195,9 @@ export const TableBlock = {
                     <td><input data-field="name" data-ai="${ai}" data-gi="${gi}" value="${g.name||""}"></td>
                     ${inputsQP}
                     <td class="${delta>=0?"green":"red"}">${fmt(delta)}</td>
-                    <td class="num">${pct.toFixed(1)}%</td>
-                    <td class="num">${s0.toFixed(1)}%</td>
-                    <td class="num">${s1.toFixed(1)}%</td>
+                    <td>${pct.toFixed(1)}%</td>
+                    <td>${s0.toFixed(1)}%</td>
+                    <td>${s1.toFixed(1)}%</td>
                     <td class="${ds>=0?"green":"red"}">${ds.toFixed(1)}</td>
                 </tr>
                 `;
@@ -208,6 +219,7 @@ export const TableBlock = {
                         </tr>
                     </tfoot>
                 </table>
+                </div><!-- /.table-body-wrap -->
             </div>
             `;
         });
@@ -219,7 +231,7 @@ export const TableBlock = {
 
             html += `
             <div class="grand-total-block">
-                <div class="section-header">
+                <div class="section-header" style="margin-bottom:0">
                     <div class="section-title">${t("grandTotal")}</div>
                     <div class="section-meta">${meta}</div>
                 </div>
@@ -229,9 +241,8 @@ export const TableBlock = {
                             <th>${t("activityName")}</th>
                             <th>${col0}</th><th>${col1}</th>
                             <th>${t("change")}</th><th>${t("changePct")}</th>
-                            <th>${t("share")} ${col0}</th>
-                            <th>${t("share")} ${col1}</th>
-                            <th>Δ ${t("share")}</th>
+                            <th>${col0}</th><th>${col1}</th>
+                            <th>${t("deltaShare")}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -278,20 +289,67 @@ export const TableBlock = {
         this.bindInputs();
         this.enablePaste();
         this.addTabNavigation();
+        this.bindCollapseButtons();
     },
 
-    // ── Controls: name, groupCount, singleFactor ──
+    // ── Collapse / expand ──
+    bindCollapseButtons(){
+
+        // Per-table toggle
+        document.querySelectorAll(".collapse-btn").forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const ai   = +btn.dataset.ai;
+                const wrap = btn.closest(".activity-block").querySelector(".table-body-wrap");
+                const icon = btn.querySelector(".collapse-icon-box");
+                const isCollapsed = wrap.style.display === "none";
+                wrap.style.display = isCollapsed ? "" : "none";
+                icon.textContent   = isCollapsed ? "−" : "+";
+                this._collapsed[ai] = !isCollapsed;
+            };
+        });
+
+        // Collapse all
+        document.getElementById("collapseAllBtn")?.addEventListener("click", () => {
+            document.querySelectorAll(".table-body-wrap").forEach((wrap, i) => {
+                wrap.style.display = "none";
+                this._collapsed[i] = true;
+            });
+            document.querySelectorAll(".collapse-icon-box").forEach(ic => ic.textContent = "+");
+        });
+
+        // Expand all
+        document.getElementById("expandAllBtn")?.addEventListener("click", () => {
+            document.querySelectorAll(".table-body-wrap").forEach((wrap, i) => {
+                wrap.style.display = "";
+                this._collapsed[i] = false;
+            });
+            document.querySelectorAll(".collapse-icon-box").forEach(ic => ic.textContent = "−");
+        });
+    },
+
+    // ── Activity controls: name, groupCount, singleFactor ──
+    // KEY FIX: act-name-inline uses onblur to save to Store (not oninput)
+    // so typing is never interrupted by re-render
     bindControls(){
 
-        // Inline name input — updates title display without re-render
         document.querySelectorAll(".act-name-inline").forEach(el => {
+
+            // Live-update just the display title (no Store call = no re-render)
             el.oninput = (e) => {
                 const ai  = +e.target.dataset.ai;
                 const val = e.target.value;
-                Store.setActivity(ai, { name: val });
                 const disp = document.querySelector(`.activity-block[data-ai="${ai}"] .activity-name-display`);
                 if(disp) disp.textContent = val;
             };
+
+            // Save to Store only on blur or Enter
+            const save = (e) => {
+                const ai = +e.target.dataset.ai;
+                Store.setActivity(ai, { name: e.target.value });
+            };
+            el.onblur  = save;
+            el.onkeydown = (e) => { if(e.key === "Enter") save(e); };
         });
 
         document.querySelectorAll(".act-groups").forEach(el => {
@@ -331,48 +389,40 @@ export const TableBlock = {
         });
     },
 
-    // ── Excel paste:
-    //    Row 0 → activity name (cell A1)
-    //    Rows 1..N → group data
+    // ── Excel paste: row 0 = activity name, rows 1..N = groups ──
     enablePaste(){
-        document.querySelectorAll("#tableBlock tbody input, .act-name-inline").forEach(input => {
+        const targets = document.querySelectorAll("#tableBlock tbody input, .act-name-inline");
+        targets.forEach(input => {
             input.onpaste = (e) => {
                 const text = e.clipboardData.getData("text");
                 if(!text.includes("\n")) return;
 
                 e.preventDefault();
 
-                const ai    = +e.target.dataset.ai;
-                const acts  = Store.get("activities");
-                const act   = acts[ai];
+                const ai     = +e.target.dataset.ai;
+                const acts   = Store.get("activities");
+                const act    = acts[ai];
                 const single = !!act.singleFactor;
+                const rows   = text.trim().split("\n");
 
-                const rows = text.trim().split("\n");
+                // Row 0 → activity name
+                const newName = rows[0].split(/\t/)[0]?.trim() || act.name;
 
-                // First row = activity name
-                const firstCells = rows[0].split(/\t/);
-                const newName = firstCells[0]?.trim() || act.name;
-                Store.setActivity(ai, { name: newName });
-
-                // Remaining rows = groups
-                const dataRows = rows.slice(1);
-                dataRows.forEach((row, i) => {
+                // Rows 1..N → groups
+                rows.slice(1).forEach((row, i) => {
                     if(i >= act.groups.length) return;
                     const c = row.split(/\t/);
                     const g = act.groups[i];
                     g.name = c[0] || "";
                     if(single){
-                        g.revenue0 = +c[1]||0;
-                        g.revenue1 = +c[2]||0;
+                        g.revenue0 = +c[1]||0; g.revenue1 = +c[2]||0;
                     } else {
-                        g.quantity0 = +c[1]||0;
-                        g.quantity1 = +c[2]||0;
-                        g.price0    = +c[3]||0;
-                        g.price1    = +c[4]||0;
+                        g.quantity0 = +c[1]||0; g.quantity1 = +c[2]||0;
+                        g.price0    = +c[3]||0; g.price1    = +c[4]||0;
                     }
                 });
 
-                setTimeout(() => Store.setActivity(ai, { groups: act.groups, name: newName }), 0);
+                setTimeout(() => Store.setActivity(ai, { name: newName, groups: act.groups }), 0);
             };
         });
     },

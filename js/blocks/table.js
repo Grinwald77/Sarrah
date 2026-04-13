@@ -80,7 +80,7 @@ export const TableBlock = {
         </div>
         `;
 
-        const grandR = { R0:0, R1:0 };
+        const grandR   = { R0:0, R1:0 };
         const actTotals = [];
 
         // ── Per-activity blocks ──
@@ -100,40 +100,42 @@ export const TableBlock = {
             });
 
             grandR.R0 += R0; grandR.R1 += R1;
-            actTotals.push({ ai, name: act.name||`${t("activityName")} ${ai+1}`, R0, R1 });
+            actTotals.push({ name: act.name||`${t("activityName")} ${ai+1}`, R0, R1 });
 
             const dR    = R1 - R0;
             const dRpct = R0 ? dR/R0*100 : 0;
             const avgP0 = totalQ0 ? R0/totalQ0 : 0;
             const avgP1 = totalQ1 ? R1/totalQ1 : 0;
 
-            // thead second row - column labels depend on single vs multi
-            const colsQP = !single ? `
-                <th>${col0}</th><th>${col1}</th>
-                <th>${col0}</th><th>${col1}</th>` : "";
+            const qpCols       = !single ? `<th colspan="2">${t("quantity")}</th><th colspan="2">${t("price")}</th>` : "";
+            const colsQP       = !single ? `<th>${col0}</th><th>${col1}</th><th>${col0}</th><th>${col1}</th>` : "";
+            const colsRevHdr   = `<th>${col0}</th><th>${col1}</th><th>${t("change")}</th><th>${t("changePct")}</th>`;
+            const colsShareHdr = `<th>${t("share")} ${col0}</th><th>${t("share")} ${col1}</th><th>Δ ${t("share")}</th>`;
 
-            const colsRevHeader = `
-                <th>${col0}</th><th>${col1}</th>
-                <th>${t("change")}</th><th>${t("changePct")}</th>`;
-
-            const colsShareHeader = `
-                <th>${t("share")} ${col0}</th>
-                <th>${t("share")} ${col1}</th>
-                <th>Δ ${t("share")}</th>`;
-
-            // thead first row colspan
-            const qpCols  = !single ? `<th colspan="2">${t("quantity")}</th><th colspan="2">${t("price")}</th>` : "";
+            const actName = act.name || "";
 
             html += `
             <div class="activity-block" data-ai="${ai}">
+
+                <!-- ── Activity header: name input LEFT, controls RIGHT ── -->
                 <div class="activity-header">
-                    <div class="activity-header-left">
-                        <div class="activity-title">${t("revenueOf")} ${t("by")} <span class="activity-name-display">${act.name||""}</span></div>
+
+                    <div class="activity-title-row">
+                        <input
+                            class="act-name act-name-inline"
+                            data-ai="${ai}"
+                            value="${actName}"
+                            placeholder="${t("activityName")}…"
+                            spellcheck="false"
+                            autocomplete="off"
+                        >
+                        <div class="activity-title-text">
+                            ${t("revenueOf")} ${t("by")} <span class="activity-name-display">${actName}</span>
+                        </div>
                         <div class="section-meta">${meta}</div>
                     </div>
+
                     <div class="activity-controls">
-                        <label class="ctrl-label">${t("activityName")}:</label>
-                        <input class="act-name" data-ai="${ai}" value="${act.name||""}">
                         <label class="ctrl-label">${t("groupCount")}:</label>
                         <input class="act-groups" type="number" min="1" max="20" data-ai="${ai}" value="${act.groupCount||groups.length}" style="width:44px">
                         <label class="ctrl-checkbox">
@@ -141,7 +143,10 @@ export const TableBlock = {
                             <span>${t("singleFactor")}</span>
                         </label>
                     </div>
+
                 </div>
+
+                <!-- ── Data table ── -->
                 <table>
                     <thead>
                         <tr>
@@ -150,7 +155,7 @@ export const TableBlock = {
                             <th colspan="4">${t("revenue")}</th>
                             <th colspan="3">${t("share")}</th>
                         </tr>
-                        <tr>${colsQP}${colsRevHeader}${colsShareHeader}</tr>
+                        <tr>${colsQP}${colsRevHdr}${colsShareHdr}</tr>
                     </thead>
                     <tbody>
             `;
@@ -187,7 +192,6 @@ export const TableBlock = {
                 `;
             });
 
-            // activity total
             const totalQPcells = !single
                 ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td><td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
                 : `<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`;
@@ -208,7 +212,7 @@ export const TableBlock = {
             `;
         });
 
-        // ── Grand total (only if >1 activity) ──
+        // ── Grand total ──
         if(activities.length > 1){
             const gdR    = grandR.R1 - grandR.R0;
             const gdRpct = grandR.R0 ? gdR/grandR.R0*100 : 0;
@@ -276,14 +280,17 @@ export const TableBlock = {
         this.addTabNavigation();
     },
 
+    // ── Controls: name, groupCount, singleFactor ──
     bindControls(){
 
-        document.querySelectorAll(".act-name").forEach(el => {
+        // Inline name input — updates title display without re-render
+        document.querySelectorAll(".act-name-inline").forEach(el => {
             el.oninput = (e) => {
-                const ai = +e.target.dataset.ai;
-                Store.setActivity(ai, { name: e.target.value });
+                const ai  = +e.target.dataset.ai;
+                const val = e.target.value;
+                Store.setActivity(ai, { name: val });
                 const disp = document.querySelector(`.activity-block[data-ai="${ai}"] .activity-name-display`);
-                if(disp) disp.textContent = e.target.value;
+                if(disp) disp.textContent = val;
             };
         });
 
@@ -324,35 +331,54 @@ export const TableBlock = {
         });
     },
 
+    // ── Excel paste:
+    //    Row 0 → activity name (cell A1)
+    //    Rows 1..N → group data
     enablePaste(){
-        document.querySelectorAll("#tableBlock tbody input").forEach(input => {
+        document.querySelectorAll("#tableBlock tbody input, .act-name-inline").forEach(input => {
             input.onpaste = (e) => {
                 const text = e.clipboardData.getData("text");
                 if(!text.includes("\n")) return;
+
                 e.preventDefault();
+
                 const ai    = +e.target.dataset.ai;
                 const acts  = Store.get("activities");
                 const act   = acts[ai];
                 const single = !!act.singleFactor;
-                text.trim().split("\n").forEach((row, i) => {
+
+                const rows = text.trim().split("\n");
+
+                // First row = activity name
+                const firstCells = rows[0].split(/\t/);
+                const newName = firstCells[0]?.trim() || act.name;
+                Store.setActivity(ai, { name: newName });
+
+                // Remaining rows = groups
+                const dataRows = rows.slice(1);
+                dataRows.forEach((row, i) => {
                     if(i >= act.groups.length) return;
                     const c = row.split(/\t/);
                     const g = act.groups[i];
                     g.name = c[0] || "";
                     if(single){
-                        g.revenue0 = +c[1]||0; g.revenue1 = +c[2]||0;
+                        g.revenue0 = +c[1]||0;
+                        g.revenue1 = +c[2]||0;
                     } else {
-                        g.quantity0 = +c[1]||0; g.quantity1 = +c[2]||0;
-                        g.price0    = +c[3]||0; g.price1    = +c[4]||0;
+                        g.quantity0 = +c[1]||0;
+                        g.quantity1 = +c[2]||0;
+                        g.price0    = +c[3]||0;
+                        g.price1    = +c[4]||0;
                     }
                 });
-                setTimeout(() => Store.setActivity(ai, { groups: act.groups }), 0);
+
+                setTimeout(() => Store.setActivity(ai, { groups: act.groups, name: newName }), 0);
             };
         });
     },
 
     addTabNavigation(){
-        const inputs = document.querySelectorAll("#tableBlock tbody input");
+        const inputs = document.querySelectorAll("#tableBlock tbody input, #tableBlock .act-name-inline");
         inputs.forEach((el, i) => {
             el.addEventListener("keydown", e => {
                 if(e.key === "Enter"){ e.preventDefault(); inputs[i+1]?.focus(); }

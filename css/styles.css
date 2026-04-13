@@ -639,3 +639,107 @@ td:nth-child(n+6) { text-align: right; }
     .activity-header { flex-direction: column; align-items: flex-start; }
     .section-header  { margin: 16px 12px 8px; }
 }
+
+/* ===================================================
+   SARRAH BI — v2.1 patches: bigger fonts, inline name
+   =================================================== */
+
+/* ── Bigger table text ── */
+th {
+    font-size: 12px !important;
+    padding: 10px 12px !important;
+}
+td {
+    font-size: 13px !important;
+    padding: 7px 12px !important;
+}
+td:first-child {
+    font-size: 14px !important;
+}
+td input {
+    font-size: 13px !important;
+}
+td:first-child input {
+    font-size: 14px !important;
+}
+tr.total td {
+    font-size: 13px !important;
+}
+tr.total td:first-child {
+    font-size: 13px !important;
+}
+
+/* ── Activity header: name left, controls right ── */
+.activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #f0f4fb;
+    border-bottom: 1px solid #d4dff0;
+}
+
+/* Left side: inline name input + title text stacked */
+.activity-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* The big inline name field */
+.act-name-inline {
+    height: 32px;
+    padding: 0 10px;
+    background: #fff;
+    border: 1.5px solid #93c5fd;
+    border-radius: var(--radius);
+    font-family: var(--font-head);
+    font-size: 14px !important;
+    font-weight: 600;
+    color: #1a3660;
+    min-width: 180px;
+    max-width: 280px;
+    transition: all 0.14s;
+    box-shadow: 0 1px 4px rgba(29,78,216,0.08);
+}
+.act-name-inline:focus {
+    outline: none;
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 3px rgba(29,78,216,0.15);
+    background: #eff6ff;
+}
+.act-name-inline::placeholder {
+    color: #93a4c0;
+    font-weight: 400;
+}
+
+/* Title text next to input */
+.activity-title-text {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a3660;
+    white-space: nowrap;
+}
+.activity-title-text .activity-name-display {
+    color: #1d4ed8;
+}
+
+/* Section header bigger */
+.section-title {
+    font-size: 16px !important;
+}
+
+/* Column headers in activity header area */
+.section-meta {
+    font-size: 11px !important;
+}
+
+/* Colspan header text bigger */
+th[colspan="2"], th[colspan="4"], th[colspan="3"] {
+    font-size: 11px !important;
+}
+

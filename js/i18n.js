@@ -3,7 +3,6 @@ import { Store } from './store.js';
 export const Dict = {
 
     en:{
-        // top bar
         language:       "Language",
         activityCount:  "Activities",
         periodType:     "Period",
@@ -14,47 +13,42 @@ export const Dict = {
         build:          "Build",
         test:           "Test",
 
-        // period types
         months:         "Months",
         weeks:          "Weeks",
         quarters:       "Quarters",
         years:          "Years",
 
-        // scale
         units:          "Units",
         thousands:      "Thousands",
         millions:       "Millions",
 
-        // period labels
         actual:         "Actual",
         planned:        "Planned",
 
-        // table columns
         group:          "Group",
         quantity:       "Qty",
         price:          "Price",
         revenue:        "Revenue",
         share:          "Share",
         initial:        "Initial",
-        change:         "Δ",
+        change:         "Change",
         changePct:      "%",
+        deltaShare:     "Δ Share",
 
-        // activity block
         activityName:   "Activity name",
         groupCount:     "Groups",
         singleFactor:   "Single-factor",
+        collapseAll:    "Collapse all",
+        expandAll:      "Expand all",
 
-        // section titles
         revenueBy:      "Revenue by activities",
         revenueOf:      "Revenue",
         by:             "by",
 
-        // totals
         total:          "Total",
         totalRevenue:   "Total Revenue",
         grandTotal:     "Grand Total",
 
-        // analysis
         analysis:       "Factor Analysis",
         factorQty:      "Volume effect",
         factorPrice:    "Price effect",
@@ -89,12 +83,15 @@ export const Dict = {
         revenue:        "Выручка",
         share:          "Доля",
         initial:        "Исходный",
-        change:         "Δ",
+        change:         "Изм.",
         changePct:      "%",
+        deltaShare:     "Δ Доля",
 
         activityName:   "Вид деятельности",
         groupCount:     "Групп",
         singleFactor:   "Однофакторная",
+        collapseAll:    "Свернуть всё",
+        expandAll:      "Развернуть всё",
 
         revenueBy:      "Выручка по видам деятельности",
         revenueOf:      "Выручка",
@@ -138,12 +135,15 @@ export const Dict = {
         revenue:        "הכנסות",
         share:          "נתח",
         initial:        "ראשוני",
-        change:         "Δ",
+        change:         "שינוי",
         changePct:      "%",
+        deltaShare:     "Δ נתח",
 
         activityName:   "סוג פעילות",
         groupCount:     "קבוצות",
         singleFactor:   "חד-גורמי",
+        collapseAll:    "כווץ הכל",
+        expandAll:      "הרחב הכל",
 
         revenueBy:      "הכנסות לפי פעילויות",
         revenueOf:      "הכנסות",

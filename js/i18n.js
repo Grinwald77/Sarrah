@@ -33,13 +33,13 @@ export const Dict = {
         initial:        "Initial",
         change:         "Change",
         changePct:      "%",
-        deltaShare:     "Δ Share",
+        deltaShare:     "Share Change",
 
         activityName:   "Activity name",
         groupCount:     "Groups",
         singleFactor:   "Single-factor",
-        collapseAll:    "Collapse all",
-        expandAll:      "Expand all",
+        collapseAll:    "Hide details",
+        expandAll:      "Show all",
 
         revenueBy:      "Revenue by activities",
         revenueOf:      "Revenue",
@@ -50,8 +50,8 @@ export const Dict = {
         grandTotal:     "Grand Total",
 
         analysis:       "Factor Analysis",
-        factorQty:      "Volume effect",
-        factorPrice:    "Price effect",
+        factorQty:      "Quantity change impact",
+        factorPrice:    "Av.price change impact",
     },
 
     ru:{
@@ -85,13 +85,13 @@ export const Dict = {
         initial:        "Исходный",
         change:         "Изм.",
         changePct:      "%",
-        deltaShare:     "Δ Доля",
+        deltaShare:     "Изм. Доли",
 
         activityName:   "Вид деятельности",
         groupCount:     "Групп",
         singleFactor:   "Однофакторная",
-        collapseAll:    "Свернуть всё",
-        expandAll:      "Развернуть всё",
+        collapseAll:    "Скрыть детали",
+        expandAll:      "Показать всё",
 
         revenueBy:      "Выручка по видам деятельности",
         revenueOf:      "Выручка",
@@ -102,8 +102,8 @@ export const Dict = {
         grandTotal:     "Общий итог",
 
         analysis:       "Факторный анализ",
-        factorQty:      "Эффект объёма",
-        factorPrice:    "Эффект цены",
+        factorQty:      "Вклад изм. количества",
+        factorPrice:    "Вклад изм. ср.цены",
     },
 
     he:{

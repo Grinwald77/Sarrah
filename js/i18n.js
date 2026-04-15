@@ -33,13 +33,13 @@ export const Dict = {
         initial:        "Initial",
         change:         "Change",
         changePct:      "%",
-        deltaShare:     "Share Change",
+        deltaShare:     "Δ Share",
 
         activityName:   "Activity name",
         groupCount:     "Groups",
         singleFactor:   "Single-factor",
-        collapseAll:    "Hide details",
-        expandAll:      "Show all",
+        collapseAll:    "Collapse all",
+        expandAll:      "Expand all",
 
         revenueBy:      "Revenue by activities",
         revenueOf:      "Revenue",
@@ -50,8 +50,9 @@ export const Dict = {
         grandTotal:     "Grand Total",
 
         analysis:       "Factor Analysis",
-        factorQty:      "Quantity change impact",
-        factorPrice:    "Av.price change impact",
+        factorQty:      "Volume effect",
+        factorPrice:    "Price effect",
+        factorSingle:   "Revenue effect",
     },
 
     ru:{
@@ -85,13 +86,13 @@ export const Dict = {
         initial:        "Исходный",
         change:         "Изм.",
         changePct:      "%",
-        deltaShare:     "Изм. Доли",
+        deltaShare:     "Δ Доля",
 
         activityName:   "Вид деятельности",
         groupCount:     "Групп",
         singleFactor:   "Однофакторная",
-        collapseAll:    "Скрыть детали",
-        expandAll:      "Показать всё",
+        collapseAll:    "Свернуть всё",
+        expandAll:      "Развернуть всё",
 
         revenueBy:      "Выручка по видам деятельности",
         revenueOf:      "Выручка",
@@ -102,8 +103,9 @@ export const Dict = {
         grandTotal:     "Общий итог",
 
         analysis:       "Факторный анализ",
-        factorQty:      "Вклад изм. количества",
-        factorPrice:    "Вклад изм. ср.цены",
+        factorQty:      "Эффект объёма",
+        factorPrice:    "Эффект цены",
+        factorSingle:   "Эффект выручки",
     },
 
     he:{
@@ -156,6 +158,7 @@ export const Dict = {
         analysis:       "ניתוח גורמים",
         factorQty:      "השפעת נפח",
         factorPrice:    "השפעת מחיר",
+        factorSingle:   "השפעת הכנסות",
     }
 };
 

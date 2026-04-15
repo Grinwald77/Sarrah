@@ -743,3 +743,199 @@ th[colspan="2"], th[colspan="4"], th[colspan="3"] {
     font-size: 11px !important;
 }
 
+
+/* ===================================================
+   SARRAH BI — v2.2: collapse, centering, title fix
+   =================================================== */
+
+/* ── All td numbers centered ── */
+#tableBlock td {
+    text-align: center !important;
+}
+/* First column (name/group) stays left */
+#tableBlock td:first-child {
+    text-align: left !important;
+}
+/* Grand total first td stays left */
+.grand-total-block td:first-child {
+    text-align: left !important;
+}
+
+/* ── Activity title: "Revenue by" text + input inline ── */
+.activity-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.activity-title-text {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a3660;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── Collapse/expand all buttons ── */
+.collapse-all-btns {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.collapse-all-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: var(--radius);
+    color: rgba(255,255,255,0.75);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.14s;
+}
+.collapse-all-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+/* ── Per-table collapse button ── */
+.collapse-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    gap: 0;
+    position: relative;
+    flex-shrink: 0;
+}
+.collapse-btn:hover .collapse-icon-box {
+    background: #1d4ed8;
+    color: #fff;
+    border-color: #1d4ed8;
+}
+.collapse-btn:active { transform: scale(0.93); }
+
+/* The square icon box with + or − */
+.collapse-icon-box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #93a4c0;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1;
+    color: #5a7aaa;
+    background: #fff;
+    transition: all 0.14s;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+/* Elegant thin bracket lines above and below the box */
+.collapse-bracket {
+    display: block;
+    width: 8px;
+    height: 5px;
+    border-left: 1.5px solid #b0c4e8;
+    border-right: 1.5px solid #b0c4e8;
+    flex-shrink: 0;
+}
+.collapse-bracket-top {
+    border-top: 1.5px solid #b0c4e8;
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+}
+.collapse-bracket-bot {
+    border-bottom: 1.5px solid #b0c4e8;
+    border-top: none;
+    border-radius: 0 0 2px 2px;
+}
+.collapse-btn:hover .collapse-bracket {
+    border-color: #1d4ed8;
+}
+
+/* ── table-body-wrap transition ── */
+.table-body-wrap {
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+
+/* ===================================================
+   SARRAH BI — v2.3: center all, col widths
+   =================================================== */
+
+/* ── All td and th centered ── */
+#tableBlock th,
+#tableBlock td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* First column left-aligned */
+#tableBlock th:first-child,
+#tableBlock td:first-child {
+    text-align: left !important;
+}
+
+/* ── Column widths ── */
+#tableBlock table {
+    table-layout: fixed;
+}
+
+/* Name column wider */
+#tableBlock th:first-child,
+#tableBlock td:first-child {
+    width: 140px;
+    min-width: 100px;
+}
+
+/* Qty/Price/Revenue input columns */
+#tableBlock td input[data-field="quantity0"],
+#tableBlock td input[data-field="quantity1"] {
+    text-align: center;
+}
+#tableBlock td input[data-field="price0"],
+#tableBlock td input[data-field="price1"],
+#tableBlock td input[data-field="revenue0"],
+#tableBlock td input[data-field="revenue1"] {
+    text-align: right;
+}
+
+/* Computed cells right-aligned */
+#tableBlock td.num {
+    text-align: right !important;
+}
+
+/* Green/red cells centered */
+#tableBlock td.green,
+#tableBlock td.red {
+    text-align: center !important;
+}
+
+/* ── Grand total table ── */
+.grand-total-block th,
+.grand-total-block td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+.grand-total-block th:first-child,
+.grand-total-block td:first-child {
+    text-align: left !important;
+    width: 200px;
+}
+

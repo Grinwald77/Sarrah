@@ -14,7 +14,23 @@ function fmt(v){
     return val.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
 }
 
+function fmtSigned(v){
+    const val = v / getScaleDiv();
+    const str = Math.abs(val).toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
+    return (v >= 0 ? "+" : "−") + str;
+}
+
 function cls(v){ return v >= 0 ? "green" : "red"; }
+
+function row(label, value, colored = false){
+    return `
+    <div class="analysis-row">
+        <span class="analysis-label">${label}</span>
+        <span class="analysis-val ${colored ? cls(value) : ""}">${colored ? fmtSigned(value) : fmt(value)}</span>
+    </div>`;
+}
+
+function divider(){ return `<div class="analysis-divider"></div>`; }
 
 export const AnalysisBlock = {
 
@@ -31,77 +47,56 @@ export const AnalysisBlock = {
             return;
         }
 
-        // Pass ALL activities to factor model — it handles both types internally
         const r = FactorModel.calc(activities);
 
-        // Only show if there's something to show
-        if(r.R0 === 0 && r.R1 === 0){
+        // Don't render if no data at all
+        if(r.R0 === 0 && r.R1 === 0 && !r.hasMulti && !r.hasSingle){
             el.innerHTML = "";
             return;
         }
 
-        // Factor check: q + p + s should equal dR
-        const factorCheck = r.q + r.p + r.s;
-        const diff = Math.abs(factorCheck - r.dR);
-        const checkOk = diff < 0.01;
+        // ── Итоговые суммы ──
+        let html = `
+        ${row(t("revenue") + " " + t("initial"),  r.R0)}
+        ${row(t("revenue") + " " + t("current"),  r.R1)}
+        ${row(t("change"),                         r.dR,  true)}
+        ${divider()}`;
 
-        let rows = `
-        <div class="analysis-row">
-            <span class="analysis-label">${t("revenue")} ${t("initial")}</span>
-            <span class="analysis-val">${fmt(r.R0)}</span>
-        </div>
-        <div class="analysis-row">
-            <span class="analysis-label">${t("revenue")} ${t("current")}</span>
-            <span class="analysis-val">${fmt(r.R1)}</span>
-        </div>
-        <div class="analysis-row">
-            <span class="analysis-label">${t("change")}</span>
-            <span class="analysis-val ${cls(r.dR)}">${fmt(r.dR)}</span>
-        </div>
-        <div class="analysis-divider"></div>
-        `;
-
-        // Volume effect — only if there are multi-factor activities
+        // ── Факторы ──
+        // Всегда показываем все три фактора если есть хотя бы один вид деятельности
         if(r.hasMulti){
-            rows += `
-            <div class="analysis-row">
-                <span class="analysis-label">${t("factorQty")}</span>
-                <span class="analysis-val ${cls(r.q)}">${fmt(r.q)}</span>
-            </div>
-            <div class="analysis-row">
-                <span class="analysis-label">${t("factorPrice")}</span>
-                <span class="analysis-val ${cls(r.p)}">${fmt(r.p)}</span>
-            </div>
-            `;
+            html += `
+            ${row(t("factorQty"),   r.q, true)}
+            ${row(t("factorPrice"), r.p, true)}`;
         }
 
-        // Single-factor revenue effect
         if(r.hasSingle){
-            rows += `
-            <div class="analysis-row">
-                <span class="analysis-label">${t("factorSingle")}</span>
-                <span class="analysis-val ${cls(r.s)}">${fmt(r.s)}</span>
-            </div>
-            `;
+            html += `
+            ${row(t("factorSingle"), r.s, true)}`;
         }
 
-        // Show factor sum = total change verification
-        if((r.hasMulti || r.hasSingle) && (r.hasMulti && r.hasSingle)){
-            rows += `
-            <div class="analysis-divider"></div>
-            <div class="analysis-row">
-                <span class="analysis-label" style="font-size:10px;opacity:0.6">
-                    ${fmt(r.q)} + ${fmt(r.p)} + ${fmt(r.s)} = ${fmt(factorCheck)}
-                    ${checkOk ? "✓" : "≠ "+fmt(r.dR)}
-                </span>
-                <span class="analysis-val" style="font-size:10px;opacity:0.6">${checkOk?"OK":"!"}</span>
-            </div>
-            `;
+        // ── Строка верификации: сумма факторов = ΔR ──
+        if(r.hasMulti || r.hasSingle){
+            const factorSum = r.q + r.p + r.s;
+            const ok = Math.abs(factorSum - r.dR) < 0.01;
+
+            // Parts for formula display
+            const parts = [];
+            if(r.hasMulti)  parts.push(`${t("factorQty")}: ${fmtSigned(r.q)}`);
+            if(r.hasMulti)  parts.push(`${t("factorPrice")}: ${fmtSigned(r.p)}`);
+            if(r.hasSingle) parts.push(`${t("factorSingle")}: ${fmtSigned(r.s)}`);
+
+            html += `
+            ${divider()}
+            <div class="analysis-row analysis-check">
+                <span class="analysis-label">${parts.join(" + ")}</span>
+                <span class="analysis-val ${ok ? "green" : "red"}">${fmtSigned(factorSum)} ${ok ? "✓" : "≠ "+fmt(r.dR)}</span>
+            </div>`;
         }
 
         el.innerHTML = `
         <b>${t("analysis")}</b>
-        <div class="analysis-grid">${rows}</div>
+        <div class="analysis-grid">${html}</div>
         `;
     }
 };

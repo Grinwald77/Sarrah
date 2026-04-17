@@ -157,8 +157,13 @@ export const TableBlock = {
 
             const qpCols     = !single ? `<th colspan="2">${t("quantity")}</th><th colspan="2">${t("price")}</th>` : "";
             const colsQP     = !single ? `<th>${col0}</th><th>${col1}</th><th>${col0}</th><th>${col1}</th>` : "";
-            const colsRevHdr = `<th>${col0}</th><th>${col1}</th><th>${t("change")}</th><th>${t("changePct")}</th>`;
+            // single: inputs ARE rev0/rev1 columns, so header = col0|col1 then change|%
+            // multi:  inputs are qty/price, revenue is computed, so header = col0|col1|change|%
+            const colsRevHdr   = `<th>${col0}</th><th>${col1}</th><th>${t("change")}</th><th>${t("changePct")}</th>`;
             const colsShareHdr = `<th>${col0}</th><th>${col1}</th><th>${t("deltaShare")}</th>`;
+            // single colspan: group(1) + rev0+rev1(2) + change+%(2) + share×3(3) = 8 cols total
+            // Revenue group header: in single covers only the 2 direct input cols
+            const revColspan = single ? "2" : "4";
 
             const actName  = act.name || "";
             const colIcon  = collapsed ? "+" : "−";
@@ -201,7 +206,7 @@ export const TableBlock = {
                         <tr>
                             <th rowspan="2">${t("group")}</th>
                             ${qpCols}
-                            <th colspan="4">${t("revenue")}</th>
+                            <th colspan="${revColspan}">${t("revenue")}</th>
                             <th colspan="3">${t("share")}</th>
                         </tr>
                         <tr>${colsQP}${colsRevHdr}${colsShareHdr}</tr>
@@ -373,6 +378,7 @@ export const TableBlock = {
             };
             el.onblur = (e) => {
                 this._flushSilent(+e.target.dataset.ai);
+                this._recalcGrandTotal();
             };
             el.onkeydown = (e) => {
                 if(e.key === "Enter"){
@@ -429,6 +435,7 @@ export const TableBlock = {
                 });
 
                 Store.setActivity(ai, { singleFactor: goSingle, groups });
+                // Store.emit triggers full render which rebuilds grand total
             };
         });
     },
@@ -452,6 +459,7 @@ export const TableBlock = {
                 this._draft[ai][gi][field] = e.target.value;
                 // Live-update computed cells for this activity
                 this._recalcActivity(ai);
+                this._recalcGrandTotal();
             };
 
             // onblur → flushSilent (no emit, no re-render)
@@ -551,6 +559,80 @@ export const TableBlock = {
         }
     },
 
+
+    // ── Recalc grand total table from current draft + store ──
+    _recalcGrandTotal(){
+        const gtBlock = document.querySelector(".grand-total-block");
+        if(!gtBlock) return;
+
+        const activities = Store.get("activities");
+        if(!activities || activities.length < 2) return;
+
+        const grandR = { R0:0, R1:0 };
+        const rows   = [];
+
+        activities.forEach((act, ai) => {
+            const single = !!act.singleFactor;
+            const draft  = this._draft[ai] || {};
+            const groups = act.groups || [];
+            let R0=0, R1=0;
+
+            groups.forEach((g, gi) => {
+                const d = draft[gi] || {};
+                if(single){
+                    R0 += parseFloat(d.revenue0 ?? g.revenue0) || 0;
+                    R1 += parseFloat(d.revenue1 ?? g.revenue1) || 0;
+                } else {
+                    const q0 = parseFloat(d.quantity0 ?? g.quantity0) || 0;
+                    const q1 = parseFloat(d.quantity1 ?? g.quantity1) || 0;
+                    const p0 = parseFloat(d.price0    ?? g.price0)    || 0;
+                    const p1 = parseFloat(d.price1    ?? g.price1)    || 0;
+                    R0 += q0 * p0;
+                    R1 += q1 * p1;
+                }
+            });
+
+            grandR.R0 += R0;
+            grandR.R1 += R1;
+
+            // Get current name from draft or store
+            const name = (draft._name !== undefined ? draft._name : act.name) || (t("activityName")+" "+(ai+1));
+            rows.push({ name, R0, R1 });
+        });
+
+        const gdR    = grandR.R1 - grandR.R0;
+        const gdRpct = grandR.R0 ? gdR / grandR.R0 * 100 : 0;
+
+        // Update tbody rows
+        const tbodyRows = Array.from(gtBlock.querySelectorAll("tbody tr"));
+        tbodyRows.forEach((row, i) => {
+            if(!rows[i]) return;
+            const { name, R0, R1 } = rows[i];
+            const d    = R1 - R0;
+            const dpct = R0 ? d / R0 * 100 : 0;
+            const s0   = grandR.R0 ? R0 / grandR.R0 * 100 : 0;
+            const s1   = grandR.R1 ? R1 / grandR.R1 * 100 : 0;
+            const ds   = s1 - s0;
+
+            const tds = Array.from(row.querySelectorAll("td"));
+            if(tds[0]) tds[0].textContent = name;
+            if(tds[1]) tds[1].textContent = fmt(R0);
+            if(tds[2]) tds[2].textContent = fmt(R1);
+            if(tds[3]){ tds[3].textContent = fmt(d);          tds[3].className = d>=0  ? "green" : "red"; }
+            if(tds[4]) tds[4].textContent  = dpct.toFixed(1)+"%";
+            if(tds[5]) tds[5].textContent  = s0.toFixed(1)+"%";
+            if(tds[6]) tds[6].textContent  = s1.toFixed(1)+"%";
+            if(tds[7]){ tds[7].textContent = ds.toFixed(1);   tds[7].className = ds>=0 ? "green" : "red"; }
+        });
+
+        // Update tfoot total row
+        const tfootTds = Array.from(gtBlock.querySelectorAll("tfoot td"));
+        if(tfootTds[1]) tfootTds[1].textContent = fmt(grandR.R0);
+        if(tfootTds[2]) tfootTds[2].textContent = fmt(grandR.R1);
+        if(tfootTds[3]){ tfootTds[3].textContent = fmt(gdR); tfootTds[3].className = gdR>=0 ? "green" : "red"; }
+        if(tfootTds[4]) tfootTds[4].textContent  = gdRpct.toFixed(1)+"%";
+    },
+
     // ── Tab / Enter navigation ──
     // Tab:   next input in row → wrap to first input of next row
     // Enter: same as Tab
@@ -639,7 +721,7 @@ export const TableBlock = {
                     }
                 });
 
-                // Paste always does full re-render (data comes in bulk)
+                // Paste triggers full re-render which rebuilds grand total
                 Store.setActivity(ai, { name: newName, groups: act.groups });
             };
         });

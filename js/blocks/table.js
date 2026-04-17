@@ -4,7 +4,6 @@ import { t } from '../i18n.js';
 // ─────────────────────────────────────────────
 //  Helpers
 // ─────────────────────────────────────────────
-
 function getScaleDiv(){
     const s = Store.get("scale");
     if(s === "thousands") return 1000;
@@ -46,58 +45,68 @@ function sectionMeta(){
 }
 
 // ─────────────────────────────────────────────
-//  KEY PRINCIPLE: inputs write to a _draft cache,
-//  Store is updated only on blur or Enter.
-//  This prevents re-render mid-typing.
+//  TableBlock
+//
+//  INPUT ARCHITECTURE:
+//  - oninput  → updates _draft only (NO Store, NO re-render)
+//  - onblur   → calls _flushSilent (writes to Store._state directly,
+//               NO emit, NO re-render)
+//  - Store.emit() only on: Build, Test, groupCount change,
+//    singleFactor toggle, paste
+//  - This breaks the render loop completely
 // ─────────────────────────────────────────────
 
 export const TableBlock = {
 
     _collapsed: {},
-
-    // Draft cache: _draft[ai][gi][field] = value
-    // Kept in sync with DOM, flushed to Store on blur/Enter
-    _draft: {},
+    _draft: {},          // [ai][gi][field] or [ai]._name
+    _rendering: false,   // re-entrancy guard
 
     init(){
-        Store.subscribe(() => this.render());
+        Store.subscribe(() => {
+            if(this._rendering) return;
+            this.render();
+        });
     },
 
-    // ─── Flush draft for one activity to Store ───
-    _flush(ai){
+    // Write draft → Store._state WITHOUT triggering emit/render
+    _flushSilent(ai){
         const draft = this._draft[ai];
         if(!draft) return;
-        const acts = Store.get("activities");
-        if(!acts[ai]) return;
-        const groups = acts[ai].groups;
 
-        // activity name
+        const acts = Store.state.activities;
+        if(!acts || !acts[ai]) return;
+
         if(draft._name !== undefined){
             acts[ai].name = draft._name;
         }
-        // group fields
+
+        const groups = acts[ai].groups || [];
         Object.keys(draft).forEach(key => {
             if(key === "_name") return;
             const gi = +key;
             if(!groups[gi]) return;
-            Object.keys(draft[gi] || {}).forEach(field => {
-                const raw = draft[gi][field];
-                groups[gi][field] = field === "name" ? raw : (+raw || 0);
+            const fields = draft[gi] || {};
+            Object.keys(fields).forEach(field => {
+                const raw = fields[field];
+                groups[gi][field] = field === "name" ? raw : (parseFloat(raw) || 0);
             });
         });
 
-        Store.setActivity(ai, { name: acts[ai].name, groups });
+        // Persist to localStorage without triggering listeners
+        try { localStorage.setItem("bi_state_v2", JSON.stringify(Store.state)); } catch(e){}
     },
 
     render(){
-
         const activities = Store.get("activities");
         if(!activities || !activities.length){
             document.getElementById("tableBlock").innerHTML = "";
             return;
         }
 
-        // Sync draft from Store on render
+        this._rendering = true;
+
+        // Rebuild draft from Store
         this._draft = {};
         activities.forEach((act, ai) => {
             this._draft[ai] = { _name: act.name || "" };
@@ -124,7 +133,6 @@ export const TableBlock = {
         const actTotals = [];
 
         activities.forEach((act, ai) => {
-
             const groups    = act.groups || [];
             const single    = !!act.singleFactor;
             const collapsed = !!this._collapsed[ai];
@@ -164,21 +172,23 @@ export const TableBlock = {
                         <input
                             class="act-name-inline"
                             data-ai="${ai}"
-                            value="${actName}"
+                            value="${actName.replace(/"/g,'&quot;')}"
                             placeholder="${t("activityName")}…"
                             spellcheck="false"
                             autocomplete="off"
+                            tabindex="0"
                         >
                         <div class="section-meta">${meta}</div>
                     </div>
                     <div class="activity-controls">
                         <label class="ctrl-label">${t("groupCount")}:</label>
-                        <input class="act-groups" type="number" min="1" max="20" data-ai="${ai}" value="${act.groupCount||groups.length}" style="width:44px">
+                        <input class="act-groups" type="number" min="1" max="20" data-ai="${ai}"
+                            value="${act.groupCount||groups.length}" style="width:44px" tabindex="-1">
                         <label class="ctrl-checkbox">
-                            <input type="checkbox" class="act-single" data-ai="${ai}" ${single?"checked":""}>
+                            <input type="checkbox" class="act-single" data-ai="${ai}" ${single?"checked":""} tabindex="-1">
                             <span>${t("singleFactor")}</span>
                         </label>
-                        <button class="collapse-btn" data-ai="${ai}">
+                        <button class="collapse-btn" data-ai="${ai}" tabindex="-1">
                             <span class="collapse-bracket collapse-bracket-top"></span>
                             <span class="collapse-icon-box">${colIcon}</span>
                             <span class="collapse-bracket collapse-bracket-bot"></span>
@@ -204,25 +214,23 @@ export const TableBlock = {
                 const s0    = R0 ? r0[gi]/R0*100 : 0;
                 const s1    = R1 ? r1[gi]/R1*100 : 0;
                 const ds    = s1 - s0;
-
-                // Data-tab-row marks each row for Tab wrap logic
-                const rowAttr = `data-ai="${ai}" data-gi="${gi}"`;
+                const da    = `data-ai="${ai}" data-gi="${gi}"`;
 
                 const inputsQP = !single ? `
-                    <td><input data-field="quantity0" ${rowAttr} value="${g.quantity0||""}"></td>
-                    <td><input data-field="quantity1" ${rowAttr} value="${g.quantity1||""}"></td>
-                    <td><input data-field="price0"    ${rowAttr} value="${g.price0||""}"></td>
-                    <td><input data-field="price1"    ${rowAttr} value="${g.price1||""}"></td>
-                    <td>${fmt(r0[gi])}</td>
-                    <td>${fmt(r1[gi])}</td>
+                    <td><input data-field="quantity0" ${da} value="${g.quantity0||""}"></td>
+                    <td><input data-field="quantity1" ${da} value="${g.quantity1||""}"></td>
+                    <td><input data-field="price0"    ${da} value="${g.price0||""}"></td>
+                    <td><input data-field="price1"    ${da} value="${g.price1||""}"></td>
+                    <td class="num">${fmt(r0[gi])}</td>
+                    <td class="num">${fmt(r1[gi])}</td>
                 ` : `
-                    <td><input data-field="revenue0" ${rowAttr} value="${g.revenue0||""}"></td>
-                    <td><input data-field="revenue1" ${rowAttr} value="${g.revenue1||""}"></td>
+                    <td><input data-field="revenue0" ${da} value="${g.revenue0||""}"></td>
+                    <td><input data-field="revenue1" ${da} value="${g.revenue1||""}"></td>
                 `;
 
                 html += `
                 <tr data-ai="${ai}" data-gi="${gi}">
-                    <td><input data-field="name" ${rowAttr} value="${g.name||""}"></td>
+                    <td><input data-field="name" ${da} value="${(g.name||"").replace(/"/g,'&quot;')}"></td>
                     ${inputsQP}
                     <td class="${delta>=0?"green":"red"}">${fmt(delta)}</td>
                     <td>${pct.toFixed(1)}%</td>
@@ -252,7 +260,7 @@ export const TableBlock = {
             </div>`;
         });
 
-        // ── Grand total ──
+        // Grand total
         if(activities.length > 1){
             const gdR    = grandR.R1 - grandR.R0;
             const gdRpct = grandR.R0 ? gdR/grandR.R0*100 : 0;
@@ -310,15 +318,22 @@ export const TableBlock = {
 
         document.getElementById("tableBlock").innerHTML = html;
 
-        this.bindControls();
-        this.bindInputs();
-        this.enablePaste();
-        this.bindTabNavigation();
-        this.bindCollapseButtons();
+        this._rendering = false;
+
+        this._bindAll();
+    },
+
+    // ── Bind everything after render ──
+    _bindAll(){
+        this._bindCollapseButtons();
+        this._bindControls();
+        this._bindDataInputs();
+        this._bindTabNavigation();
+        this._bindPaste();
     },
 
     // ── Collapse ──
-    bindCollapseButtons(){
+    _bindCollapseButtons(){
         document.querySelectorAll(".collapse-btn").forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -332,136 +347,151 @@ export const TableBlock = {
             };
         });
         document.getElementById("collapseAllBtn")?.addEventListener("click", () => {
-            document.querySelectorAll(".table-body-wrap").forEach((w,i) => { w.style.display="none"; this._collapsed[i]=true; });
-            document.querySelectorAll(".collapse-icon-box").forEach(ic => ic.textContent="+");
+            document.querySelectorAll(".table-body-wrap").forEach((w,i) => {
+                w.style.display = "none"; this._collapsed[i] = true;
+            });
+            document.querySelectorAll(".collapse-icon-box").forEach(ic => ic.textContent = "+");
         });
         document.getElementById("expandAllBtn")?.addEventListener("click", () => {
-            document.querySelectorAll(".table-body-wrap").forEach((w,i) => { w.style.display=""; this._collapsed[i]=false; });
-            document.querySelectorAll(".collapse-icon-box").forEach(ic => ic.textContent="−");
+            document.querySelectorAll(".table-body-wrap").forEach((w,i) => {
+                w.style.display = ""; this._collapsed[i] = false;
+            });
+            document.querySelectorAll(".collapse-icon-box").forEach(ic => ic.textContent = "−");
         });
     },
 
-    // ── Controls: groupCount, singleFactor ──
-    // act-name-inline: draft on input, flush to Store on blur/Enter only
-    bindControls(){
+    // ── Activity-level controls (groupCount, singleFactor, name) ──
+    _bindControls(){
 
+        // Name: draft on input, flushSilent on blur, full emit on Enter
         document.querySelectorAll(".act-name-inline").forEach(el => {
             el.oninput = (e) => {
                 const ai = +e.target.dataset.ai;
                 if(!this._draft[ai]) this._draft[ai] = {};
                 this._draft[ai]._name = e.target.value;
-                // update display title live without Store
-                const disp = document.querySelector(`.activity-block[data-ai="${ai}"] .activity-name-display`);
-                if(disp) disp.textContent = e.target.value;
             };
-            const save = (e) => this._flush(+e.target.dataset.ai);
-            el.onblur    = save;
-            el.onkeydown = (e) => { if(e.key === "Enter"){ save(e); e.preventDefault(); } };
+            el.onblur = (e) => {
+                this._flushSilent(+e.target.dataset.ai);
+            };
+            el.onkeydown = (e) => {
+                if(e.key === "Enter"){
+                    e.preventDefault();
+                    this._flushSilent(+e.target.dataset.ai);
+                    // focus first input in the first row of this activity
+                    const ai    = +e.target.dataset.ai;
+                    const block = document.querySelector(`.activity-block[data-ai="${ai}"]`);
+                    const first = block?.querySelector("tbody input");
+                    first?.focus();
+                }
+            };
         });
 
+        // Group count — triggers full re-render (structural change)
         document.querySelectorAll(".act-groups").forEach(el => {
             el.onchange = (e) => {
                 const ai  = +e.target.dataset.ai;
                 const n   = Math.min(20, Math.max(1, +e.target.value||1));
                 e.target.value = n;
+                this._flushSilent(ai); // save current values first
                 const act = Store.get("activities")[ai];
                 const old = act.groups || [];
                 const groups = Array.from({length:n}, (_,i) =>
                     old[i] || { name:`${t("group")} ${i+1}`, quantity0:0, quantity1:0, price0:0, price1:0, revenue0:0, revenue1:0 }
                 );
-                Store.setActivity(ai, { groupCount: n, groups });
+                Store.setActivity(ai, { groupCount: n, groups }); // emits → re-render
             };
         });
 
+        // Single-factor toggle — triggers re-render (structure changes)
         document.querySelectorAll(".act-single").forEach(el => {
             el.onchange = (e) => {
                 const ai = +e.target.dataset.ai;
-                Store.setActivity(ai, { singleFactor: e.target.checked });
+                this._flushSilent(ai);
+                Store.setActivity(ai, { singleFactor: e.target.checked }); // emits → re-render
             };
         });
     },
 
-    // ── Table inputs: draft on input, flush on blur/Enter ──
-    bindInputs(){
+    // ── Data inputs: draft only, NO Store on input/blur ──
+    _bindDataInputs(){
         document.querySelectorAll("#tableBlock tbody input").forEach(input => {
 
-            // Update draft silently (no Store, no re-render)
-            input.addEventListener("input", e => {
+            // oninput → update draft only
+            input.oninput = (e) => {
                 const ai    = +e.target.dataset.ai;
                 const gi    = +e.target.dataset.gi;
                 const field = e.target.dataset.field;
                 if(!this._draft[ai])     this._draft[ai]    = {};
                 if(!this._draft[ai][gi]) this._draft[ai][gi] = {};
                 this._draft[ai][gi][field] = e.target.value;
-            });
+            };
 
-            // Flush to Store on blur
-            input.addEventListener("blur", e => {
-                this._flush(+e.target.dataset.ai);
-            });
+            // onblur → flushSilent (no emit, no re-render)
+            input.onblur = (e) => {
+                this._flushSilent(+e.target.dataset.ai);
+            };
         });
     },
 
-    // ── Tab: within row → next input in same row; last in row → first input in next row ──
-    bindTabNavigation(){
+    // ── Tab / Enter navigation ──
+    // Tab:   next input in row → wrap to first input of next row
+    // Enter: same as Tab
+    // act-name-inline → Enter → first cell of first row (handled in _bindControls)
+    _bindTabNavigation(){
 
-        // Collect all editable inputs per table row
-        const tableBlock = document.getElementById("tableBlock");
+        const block = document.getElementById("tableBlock");
 
-        tableBlock.addEventListener("keydown", (e) => {
-
-            const input = e.target;
-            if(input.tagName !== "INPUT") return;
+        block.addEventListener("keydown", (e) => {
+            const el = e.target;
+            if(el.tagName !== "INPUT") return;
             if(e.key !== "Tab" && e.key !== "Enter") return;
 
-            // Find current row
-            const row = input.closest("tr");
+            // Skip controls (act-groups etc)
+            if(!el.dataset.field && !el.classList.contains("act-name-inline")) return;
+
+            // act-name-inline Enter is handled separately in _bindControls
+            if(el.classList.contains("act-name-inline") && e.key === "Enter") return;
+
+            const row = el.closest("tr");
             if(!row) return;
 
-            const rowInputs = Array.from(row.querySelectorAll("input"));
-            const idx       = rowInputs.indexOf(input);
+            // Only inputs with data-field (editable data cells)
+            const rowInputs = Array.from(row.querySelectorAll("input[data-field]"));
+            const idx = rowInputs.indexOf(el);
 
-            if(e.key === "Tab"){
+            if(idx === -1) return; // not a data cell
 
-                // Flush current activity on tab
-                const ai = +input.dataset.ai;
-                if(!isNaN(ai)) this._flush(ai);
+            e.preventDefault();
 
-                if(idx < rowInputs.length - 1){
-                    // Next input in same row
-                    e.preventDefault();
-                    rowInputs[idx+1].focus();
+            if(e.shiftKey && e.key === "Tab"){
+                // Backwards
+                if(idx > 0){
+                    rowInputs[idx-1].focus();
                 } else {
-                    // Last input in row → first input in next row
-                    const nextRow = row.nextElementSibling;
-                    if(nextRow){
-                        const nextInputs = nextRow.querySelectorAll("input");
-                        if(nextInputs.length){
-                            e.preventDefault();
-                            nextInputs[0].focus();
-                        }
-                    }
-                    // else let natural tab continue
+                    const prevRow = row.previousElementSibling;
+                    const prevInputs = prevRow ? Array.from(prevRow.querySelectorAll("input[data-field]")) : [];
+                    if(prevInputs.length) prevInputs[prevInputs.length-1].focus();
                 }
+                return;
+            }
 
-            } else if(e.key === "Enter"){
-                e.preventDefault();
-                const ai = +input.dataset.ai;
-                if(!isNaN(ai)) this._flush(ai);
-                // Move to next input in row, or first of next row
-                if(idx < rowInputs.length - 1){
-                    rowInputs[idx+1].focus();
-                } else {
-                    const nextRow = row.nextElementSibling;
-                    const nextInputs = nextRow?.querySelectorAll("input");
-                    if(nextInputs?.length) nextInputs[0].focus();
+            // Forward
+            if(idx < rowInputs.length - 1){
+                rowInputs[idx+1].focus();
+            } else {
+                // Last input in row → first input in next row
+                const nextRow = row.nextElementSibling;
+                const nextInputs = nextRow ? Array.from(nextRow.querySelectorAll("input[data-field]")) : [];
+                if(nextInputs.length){
+                    nextInputs[0].focus();
                 }
+                // else natural tab (leaves table)
             }
         });
     },
 
-    // ── Excel paste: row 0 = activity name, rows 1..N = groups ──
-    enablePaste(){
+    // ── Excel paste ──
+    _bindPaste(){
         const targets = document.querySelectorAll("#tableBlock tbody input, .act-name-inline");
         targets.forEach(input => {
             input.onpaste = (e) => {
@@ -491,7 +521,8 @@ export const TableBlock = {
                     }
                 });
 
-                setTimeout(() => Store.setActivity(ai, { name: newName, groups: act.groups }), 0);
+                // Paste always does full re-render (data comes in bulk)
+                Store.setActivity(ai, { name: newName, groups: act.groups });
             };
         });
     }

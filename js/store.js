@@ -2,14 +2,14 @@ export const Store = {
 
     state: (() => {
 
-        let saved = localStorage.getItem("bi_state_v2");
+        let saved = localStorage.getItem("bi_state_v3");
 
         if(saved){
             try{ return JSON.parse(saved); }catch(e){}
         }
 
         return {
-            activities: [],          // массив видов деятельности
+            activities: [],          // empty until BUILD pressed
             activityCount: 2,        // сколько видов деятельности (1-5)
 
             language:   "en",
@@ -66,7 +66,7 @@ export const Store = {
     },
 
     _save(){
-        localStorage.setItem("bi_state_v2", JSON.stringify(this.state));
+        localStorage.setItem("bi_state_v3", JSON.stringify(this.state));
     },
 
     subscribe(fn){

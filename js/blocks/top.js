@@ -108,11 +108,12 @@ export const TopBlock = {
 
     bind(){
 
-        // BUILD
+        // BUILD — always resets all values, always 5 groups per activity
         document.getElementById("buildBtn").onclick = () => {
 
             let n = Math.min(5, Math.max(1, +document.getElementById("activityCount").value || 1));
 
+            // Preserve structure (name, singleFactor) but RESET all numeric data
             let existing = Store.get("activities") || [];
 
             let activities = [];
@@ -120,9 +121,9 @@ export const TopBlock = {
                 let prev = existing[i];
                 activities.push({
                     name:         prev?.name         || `${t("activityName")} ${i+1}`,
-                    groupCount:   prev?.groupCount    ?? 3,
-                    singleFactor: prev?.singleFactor  ?? false,
-                    groups:       prev?.groups        || this._defaultGroups(prev?.groupCount ?? 3)
+                    groupCount:   5,
+                    singleFactor: prev?.singleFactor ?? false,
+                    groups:       this._defaultGroups(5)   // always 5 fresh empty groups
                 });
             }
 
@@ -201,7 +202,7 @@ export const TopBlock = {
         document.getElementById("type1").onchange   = syncPeriods;
     },
 
-    _defaultGroups(n){
+    _defaultGroups(n=5){
         let groups = [];
         for(let i = 0; i < n; i++){
             groups.push({ name:`${t("group")} ${i+1}`, quantity0:0, quantity1:0, price0:0, price1:0, revenue0:0, revenue1:0 });

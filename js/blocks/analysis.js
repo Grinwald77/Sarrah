@@ -14,6 +14,8 @@ function fmt(v){
     return val.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
 }
 
+function cls(v){ return v >= 0 ? "green" : "red"; }
+
 export const AnalysisBlock = {
 
     init(){
@@ -21,43 +23,27 @@ export const AnalysisBlock = {
     },
 
     render(){
+        const el = document.getElementById("analysisBlock");
 
         const activities = Store.get("activities");
         if(!activities || !activities.length){
-            document.getElementById("analysisBlock").innerHTML = "";
+            el.innerHTML = "";
             return;
         }
 
-        // Separate multi-factor groups and single-factor revenue totals
-        let multiGroups   = [];
-        let singleR0 = 0, singleR1 = 0;
+        // Pass ALL activities to factor model — it handles both types internally
+        const r = FactorModel.calc(activities);
 
-        activities.forEach(act => {
-            if(act.singleFactor){
-                (act.groups||[]).forEach(g => {
-                    singleR0 += +g.revenue0 || 0;
-                    singleR1 += +g.revenue1 || 0;
-                });
-            } else {
-                multiGroups = multiGroups.concat(act.groups || []);
-            }
-        });
-
-        const hasAny = multiGroups.length > 0 || singleR0 || singleR1;
-        if(!hasAny){
-            document.getElementById("analysisBlock").innerHTML = "";
+        // Only show if there's something to show
+        if(r.R0 === 0 && r.R1 === 0){
+            el.innerHTML = "";
             return;
         }
 
-        const r = FactorModel.calc(multiGroups, { R0: singleR0, R1: singleR1 });
-
-        const dCls = r.dR >= 0 ? "green" : "red";
-        const qCls = r.q  >= 0 ? "green" : "red";
-        const pCls = r.p  >= 0 ? "green" : "red";
-        const sCls = r.s  >= 0 ? "green" : "red";
-
-        // Check factor sum = dR (rounding guard)
-        const factorSum = r.q + r.p + (r.hasSingle ? r.s : 0);
+        // Factor check: q + p + s should equal dR
+        const factorCheck = r.q + r.p + r.s;
+        const diff = Math.abs(factorCheck - r.dR);
+        const checkOk = diff < 0.01;
 
         let rows = `
         <div class="analysis-row">
@@ -70,34 +56,50 @@ export const AnalysisBlock = {
         </div>
         <div class="analysis-row">
             <span class="analysis-label">${t("change")}</span>
-            <span class="analysis-val ${dCls}">${fmt(r.dR)}</span>
+            <span class="analysis-val ${cls(r.dR)}">${fmt(r.dR)}</span>
         </div>
         <div class="analysis-divider"></div>
         `;
 
-        if(multiGroups.length > 0){
+        // Volume effect — only if there are multi-factor activities
+        if(r.hasMulti){
             rows += `
             <div class="analysis-row">
                 <span class="analysis-label">${t("factorQty")}</span>
-                <span class="analysis-val ${qCls}">${fmt(r.q)}</span>
+                <span class="analysis-val ${cls(r.q)}">${fmt(r.q)}</span>
             </div>
             <div class="analysis-row">
                 <span class="analysis-label">${t("factorPrice")}</span>
-                <span class="analysis-val ${pCls}">${fmt(r.p)}</span>
+                <span class="analysis-val ${cls(r.p)}">${fmt(r.p)}</span>
             </div>
             `;
         }
 
+        // Single-factor revenue effect
         if(r.hasSingle){
             rows += `
             <div class="analysis-row">
                 <span class="analysis-label">${t("factorSingle")}</span>
-                <span class="analysis-val ${sCls}">${fmt(r.s)}</span>
+                <span class="analysis-val ${cls(r.s)}">${fmt(r.s)}</span>
             </div>
             `;
         }
 
-        document.getElementById("analysisBlock").innerHTML = `
+        // Show factor sum = total change verification
+        if((r.hasMulti || r.hasSingle) && (r.hasMulti && r.hasSingle)){
+            rows += `
+            <div class="analysis-divider"></div>
+            <div class="analysis-row">
+                <span class="analysis-label" style="font-size:10px;opacity:0.6">
+                    ${fmt(r.q)} + ${fmt(r.p)} + ${fmt(r.s)} = ${fmt(factorCheck)}
+                    ${checkOk ? "✓" : "≠ "+fmt(r.dR)}
+                </span>
+                <span class="analysis-val" style="font-size:10px;opacity:0.6">${checkOk?"OK":"!"}</span>
+            </div>
+            `;
+        }
+
+        el.innerHTML = `
         <b>${t("analysis")}</b>
         <div class="analysis-grid">${rows}</div>
         `;

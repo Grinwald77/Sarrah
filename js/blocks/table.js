@@ -365,6 +365,7 @@ export const TableBlock = {
 
         // Name: draft on input, flushSilent on blur, full emit on Enter
         document.querySelectorAll(".act-name-inline").forEach(el => {
+            el.addEventListener("focus", (e) => { e.target.select(); });
             el.oninput = (e) => {
                 const ai = +e.target.dataset.ai;
                 if(!this._draft[ai]) this._draft[ai] = {};
@@ -402,21 +403,46 @@ export const TableBlock = {
             };
         });
 
-        // Single-factor toggle — triggers re-render (structure changes)
+        // Single-factor toggle — preserve revenue, zero qty/price on return to multi
         document.querySelectorAll(".act-single").forEach(el => {
             el.onchange = (e) => {
-                const ai = +e.target.dataset.ai;
-                this._flushSilent(ai);
-                Store.setActivity(ai, { singleFactor: e.target.checked }); // emits → re-render
+                const ai       = +e.target.dataset.ai;
+                const goSingle = e.target.checked;
+
+                this._flushSilent(ai); // save current draft first
+
+                const act    = Store.get("activities")[ai];
+                const groups = (act.groups || []).map(g => {
+                    const ng = { ...g };
+                    if(goSingle){
+                        // multi → single: compute revenue from qty*price if revenue is zero
+                        if(!ng.revenue0 && ng.quantity0 && ng.price0)
+                            ng.revenue0 = (+ng.quantity0||0) * (+ng.price0||0);
+                        if(!ng.revenue1 && ng.quantity1 && ng.price1)
+                            ng.revenue1 = (+ng.quantity1||0) * (+ng.price1||0);
+                    } else {
+                        // single → multi: zero out qty and price (meaningless from single)
+                        ng.quantity0 = 0; ng.quantity1 = 0;
+                        ng.price0    = 0; ng.price1    = 0;
+                    }
+                    return ng;
+                });
+
+                Store.setActivity(ai, { singleFactor: goSingle, groups });
             };
         });
     },
 
-    // ── Data inputs: draft only, NO Store on input/blur ──
+    // ── Data inputs: draft + live DOM recalc, NO Store on input/blur ──
     _bindDataInputs(){
         document.querySelectorAll("#tableBlock tbody input").forEach(input => {
 
-            // oninput → update draft only
+            // Select all on focus — easy value replacement
+            input.addEventListener("focus", (e) => {
+                e.target.select();
+            });
+
+            // oninput → update draft + recalc row and totals live
             input.oninput = (e) => {
                 const ai    = +e.target.dataset.ai;
                 const gi    = +e.target.dataset.gi;
@@ -424,6 +450,8 @@ export const TableBlock = {
                 if(!this._draft[ai])     this._draft[ai]    = {};
                 if(!this._draft[ai][gi]) this._draft[ai][gi] = {};
                 this._draft[ai][gi][field] = e.target.value;
+                // Live-update computed cells for this activity
+                this._recalcActivity(ai);
             };
 
             // onblur → flushSilent (no emit, no re-render)
@@ -431,6 +459,96 @@ export const TableBlock = {
                 this._flushSilent(+e.target.dataset.ai);
             };
         });
+    },
+
+    // ── Live recalc: read draft, update computed DOM cells ──
+    _recalcActivity(ai){
+        const block  = document.querySelector(`.activity-block[data-ai="${ai}"]`);
+        if(!block) return;
+
+        const acts   = Store.get("activities");
+        const act    = acts[ai];
+        if(!act) return;
+        const single = !!act.singleFactor;
+        const draft  = this._draft[ai] || {};
+        const groups = act.groups || [];
+
+        let R0=0, R1=0, totalQ0=0, totalQ1=0;
+        const r0=[], r1=[];
+
+        groups.forEach((g, gi) => {
+            const d = draft[gi] || {};
+            if(single){
+                r0[gi] = parseFloat(d.revenue0 ?? g.revenue0) || 0;
+                r1[gi] = parseFloat(d.revenue1 ?? g.revenue1) || 0;
+            } else {
+                const q0 = parseFloat(d.quantity0 ?? g.quantity0) || 0;
+                const q1 = parseFloat(d.quantity1 ?? g.quantity1) || 0;
+                const p0 = parseFloat(d.price0    ?? g.price0)    || 0;
+                const p1 = parseFloat(d.price1    ?? g.price1)    || 0;
+                r0[gi] = q0 * p0;
+                r1[gi] = q1 * p1;
+                totalQ0 += q0; totalQ1 += q1;
+            }
+            R0 += r0[gi]; R1 += r1[gi];
+        });
+
+        const dR    = R1 - R0;
+        const dRpct = R0 ? dR / R0 * 100 : 0;
+        const avgP0 = totalQ0 ? R0 / totalQ0 : 0;
+        const avgP1 = totalQ1 ? R1 / totalQ1 : 0;
+
+        // Update per-row computed cells
+        block.querySelectorAll("tbody tr[data-gi]").forEach(row => {
+            const gi = +row.dataset.gi;
+            if(isNaN(gi)) return;
+
+            const delta = r1[gi] - r0[gi];
+            const pct   = r0[gi] ? delta / r0[gi] * 100 : 0;
+            const s0    = R0 ? r0[gi] / R0 * 100 : 0;
+            const s1    = R1 ? r1[gi] / R1 * 100 : 0;
+            const ds    = s1 - s0;
+
+            // Computed revenue cells (only in multi-factor mode)
+            if(!single){
+                const cells = row.querySelectorAll("td.num");
+                if(cells[0]) cells[0].textContent = fmt(r0[gi]);
+                if(cells[1]) cells[1].textContent = fmt(r1[gi]);
+            }
+
+            // Delta, %, shares — always last 5 tds (non-input)
+            const allTds = Array.from(row.querySelectorAll("td"));
+            const last5  = allTds.slice(-5);
+            if(last5[0]){ last5[0].textContent = fmt(delta); last5[0].className = delta>=0 ? "green" : "red"; }
+            if(last5[1]){ last5[1].textContent = pct.toFixed(1)+"%"; last5[1].className = ""; }
+            if(last5[2]){ last5[2].textContent = s0.toFixed(1)+"%";  last5[2].className = ""; }
+            if(last5[3]){ last5[3].textContent = s1.toFixed(1)+"%";  last5[3].className = ""; }
+            if(last5[4]){ last5[4].textContent = ds.toFixed(1);       last5[4].className = ds>=0 ? "green" : "red"; }
+        });
+
+        // Update total row (tfoot)
+        const tfoot = block.querySelector("tfoot tr.total");
+        if(tfoot){
+            const tds = Array.from(tfoot.querySelectorAll("td"));
+            // Find the delta td (has green/red class)
+            if(!single){
+                // cols: name | q0 | q1 | avgP0 | avgP1 | R0 | R1 | dR | dRpct | 100% | 100% | 0
+                if(tds[1]) tds[1].textContent = totalQ0;
+                if(tds[2]) tds[2].textContent = totalQ1;
+                if(tds[3]) tds[3].textContent = Math.round(avgP0);
+                if(tds[4]) tds[4].textContent = Math.round(avgP1);
+                if(tds[5]) tds[5].textContent = fmt(R0);
+                if(tds[6]) tds[6].textContent = fmt(R1);
+                if(tds[7]){ tds[7].textContent = fmt(dR); tds[7].className = dR>=0 ? "green" : "red"; }
+                if(tds[8]) tds[8].textContent  = dRpct.toFixed(1)+"%";
+            } else {
+                // cols: name | R0 | R1 | dR | dRpct | 100% | 100% | 0
+                if(tds[1]) tds[1].textContent = fmt(R0);
+                if(tds[2]) tds[2].textContent = fmt(R1);
+                if(tds[3]){ tds[3].textContent = fmt(dR); tds[3].className = dR>=0 ? "green" : "red"; }
+                if(tds[4]) tds[4].textContent  = dRpct.toFixed(1)+"%";
+            }
+        }
     },
 
     // ── Tab / Enter navigation ──

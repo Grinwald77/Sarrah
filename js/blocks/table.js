@@ -93,13 +93,14 @@ export const TableBlock = {
             });
         });
 
-        // Persist to localStorage without triggering listeners
-        try { localStorage.setItem("bi_state_v2", JSON.stringify(Store.state)); } catch(e){}
+        // Save + notify analysis only (no table re-render)
+        Store.flushNotifyAnalysis();
     },
 
     render(){
         const activities = Store.get("activities");
-        if(!activities || !activities.length){
+        // Don't render until BUILD is pressed
+        if(!Store.get("built") || !activities || !activities.length){
             document.getElementById("tableBlock").innerHTML = "";
             return;
         }
@@ -409,11 +410,13 @@ export const TableBlock = {
             };
         });
 
-        // Single-factor toggle — preserve revenue, zero qty/price on return to multi
+        // Single-factor toggle — only works after BUILD
         document.querySelectorAll(".act-single").forEach(el => {
             el.onchange = (e) => {
                 const ai       = +e.target.dataset.ai;
                 const goSingle = e.target.checked;
+
+                if(!Store.get("built")) return; // ignore before BUILD
 
                 this._flushSilent(ai); // save current draft first
 

@@ -36,6 +36,7 @@ export const AnalysisBlock = {
 
     init(){
         Store.subscribe(() => this.render());
+        Store.subscribeAnalysis(() => this.render());
     },
 
     render(){

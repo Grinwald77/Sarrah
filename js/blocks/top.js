@@ -128,6 +128,7 @@ export const TopBlock = {
             }
 
             Store.set("activityCount", n);
+            Store.set("built", true);
             Store.set("activities", activities);
         };
 

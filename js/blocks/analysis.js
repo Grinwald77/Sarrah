@@ -23,10 +23,12 @@ function fmtSigned(v){
 function cls(v){ return v >= 0 ? "green" : "red"; }
 
 function row(label, value, colored = false){
+    const colorCls = colored ? (value < 0 ? "red" : value > 0 ? "green" : "") : "";
+    const display  = colored ? fmtSigned(value) : fmt(value);
     return `
     <div class="analysis-row">
         <span class="analysis-label">${label}</span>
-        <span class="analysis-val ${colored ? cls(value) : ""}">${colored ? fmtSigned(value) : fmt(value)}</span>
+        <span class="analysis-val ${colorCls}">${display}</span>
     </div>`;
 }
 
@@ -36,7 +38,7 @@ export const AnalysisBlock = {
 
     init(){
         Store.subscribe(() => this.render());
-        Store.subscribeAnalysis(() => this.render());
+        Store.subscribeAnalysis(() => this.render()); // silent flush updates
     },
 
     render(){

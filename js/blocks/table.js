@@ -15,33 +15,33 @@ function getCurrencySymbol(){
 }
 function getScaleShort(){
     const s = Store.get("scale");
-    if(s === "thousands") return t("thousands").slice(0,4)+".";
-    if(s === "millions")  return t("millions").slice(0,4)+".";
+    if(s === "thousands") return t("thousands");
+    if(s === "millions")  return t("millions");
     return "";
 }
 function fmt(v){
     const val = v / getScaleDiv();
     return val.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
 }
+// "Actual W52, 2025"  or  "Planned Feb. 2026"
 function periodLabel(typeKey, periodKey, yearKey){
     const p = Store.get("periods") || {};
     const typeStr = (p[typeKey]||"Actual") === "Planned" ? t("planned") : t("actual");
     const per  = p[periodKey] || "";
-    const year = (p[yearKey]||"").toString().slice(-2);
-    return per ? `${typeStr}, ${per} '${year}` : `${typeStr} '${year}`;
+    const year = p[yearKey]   || "";
+    return per ? `${typeStr} ${per}, ${year}` : `${typeStr} ${year}`;
 }
+// "Actual W52, 2025 — Planned W1, 2026 | Thousands $"
 function sectionMeta(){
     const p   = Store.get("periods") || {};
     const sym = getCurrencySymbol();
     const sc  = getScaleShort();
-    const t0  = (p.type0||"Actual") === "Planned" ? t("planned") : t("actual");
-    const t1  = (p.type1||"Actual") === "Planned" ? t("planned") : t("actual");
-    const p0  = p.period0 ? `${p.period0} '${(p.year0||"").slice(-2)}` : `'${(p.year0||"").slice(-2)}`;
-    const p1  = p.period1 ? `${p.period1} '${(p.year1||"").slice(-2)}` : `'${(p.year1||"").slice(-2)}`;
-    const parts = [`${t0}–${t1}`, `${p0}–${p1}`];
-    if(sym) parts.push(sym);
-    if(sc)  parts.push(sc);
-    return parts.join(", ");
+    const col0 = periodLabel("type0","period0","year0");
+    const col1 = periodLabel("type1","period1","year1");
+    let meta = `${col0} — ${col1}`;
+    const unit = [sc, sym].filter(Boolean).join(" ");
+    if(unit) meta += ` | ${unit}`;
+    return meta;
 }
 
 // ─────────────────────────────────────────────
@@ -101,11 +101,17 @@ export const TableBlock = {
         const activities = Store.get("activities");
         // Don't render until BUILD is pressed
         if(!Store.get("built") || !activities || !activities.length){
-            document.getElementById("tableBlock").innerHTML = "";
+            document.getElementById("tableBlock").innerHTML = `
+            <div class="empty-placeholder">
+                <div class="empty-placeholder-icon">⬆</div>
+                <div class="empty-placeholder-text">${t("placeholder")}</div>
+            </div>`;
             return;
         }
 
         this._rendering = true;
+        // Always start fully expanded on each full render
+        this._collapsed = {};
 
         // Rebuild draft from Store
         this._draft = {};

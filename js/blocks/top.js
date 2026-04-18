@@ -179,9 +179,11 @@ export const TopBlock = {
         document.getElementById("scale").onchange    = (e) => Store.set("scale",    e.target.value);
 
         document.getElementById("activityCount").onchange = (e) => {
+            // Just save the value — do NOT build. Build only on BUILD button.
             let n = Math.min(5, Math.max(1, +e.target.value || 1));
             e.target.value = n;
-            Store.set("activityCount", n);
+            Store.state.activityCount = n;   // silent, no emit
+            try { localStorage.setItem("bi_state_v3", JSON.stringify(Store.state)); } catch(ex){}
         };
 
         const syncPeriods = () => {

@@ -15,7 +15,7 @@ export const TopBlock = {
         <div class="top-bar">
 
             <div class="logo-block">
-                <canvas id="sarrah-murmuration" width="68" height="68"></canvas>
+                <canvas id="sarrah-murmuration" width="96" height="96"></canvas>
                 <div class="logo-text">
                     <div class="logo-main">Sarrah BI Model:</div>
                     <div class="logo-sub">Revenue &amp; Cost Factor Analysis</div>
@@ -32,6 +32,9 @@ export const TopBlock = {
 
                 <span class="label">${t("activityCount")}</span>
                 <input id="activityCount" type="number" min="1" max="5" value="${state.activityCount}" style="width:44px">
+
+                <span class="label">${t("branchCount")}</span>
+                <input id="branchCount" type="number" min="1" max="10" value="${state.branchCount || 1}" style="width:44px">
 
                 <span class="label">${t("periodType")}</span>
                 <select id="periodType">
@@ -110,57 +113,75 @@ export const TopBlock = {
 
     _startMurmuration(){
         if(window.DataCloud){
-            window.DataCloud.start('sarrah-murmuration', 68);
+            window.DataCloud.start('sarrah-murmuration', 96);
         }
     },
 
     bind(){
 
-        // BUILD — always resets all values, always 5 groups per activity
+        // BUILD — resets all values, builds branches × activities
         document.getElementById("buildBtn").onclick = () => {
 
-            let n = Math.min(5, Math.max(1, +document.getElementById("activityCount").value || 1));
+            const n  = Math.min(5,  Math.max(1, +document.getElementById("activityCount").value || 1));
+            const nb = Math.min(10, Math.max(1, +document.getElementById("branchCount").value   || 1));
 
-            // Preserve structure (name, singleFactor) but RESET all numeric data
-            let existing = Store.get("activities") || [];
+            const existingBranches = Store.get("branches") || [];
 
-            let activities = [];
-            for(let i = 0; i < n; i++){
-                let prev = existing[i];
-                activities.push({
-                    name:         prev?.name         || `${t("activityName")} ${i+1}`,
-                    groupCount:   5,
-                    singleFactor: prev?.singleFactor ?? false,
-                    groups:       this._defaultGroups(5)   // always 5 fresh empty groups
+            const branches = [];
+            for(let bi = 0; bi < nb; bi++){
+                const prevBranch = existingBranches[bi];
+                const activities = [];
+                for(let i = 0; i < n; i++){
+                    const prev = prevBranch?.activities?.[i];
+                    activities.push({
+                        name:         prev?.name         || `${t("activityName")} ${i+1}`,
+                        groupCount:   5,
+                        singleFactor: prev?.singleFactor ?? false,
+                        groups:       this._defaultGroups(5)
+                    });
+                }
+                branches.push({
+                    name: prevBranch?.name || `${t("branch")} ${bi+1}`,
+                    activities
                 });
             }
 
+            // If >1 branch start on Summary tab, else on branch 0
+            const activeBranch = nb > 1 ? -1 : 0;
+
             Store.set("activityCount", n);
-            Store.set("built", true);
-            Store.set("activities", activities);
+            Store.set("branchCount",   nb);
+            Store.set("activeBranch",  activeBranch);
+            Store.set("built",         true);
+            Store.set("branches",      branches);
         };
 
-        // TEST
+        // TEST — fill active branch with random data (not summary)
         document.getElementById("testBtn").onclick = () => {
+            const branches = Store.get("branches");
+            if(!branches || !branches.length) return;
 
-            let activities = Store.get("activities");
-            if(!activities || !activities.length) return;
+            const ab = Store.get("activeBranch");
+            // If on summary, fill all branches
+            const toFill = ab === -1 ? branches : [branches[ab]];
 
-            activities.forEach(act => {
-                act.groups.forEach(g => {
-                    if(act.singleFactor){
-                        g.revenue0 = Math.round(Math.random()*900000 + 100000);
-                        g.revenue1 = Math.round(Math.random()*900000 + 100000);
-                    } else {
-                        g.quantity0 = Math.floor(Math.random()*200) + 10;
-                        g.quantity1 = Math.floor(Math.random()*200) + 10;
-                        g.price0    = Math.round((Math.random()*9000 + 1000) / 10) * 10;
-                        g.price1    = Math.round((Math.random()*9000 + 1000) / 10) * 10;
-                    }
+            toFill.forEach(branch => {
+                (branch.activities || []).forEach(act => {
+                    act.groups.forEach(g => {
+                        if(act.singleFactor){
+                            g.revenue0 = Math.round(Math.random()*900000 + 100000);
+                            g.revenue1 = Math.round(Math.random()*900000 + 100000);
+                        } else {
+                            g.quantity0 = Math.floor(Math.random()*200) + 10;
+                            g.quantity1 = Math.floor(Math.random()*200) + 10;
+                            g.price0    = Math.round((Math.random()*9000 + 1000) / 10) * 10;
+                            g.price1    = Math.round((Math.random()*9000 + 1000) / 10) * 10;
+                        }
+                    });
                 });
             });
 
-            Store.set("activities", activities);
+            Store.set("branches", branches);
         };
 
         // LANGUAGE
@@ -201,11 +222,17 @@ export const TopBlock = {
         };
 
         document.getElementById("activityCount").onchange = (e) => {
-            // Just save the value — do NOT build. Build only on BUILD button.
             let n = Math.min(5, Math.max(1, +e.target.value || 1));
             e.target.value = n;
-            Store.state.activityCount = n;   // silent, no emit
-            try { localStorage.setItem("bi_state_v3", JSON.stringify(Store.state)); } catch(ex){}
+            Store.state.activityCount = n;
+            Store._save();
+        };
+
+        document.getElementById("branchCount").onchange = (e) => {
+            let n = Math.min(10, Math.max(1, +e.target.value || 1));
+            e.target.value = n;
+            Store.state.branchCount = n;
+            Store._save();
         };
 
         const syncPeriods = () => {

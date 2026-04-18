@@ -44,7 +44,19 @@ export const AnalysisBlock = {
 
         if(!Store.get("built")){ el.innerHTML = ""; return; }
 
-        const activities = Store.get("activities");
+        const branches     = Store.get("branches") || [];
+        const branchCount  = Store.get("branchCount") || 1;
+        const activeBranch = Store.get("activeBranch");
+        const isSummary    = branchCount > 1 && activeBranch === -1;
+
+        let activities = [];
+        if(isSummary){
+            // Flatten all branches' activities for factor analysis
+            branches.forEach(b => { activities = activities.concat(b.activities || []); });
+        } else {
+            activities = branches[activeBranch]?.activities || [];
+        }
+
         if(!activities || !activities.length){ el.innerHTML = ""; return; }
 
         const r = FactorModel.calc(activities);

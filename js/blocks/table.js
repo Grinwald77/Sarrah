@@ -109,9 +109,30 @@ export const TableBlock = {
     },
 
     render(){
-        const activities = Store.get("activities");
-        // Don't render until BUILD is pressed
-        if(!Store.get("built") || !activities || !activities.length){
+        if(!Store.get("built")){
+            document.getElementById("tableBlock").innerHTML = `
+            <div class="empty-placeholder">
+                <div class="empty-placeholder-icon">⬆</div>
+                <div class="empty-placeholder-text">${t("placeholder")}</div>
+            </div>`;
+            return;
+        }
+
+        const branches     = Store.get("branches") || [];
+        const branchCount  = Store.get("branchCount") || 1;
+        const activeBranch = Store.get("activeBranch");
+        const isSummary    = branchCount > 1 && activeBranch === -1;
+
+        // Get activities for current view
+        let activities = [];
+        if(isSummary){
+            // Summary: aggregate all branches into virtual activities
+            activities = this._aggregateBranches(branches);
+        } else {
+            activities = branches[activeBranch]?.activities || [];
+        }
+
+        if(!activities || !activities.length){
             document.getElementById("tableBlock").innerHTML = `
             <div class="empty-placeholder">
                 <div class="empty-placeholder-icon">⬆</div>
@@ -239,21 +260,22 @@ export const TableBlock = {
                 const ds    = s1 - s0;
                 const da    = `data-ai="${ai}" data-gi="${gi}"`;
 
+                const ro = isSummary ? 'readonly tabindex="-1"' : '';
                 const inputsQP = !single ? `
-                    <td><input data-field="quantity0" ${da} value="${g.quantity0||""}"></td>
-                    <td><input data-field="quantity1" ${da} value="${g.quantity1||""}"></td>
-                    <td><input data-field="price0"    ${da} value="${g.price0||""}"></td>
-                    <td><input data-field="price1"    ${da} value="${g.price1||""}"></td>
+                    <td><input data-field="quantity0" ${da} ${ro} value="${g.quantity0||""}"></td>
+                    <td><input data-field="quantity1" ${da} ${ro} value="${g.quantity1||""}"></td>
+                    <td><input data-field="price0"    ${da} ${ro} value="${g.price0||""}"></td>
+                    <td><input data-field="price1"    ${da} ${ro} value="${g.price1||""}"></td>
                     <td class="num">${fmt(r0[gi])}</td>
                     <td class="num">${fmt(r1[gi])}</td>
                 ` : `
-                    <td><input data-field="revenue0" ${da} value="${g.revenue0||""}"></td>
-                    <td><input data-field="revenue1" ${da} value="${g.revenue1||""}"></td>
+                    <td><input data-field="revenue0" ${da} ${ro} value="${g.revenue0||""}"></td>
+                    <td><input data-field="revenue1" ${da} ${ro} value="${g.revenue1||""}"></td>
                 `;
 
                 html += `
                 <tr data-ai="${ai}" data-gi="${gi}">
-                    <td><input data-field="name" ${da} value="${(g.name||"").replace(/"/g,'&quot;')}"></td>
+                    <td><input data-field="name" ${da} ${isSummary?'readonly tabindex="-1"':''} value="${(g.name||"").replace(/"/g,'&quot;')}"></td>
                     ${inputsQP}
                     <td class="${delta>=0?"green":"red"}">${fmt(delta)}</td>
                     <td>${pct.toFixed(1)}%</td>
@@ -344,6 +366,46 @@ export const TableBlock = {
         this._rendering = false;
 
         this._bindAll();
+    },
+
+
+    // ── Aggregate all branches for Summary tab ──
+    // Each activity summed across branches (same index = same activity)
+    _aggregateBranches(branches){
+        if(!branches.length) return [];
+        const first = branches[0].activities || [];
+        const result = first.map((act, ai) => ({
+            name:         act.name,
+            groupCount:   act.groupCount,
+            singleFactor: act.singleFactor,
+            groups: (act.groups || []).map((g, gi) => {
+                // Sum this group across all branches
+                let q0=0, q1=0, p0Sum=0, p1Sum=0, rev0=0, rev1=0, pCount=0;
+                branches.forEach(b => {
+                    const bg = b.activities?.[ai]?.groups?.[gi];
+                    if(!bg) return;
+                    if(act.singleFactor){
+                        rev0 += +bg.revenue0 || 0;
+                        rev1 += +bg.revenue1 || 0;
+                    } else {
+                        q0 += +bg.quantity0 || 0;
+                        q1 += +bg.quantity1 || 0;
+                        // Weighted average price: total_revenue / total_qty
+                        p0Sum += (+bg.quantity0||0) * (+bg.price0||0);
+                        p1Sum += (+bg.quantity1||0) * (+bg.price1||0);
+                        pCount++;
+                    }
+                });
+                if(act.singleFactor){
+                    return { ...g, revenue0: rev0, revenue1: rev1 };
+                } else {
+                    const avgP0 = q0 ? p0Sum / q0 : 0;
+                    const avgP1 = q1 ? p1Sum / q1 : 0;
+                    return { ...g, quantity0: q0, quantity1: q1, price0: Math.round(avgP0), price1: Math.round(avgP1) };
+                }
+            })
+        }));
+        return result;
     },
 
     // ── Bind everything after render ──

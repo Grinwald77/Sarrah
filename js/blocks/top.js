@@ -168,15 +168,29 @@ export const TopBlock = {
         // PERIOD TYPE
         document.getElementById("periodType").onchange = () => {
             this.fillPeriods();
-            Store.set("periodType", document.getElementById("periodType").value);
-            Store.setPeriods({
+            const val = document.getElementById("periodType").value;
+            const patch = {
                 period0: document.getElementById("period0").value,
                 period1: document.getElementById("period1").value
-            });
+            };
+            if(!Store.get("built")){
+                Store.state.periodType = val;
+                Store.state.periods = { ...Store.state.periods, ...patch };
+                Store._save();
+            } else {
+                Store.set("periodType", val);
+                Store.setPeriods(patch);
+            }
         };
 
-        document.getElementById("currency").onchange = (e) => Store.set("currency", e.target.value);
-        document.getElementById("scale").onchange    = (e) => Store.set("scale",    e.target.value);
+        document.getElementById("currency").onchange = (e) => {
+            if(!Store.get("built")){ Store.state.currency = e.target.value; Store._save(); }
+            else Store.set("currency", e.target.value);
+        };
+        document.getElementById("scale").onchange = (e) => {
+            if(!Store.get("built")){ Store.state.scale = e.target.value; Store._save(); }
+            else Store.set("scale", e.target.value);
+        };
 
         document.getElementById("activityCount").onchange = (e) => {
             // Just save the value — do NOT build. Build only on BUILD button.
@@ -187,14 +201,21 @@ export const TopBlock = {
         };
 
         const syncPeriods = () => {
-            Store.setPeriods({
+            const patch = {
                 period0: document.getElementById("period0").value,
                 period1: document.getElementById("period1").value,
                 year0:   document.getElementById("year0").value,
                 year1:   document.getElementById("year1").value,
                 type0:   document.getElementById("type0").value,
                 type1:   document.getElementById("type1").value
-            });
+            };
+            if(!Store.get("built")){
+                // Silent — just save, no emit, no render
+                Store.state.periods = { ...Store.state.periods, ...patch };
+                try { localStorage.setItem("bi_state_v3", JSON.stringify(Store.state)); } catch(e){}
+            } else {
+                Store.setPeriods(patch);
+            }
         };
 
         document.getElementById("year0").onchange   = () => { this.fillPeriods(); syncPeriods(); };

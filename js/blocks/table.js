@@ -67,6 +67,8 @@ export const TableBlock = {
             if(this._rendering) return;
             this.render();
         });
+        // Show placeholder immediately on page load
+        this.render();
     },
 
     // Write draft → Store._state WITHOUT triggering emit/render

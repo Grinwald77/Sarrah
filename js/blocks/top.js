@@ -15,7 +15,7 @@ export const TopBlock = {
         <div class="top-bar">
 
             <div class="logo-block">
-                <img src="assets/logo.png" class="logo">
+                <canvas id="sarrah-murmuration" width="68" height="68"></canvas>
                 <div class="logo-text">
                     <div class="logo-main">Sarrah BI Model:</div>
                     <div class="logo-sub">Revenue &amp; Cost Factor Analysis</div>
@@ -87,6 +87,7 @@ export const TopBlock = {
 
         this.bind();
         this.fillYears();
+        this._startMurmuration();
 
         document.getElementById("periodType").value = state.periodType || "quarters";
         this.fillPeriods();
@@ -104,6 +105,107 @@ export const TopBlock = {
         document.getElementById("lang").value     = state.language;
         document.getElementById("currency").value = state.currency || "ILS";
         document.getElementById("scale").value    = state.scale    || "units";
+    },
+
+
+    _startMurmuration(){
+        const canvas = document.getElementById('sarrah-murmuration');
+        if(!canvas || canvas._murInit) return;
+        canvas._murInit = true;
+        const x = canvas.getContext('2d');
+        const W=68,H=68,CX=34,CY=34;
+        const SAFE=Math.min(W,H)*0.5*0.90;
+        const MAX_PERSP=1.4/(1.4-0.97*0.6);
+        const MAX_SZ=2.3*MAX_PERSP*1.1;
+        const R=(SAFE-MAX_SZ)*0.78;
+        const FORM_AMP=0.32;
+        const N=600;
+        const orbs=[];
+        const PHI=Math.PI*(3-Math.sqrt(5));
+        for(let i=0;i<N;i++){
+            const yN=1-(i/(N-1))*2;
+            const rad=Math.sqrt(1-yN*yN);
+            const th=PHI*i;
+            const rr=(0.30+Math.pow(Math.random(),0.5)*0.67);
+            orbs.push({bx:Math.cos(th)*rad*rr,by:yN*rr,bz:Math.sin(th)*rad*rr,
+                cph:Math.random()*Math.PI*2,sz:0.8+Math.random()*0.7,
+                spark:0,sparkCool:Math.random()*300});
+        }
+        function hsl(h,s,l){
+            h=((h%1)+1)%1;
+            const a=s*Math.min(l,1-l);
+            const f=n=>{const k=(n+h*12)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1));};
+            return [f(0)*255|0,f(8)*255|0,f(4)*255|0];
+        }
+        let t=0,rotY=0;
+        function formDeform(nx,ny,nz,t){
+            const a=Math.sin(nx*1.5+ny*0.9-nz*1.1+t*0.7);
+            const b=Math.sin(nx*0.8-ny*1.6+nz*0.6+t*0.55+1.7);
+            const c2=Math.sin(-nx*1.2+ny*0.7+nz*1.4+t*0.85+3.3);
+            const d=Math.sin(nx*2.1+ny*1.8+nz*1.5+t*0.45+5.1);
+            return 1+FORM_AMP*(a*0.45+b*0.35+c2*0.30+d*0.20);
+        }
+        function frame(){
+            if(!document.getElementById('sarrah-murmuration')) return;
+            t+=0.018; rotY+=0.0035;
+            x.fillStyle='rgba(0,0,0,0.28)';
+            x.fillRect(0,0,W,H);
+            const cosY=Math.cos(rotY),sinY=Math.sin(rotY);
+            const cosX=Math.cos(rotY*0.5),sinX=Math.sin(rotY*0.5);
+            const draw=[];
+            const gb=1+Math.sin(t*0.35)*0.04;
+            for(let i=0;i<N;i++){
+                const o=orbs[i];
+                const t1=t*1.3,t2=t*1.0,t3=t*1.6;
+                let dx=Math.sin(t1+o.by*2.8+o.bz*2.1)*0.13+Math.sin(t2*1.7+o.bz*2.6)*0.08;
+                let dy=Math.cos(t1*1.1+o.bx*2.6+o.bz*2.3)*0.13+Math.sin(t3+o.bx*2.2)*0.08;
+                let dz=Math.sin(t2*1.2+o.bx*3.0+o.by*2.0)*0.13+Math.cos(t1*1.3+o.by*2.4)*0.08;
+                let nx=o.bx+dx,ny=o.by+dy,nz=o.bz+dz;
+                const len=Math.sqrt(nx*nx+ny*ny+nz*nz);
+                if(len>0.001){
+                    const ux=nx/len,uy=ny/len,uz=nz/len;
+                    const sr=formDeform(ux,uy,uz,t)*gb;
+                    const ml=sr*0.97;
+                    if(len>ml){const k=ml/len;nx*=k;ny*=k;nz*=k;}
+                }
+                let rx1=nx*cosY+nz*sinY;
+                let rz1=-nx*sinY+nz*cosY;
+                let ry1=ny*cosX-rz1*sinX;
+                let rz2=ny*sinX+rz1*cosX;
+                const persp=1.4/(1.4-rz2*0.6);
+                let sx=CX+rx1*R*persp,sy=CY+ry1*R*persp;
+                const wave=Math.sin(o.bx*2.4+o.by*2.0+o.bz*2.2-t*2.2+o.cph*0.3);
+                const w=(wave+1)*0.5;
+                let hue=0.62+w*0.44,sat=0.92,lig=0.48+w*0.13;
+                o.sparkCool--;
+                if(o.sparkCool<0&&Math.random()<0.002){o.spark=1;o.sparkCool=400+Math.random()*600;}
+                if(o.spark>0.01){hue=hue*(1-o.spark*0.85)+0.13*o.spark*0.85;sat=1;lig+=o.spark*0.38;o.spark*=0.92;}
+                const [rC,gC,bC]=hsl(hue,sat,Math.min(0.88,lig));
+                const depth=(rz2+1)*0.5;
+                const sz=o.sz*persp*(0.55+depth*0.55);
+                const alpha=0.5+depth*0.5;
+                const ddx=sx-CX,ddy=sy-CY,dist=Math.sqrt(ddx*ddx+ddy*ddy);
+                const maxD=SAFE-sz;
+                if(dist>maxD&&dist>0){const k=maxD/dist;sx=CX+ddx*k;sy=CY+ddy*k;}
+                draw.push({sx,sy,sz,rC,gC,bC,alpha,depth,spark:o.spark});
+            }
+            draw.sort((a,b)=>a.depth-b.depth);
+            for(let i=0;i<draw.length;i++){
+                const d=draw[i];
+                const g=x.createRadialGradient(d.sx,d.sy,0,d.sx,d.sy,d.sz);
+                g.addColorStop(0,`rgba(${d.rC},${d.gC},${d.bC},${d.alpha})`);
+                g.addColorStop(0.6,`rgba(${d.rC},${d.gC},${d.bC},${d.alpha*0.4})`);
+                g.addColorStop(1,`rgba(${d.rC},${d.gC},${d.bC},0)`);
+                x.fillStyle=g;
+                x.beginPath();
+                x.arc(d.sx,d.sy,d.sz,0,Math.PI*2);
+                x.fill();
+            }
+            requestAnimationFrame(frame);
+        }
+        x.fillStyle='#000';
+        x.fillRect(0,0,W,H);
+        frame();
     },
 
     bind(){

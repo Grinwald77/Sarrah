@@ -1155,3 +1155,92 @@ tr.total .red {
     display: block;
     box-shadow: 0 0 0 2px rgba(255,255,255,0.15), 0 4px 24px rgba(0,0,0,0.6);
 }
+
+/* ===================================================
+   SARRAH BI — v4.2 patches
+   =================================================== */
+
+/* ── 1) Hebrew — elegant, not oversized ── */
+[dir="rtl"] th,
+[dir="rtl"] td,
+[dir="rtl"] .analysis-label,
+[dir="rtl"] .activity-title-text,
+[dir="rtl"] .ctrl-label {
+    font-size: 103% !important;
+    letter-spacing: 0 !important;
+    line-height: 1.5 !important;
+}
+[dir="rtl"] .section-meta,
+[dir="rtl"] .logo-sub {
+    font-size: 101% !important;
+    letter-spacing: 0 !important;
+}
+
+/* ── 2) Section meta — same weight/style as section-title ── */
+.section-meta {
+    font-family: var(--font-head) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #2d3f5a !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+/* ── 3) Two-line column headers ── */
+#tableBlock thead th {
+    white-space: normal !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+    padding: 7px 8px !important;
+}
+.th-type {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: #1a3660;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.th-period {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    color: #3a5070;
+    margin-top: 2px;
+    letter-spacing: 0;
+}
+
+/* ── 4) Center all columns except first ── */
+#tableBlock td:not(:first-child),
+#tableBlock th:not(:first-child) {
+    text-align: center !important;
+}
+#tableBlock td:first-child {
+    text-align: left !important;
+}
+#tableBlock th:first-child {
+    text-align: left !important;
+}
+#tableBlock td input {
+    text-align: center !important;
+}
+#tableBlock td:first-child input {
+    text-align: left !important;
+}
+#tableBlock td.num {
+    text-align: center !important;
+}
+
+/* Grand total table same centering */
+.grand-total-block td:not(:first-child),
+.grand-total-block th:not(:first-child) {
+    text-align: center !important;
+}
+.grand-total-block td:first-child,
+.grand-total-block th:first-child {
+    text-align: left !important;
+}
+

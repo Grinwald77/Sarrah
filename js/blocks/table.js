@@ -23,17 +23,8 @@ function fmt(v){
     const val = v / getScaleDiv();
     return val.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
 }
-// Two-line: "Planned<br>Q1, 2026"
+// "Actual W52, 2025"  or  "Planned Feb. 2026"
 function periodLabel(typeKey, periodKey, yearKey){
-    const p = Store.get("periods") || {};
-    const typeStr = (p[typeKey]||"Actual") === "Planned" ? t("planned") : t("actual");
-    const per  = p[periodKey] || "";
-    const year = p[yearKey]   || "";
-    const period = per ? `${per}, ${year}` : year;
-    return `<span class="th-type">${typeStr}</span><br><span class="th-period">${period}</span>`;
-}
-// Plain text version for meta line (no HTML)
-function periodLabelText(typeKey, periodKey, yearKey){
     const p = Store.get("periods") || {};
     const typeStr = (p[typeKey]||"Actual") === "Planned" ? t("planned") : t("actual");
     const per  = p[periodKey] || "";
@@ -45,8 +36,8 @@ function sectionMeta(){
     const p   = Store.get("periods") || {};
     const sym = getCurrencySymbol();
     const sc  = getScaleShort();
-    const col0 = periodLabelText("type0","period0","year0");
-    const col1 = periodLabelText("type1","period1","year1");
+    const col0 = periodLabel("type0","period0","year0");
+    const col1 = periodLabel("type1","period1","year1");
     let meta = `${col0} — ${col1}`;
     const unit = [sc, sym].filter(Boolean).join(" ");
     if(unit) meta += ` | ${unit}`;
@@ -222,9 +213,9 @@ export const TableBlock = {
                 <table>
                     <thead>
                         <tr>
-                            <th rowspan="2" class="sec-end">${t("group")}</th>
+                            <th rowspan="2">${t("group")}</th>
                             ${qpCols}
-                            <th colspan="${revColspan}" class="sec-end">${t("revenue")}</th>
+                            <th colspan="${revColspan}">${t("revenue")}</th>
                             <th colspan="3">${t("share")}</th>
                         </tr>
                         <tr>${colsQP}${colsRevHdr}${colsShareHdr}</tr>
@@ -241,22 +232,22 @@ export const TableBlock = {
 
                 const inputsQP = !single ? `
                     <td><input data-field="quantity0" ${da} value="${g.quantity0||""}"></td>
-                    <td class="sec-end"><input data-field="quantity1" ${da} value="${g.quantity1||""}"></td>
+                    <td><input data-field="quantity1" ${da} value="${g.quantity1||""}"></td>
                     <td><input data-field="price0"    ${da} value="${g.price0||""}"></td>
-                    <td class="sec-end"><input data-field="price1"    ${da} value="${g.price1||""}"></td>
-                    <td>${fmt(r0[gi])}</td>
-                    <td class="sec-end">${fmt(r1[gi])}</td>
+                    <td><input data-field="price1"    ${da} value="${g.price1||""}"></td>
+                    <td class="num">${fmt(r0[gi])}</td>
+                    <td class="num">${fmt(r1[gi])}</td>
                 ` : `
                     <td><input data-field="revenue0" ${da} value="${g.revenue0||""}"></td>
-                    <td class="sec-end"><input data-field="revenue1" ${da} value="${g.revenue1||""}"></td>
+                    <td><input data-field="revenue1" ${da} value="${g.revenue1||""}"></td>
                 `;
 
                 html += `
                 <tr data-ai="${ai}" data-gi="${gi}">
-                    <td class="sec-end"><input data-field="name" ${da} value="${(g.name||"").replace(/"/g,'&quot;')}"></td>
+                    <td><input data-field="name" ${da} value="${(g.name||"").replace(/"/g,'&quot;')}"></td>
                     ${inputsQP}
                     <td class="${delta>=0?"green":"red"}">${fmt(delta)}</td>
-                    <td class="sec-end">${pct.toFixed(1)}%</td>
+                    <td>${pct.toFixed(1)}%</td>
                     <td>${s0.toFixed(1)}%</td>
                     <td>${s1.toFixed(1)}%</td>
                     <td class="${ds>=0?"green":"red"}">${ds.toFixed(1)}</td>

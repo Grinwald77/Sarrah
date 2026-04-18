@@ -44,6 +44,12 @@ export const AnalysisBlock = {
     render(){
         const el = document.getElementById("analysisBlock");
 
+        // Don't show until BUILD pressed
+        if(!Store.get("built")){
+            el.innerHTML = "";
+            return;
+        }
+
         const activities = Store.get("activities");
         if(!activities || !activities.length){
             el.innerHTML = "";

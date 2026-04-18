@@ -1282,3 +1282,47 @@ tr.total .red {
     animation: none !important;
     filter: none !important;
 }
+
+/* ── DataCloud canvas size fix ── */
+#sarrah-murmuration {
+    width: 96px !important;
+    height: 96px !important;
+    border-radius: 50%;
+    background: #000;
+    flex-shrink: 0;
+    display: block;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15), 0 4px 24px rgba(0,0,0,0.6);
+}
+
+/* ── Section boundary double borders (replaces broken nth-child rules) ── */
+
+/* Remove old nth-child attempts */
+#tableBlock table th:nth-child(1),
+#tableBlock table td:nth-child(1),
+#tableBlock table thead tr:last-child th:nth-child(3),
+#tableBlock table tbody td:nth-child(3),
+#tableBlock table thead tr:last-child th:nth-child(5),
+#tableBlock table tbody td:nth-child(5),
+#tableBlock table thead tr:last-child th:nth-child(9),
+#tableBlock table tbody td:nth-child(9),
+#tableBlock table thead tr:first-child th {
+    border-right: 1px solid #edf1f8 !important;
+}
+
+/* Section-end class = double right border */
+#tableBlock th.sec-end,
+#tableBlock td.sec-end {
+    border-right: 3px double #93a4c0 !important;
+}
+
+/* Keep last column clean */
+#tableBlock th:last-child,
+#tableBlock td:last-child {
+    border-right: none !important;
+}
+
+/* First header row group headers also get double border */
+#tableBlock thead tr:first-child th.sec-end {
+    border-right: 3px double #93a4c0 !important;
+}
+

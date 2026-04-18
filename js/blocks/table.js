@@ -222,9 +222,9 @@ export const TableBlock = {
                 <table>
                     <thead>
                         <tr>
-                            <th rowspan="2">${t("group")}</th>
+                            <th rowspan="2" class="sec-end">${t("group")}</th>
                             ${qpCols}
-                            <th colspan="${revColspan}">${t("revenue")}</th>
+                            <th colspan="${revColspan}" class="sec-end">${t("revenue")}</th>
                             <th colspan="3">${t("share")}</th>
                         </tr>
                         <tr>${colsQP}${colsRevHdr}${colsShareHdr}</tr>
@@ -241,22 +241,22 @@ export const TableBlock = {
 
                 const inputsQP = !single ? `
                     <td><input data-field="quantity0" ${da} value="${g.quantity0||""}"></td>
-                    <td><input data-field="quantity1" ${da} value="${g.quantity1||""}"></td>
+                    <td class="sec-end"><input data-field="quantity1" ${da} value="${g.quantity1||""}"></td>
                     <td><input data-field="price0"    ${da} value="${g.price0||""}"></td>
-                    <td><input data-field="price1"    ${da} value="${g.price1||""}"></td>
-                    <td class="num">${fmt(r0[gi])}</td>
-                    <td class="num">${fmt(r1[gi])}</td>
+                    <td class="sec-end"><input data-field="price1"    ${da} value="${g.price1||""}"></td>
+                    <td>${fmt(r0[gi])}</td>
+                    <td class="sec-end">${fmt(r1[gi])}</td>
                 ` : `
                     <td><input data-field="revenue0" ${da} value="${g.revenue0||""}"></td>
-                    <td><input data-field="revenue1" ${da} value="${g.revenue1||""}"></td>
+                    <td class="sec-end"><input data-field="revenue1" ${da} value="${g.revenue1||""}"></td>
                 `;
 
                 html += `
                 <tr data-ai="${ai}" data-gi="${gi}">
-                    <td><input data-field="name" ${da} value="${(g.name||"").replace(/"/g,'&quot;')}"></td>
+                    <td class="sec-end"><input data-field="name" ${da} value="${(g.name||"").replace(/"/g,'&quot;')}"></td>
                     ${inputsQP}
                     <td class="${delta>=0?"green":"red"}">${fmt(delta)}</td>
-                    <td>${pct.toFixed(1)}%</td>
+                    <td class="sec-end">${pct.toFixed(1)}%</td>
                     <td>${s0.toFixed(1)}%</td>
                     <td>${s1.toFixed(1)}%</td>
                     <td class="${ds>=0?"green":"red"}">${ds.toFixed(1)}</td>

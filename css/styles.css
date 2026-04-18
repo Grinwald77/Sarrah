@@ -1123,3 +1123,24 @@ td:first-child  { color: #111827 !important; }
     font-size: 10px;
 }
 
+
+/* ── Total row contrast fix ── */
+tr.total td {
+    color: #e2e8f0 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+tr.total td:first-child {
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em;
+}
+tr.total .green {
+    color: #86efac !important;
+    background: rgba(134,239,172,0.15) !important;
+}
+tr.total .red {
+    color: #fca5a5 !important;
+    background: rgba(252,165,165,0.15) !important;
+}

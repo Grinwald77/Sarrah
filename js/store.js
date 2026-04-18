@@ -1,14 +1,18 @@
 export const Store = {
 
     state: (() => {
-        let saved = localStorage.getItem("bi_state_v3");
+        let saved = localStorage.getItem("bi_state_v4");
         if(saved){
-            try{ return JSON.parse(saved); }catch(e){}
+            try{
+                const parsed = JSON.parse(saved);
+                parsed.built = false;   // always reset built on page load
+                return parsed;
+            }catch(e){}
         }
         return {
             activities:    [],
             activityCount: 2,
-            built:         false,   // true only after BUILD pressed
+            built:         false,   // always false on fresh page load
 
             language:   "en",
             currency:   "ILS",
@@ -62,7 +66,7 @@ export const Store = {
     },
 
     _save(){
-        try{ localStorage.setItem("bi_state_v3", JSON.stringify(this.state)); }catch(e){}
+        try{ localStorage.setItem("bi_state_v4", JSON.stringify(this.state)); }catch(e){}
     },
 
     subscribe(fn){

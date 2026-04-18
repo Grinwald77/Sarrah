@@ -21,7 +21,8 @@ window.DataCloud = {
         const R = (SAFE - MAX_SZ) * 0.78;
         const FORM_AMP = 0.32;
 
-        const N = size > 200 ? 4500 : 800;  // fewer particles for small sizes
+        const N = size > 200 ? 4500 : 1200;
+        // For small sizes, don't scale sz down — keep particles visible
         const orbs = [];
         const PHI = Math.PI * (3 - Math.sqrt(5));
 
@@ -35,7 +36,7 @@ window.DataCloud = {
                 by: yN * rr,
                 bz: Math.sin(th) * rad * rr,
                 cph: Math.random() * Math.PI * 2,
-                sz: (0.6 + Math.random() * 0.9) * SCALE,
+                sz: (0.6 + Math.random() * 0.9) * 3 * SCALE,
                 spark: 0,
                 sparkCool: Math.random() * 300
             });
@@ -43,7 +44,7 @@ window.DataCloud = {
 
         const C1 = [255, 140, 55];
         const C2 = [160, 80, 235];
-        const C_SPARK = [255, 235, 120];
+        const C_SPARK = [120, 255, 200];  // mint/teal sparks
 
         function mix2(w, intensity) {
             const r = C1[0] + (C2[0] - C1[0]) * w;
@@ -174,7 +175,8 @@ window.DataCloud = {
 
                 const depth = (rz2 + 1) * 0.5;
                 const sz = o.sz * persp * (0.55 + depth * 0.55) * (1 + flashBoost * 0.4);
-                const alpha = Math.min(1, 0.6 + depth * 0.5 + flashBoost * 0.3);
+                const alphaBoost = size < 200 ? 0.35 : 0;
+                const alpha = Math.min(1, 0.6 + depth * 0.5 + flashBoost * 0.3 + alphaBoost);
 
                 const ddx2 = sx - CX, ddy2 = sy - CY;
                 const dist = Math.sqrt(ddx2 * ddx2 + ddy2 * ddy2);

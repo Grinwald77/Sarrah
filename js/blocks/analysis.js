@@ -20,8 +20,6 @@ function fmtSigned(v){
     return (v >= 0 ? "+" : "−") + str;
 }
 
-function cls(v){ return v >= 0 ? "green" : "red"; }
-
 function row(label, value, colored = false){
     const colorCls = colored ? (value < 0 ? "red" : value > 0 ? "green" : "") : "";
     const display  = colored ? fmtSigned(value) : fmt(value);
@@ -38,41 +36,29 @@ export const AnalysisBlock = {
 
     init(){
         Store.subscribe(() => this.render());
-        Store.subscribeAnalysis(() => this.render()); // silent flush updates
+        Store.subscribeAnalysis(() => this.render());
     },
 
     render(){
         const el = document.getElementById("analysisBlock");
 
-        // Don't show until BUILD pressed
-        if(!Store.get("built")){
-            el.innerHTML = "";
-            return;
-        }
+        if(!Store.get("built")){ el.innerHTML = ""; return; }
 
         const activities = Store.get("activities");
-        if(!activities || !activities.length){
-            el.innerHTML = "";
-            return;
-        }
+        if(!activities || !activities.length){ el.innerHTML = ""; return; }
 
         const r = FactorModel.calc(activities);
 
-        // Don't render if no data at all
         if(r.R0 === 0 && r.R1 === 0 && !r.hasMulti && !r.hasSingle){
-            el.innerHTML = "";
-            return;
+            el.innerHTML = ""; return;
         }
 
-        // ── Итоговые суммы ──
         let html = `
-        ${row(t("revenue") + " " + t("initial"),  r.R0)}
-        ${row(t("revenue") + " " + t("current"),  r.R1)}
-        ${row(t("change"),                         r.dR,  true)}
+        ${row(t("revenue") + " " + t("initial"), r.R0)}
+        ${row(t("revenue") + " " + t("current"), r.R1)}
+        ${row(t("change"),                        r.dR, true)}
         ${divider()}`;
 
-        // ── Факторы ──
-        // Всегда показываем все три фактора если есть хотя бы один вид деятельности
         if(r.hasMulti){
             html += `
             ${row(t("factorQty"),   r.q, true)}
@@ -82,25 +68,6 @@ export const AnalysisBlock = {
         if(r.hasSingle){
             html += `
             ${row(t("factorSingle"), r.s, true)}`;
-        }
-
-        // ── Строка верификации: сумма факторов = ΔR ──
-        if(r.hasMulti || r.hasSingle){
-            const factorSum = r.q + r.p + r.s;
-            const ok = Math.abs(factorSum - r.dR) < 0.01;
-
-            // Parts for formula display
-            const parts = [];
-            if(r.hasMulti)  parts.push(`${t("factorQty")}: ${fmtSigned(r.q)}`);
-            if(r.hasMulti)  parts.push(`${t("factorPrice")}: ${fmtSigned(r.p)}`);
-            if(r.hasSingle) parts.push(`${t("factorSingle")}: ${fmtSigned(r.s)}`);
-
-            html += `
-            ${divider()}
-            <div class="analysis-row analysis-check">
-                <span class="analysis-label">${parts.join(" + ")}</span>
-                <span class="analysis-val ${ok ? "green" : "red"}">${fmtSigned(factorSum)} ${ok ? "✓" : "≠ "+fmt(r.dR)}</span>
-            </div>`;
         }
 
         el.innerHTML = `

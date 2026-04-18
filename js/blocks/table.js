@@ -23,8 +23,17 @@ function fmt(v){
     const val = v / getScaleDiv();
     return val.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
 }
-// "Actual W52, 2025"  or  "Planned Feb. 2026"
+// Two-line: "Planned<br>Q1, 2026"
 function periodLabel(typeKey, periodKey, yearKey){
+    const p = Store.get("periods") || {};
+    const typeStr = (p[typeKey]||"Actual") === "Planned" ? t("planned") : t("actual");
+    const per  = p[periodKey] || "";
+    const year = p[yearKey]   || "";
+    const period = per ? `${per}, ${year}` : year;
+    return `<span class="th-type">${typeStr}</span><br><span class="th-period">${period}</span>`;
+}
+// Plain text version for meta line (no HTML)
+function periodLabelText(typeKey, periodKey, yearKey){
     const p = Store.get("periods") || {};
     const typeStr = (p[typeKey]||"Actual") === "Planned" ? t("planned") : t("actual");
     const per  = p[periodKey] || "";
@@ -36,8 +45,8 @@ function sectionMeta(){
     const p   = Store.get("periods") || {};
     const sym = getCurrencySymbol();
     const sc  = getScaleShort();
-    const col0 = periodLabel("type0","period0","year0");
-    const col1 = periodLabel("type1","period1","year1");
+    const col0 = periodLabelText("type0","period0","year0");
+    const col1 = periodLabelText("type1","period1","year1");
     let meta = `${col0} — ${col1}`;
     const unit = [sc, sym].filter(Boolean).join(" ");
     if(unit) meta += ` | ${unit}`;

@@ -85,7 +85,8 @@ export const TableBlock = {
         const draft = this._draft[ai];
         if(!draft) return;
 
-        const acts = Store.state.activities;
+        const ab   = Store.state.activeBranch;
+        const acts = Store.state.branches?.[ab]?.activities;
         if(!acts || !acts[ai]) return;
 
         if(draft._name !== undefined){
@@ -480,7 +481,9 @@ export const TableBlock = {
                 const n   = Math.min(20, Math.max(1, +e.target.value||1));
                 e.target.value = n;
                 this._flushSilent(ai); // save current values first
-                const act = Store.get("activities")[ai];
+                const ab  = Store.get("activeBranch");
+                const act = Store.state.branches?.[ab]?.activities?.[ai];
+                if(!act) return;
                 const old = act.groups || [];
                 const groups = Array.from({length:n}, (_,i) =>
                     old[i] || { name:`${t("group")} ${i+1}`, quantity0:0, quantity1:0, price0:0, price1:0, revenue0:0, revenue1:0 }
@@ -499,7 +502,9 @@ export const TableBlock = {
 
                 this._flushSilent(ai); // save current draft first
 
-                const act    = Store.get("activities")[ai];
+                const ab_    = Store.get("activeBranch");
+                const act    = Store.state.branches?.[ab_]?.activities?.[ai];
+                if(!act) return;
                 const groups = (act.groups || []).map(g => {
                     const ng = { ...g };
                     if(goSingle){
@@ -556,8 +561,9 @@ export const TableBlock = {
         const block  = document.querySelector(`.activity-block[data-ai="${ai}"]`);
         if(!block) return;
 
-        const acts   = Store.get("activities");
-        const act    = acts[ai];
+        const ab_ra  = Store.state.activeBranch;
+        const acts   = Store.state.branches?.[ab_ra]?.activities;
+        const act    = acts?.[ai];
         if(!act) return;
         const single = !!act.singleFactor;
         const draft  = this._draft[ai] || {};
@@ -647,7 +653,15 @@ export const TableBlock = {
         const gtBlock = document.querySelector(".grand-total-block");
         if(!gtBlock) return;
 
-        const activities = Store.get("activities");
+        const _ab    = Store.state.activeBranch;
+        const _acts  = Store.state.branches?.[ _ab]?.activities;
+        // For grand total we need ALL activities in current view
+        const _branches   = Store.state.branches || [];
+        const _branchCount= Store.state.branchCount || 1;
+        const _isSummary  = _branchCount > 1 && _ab === -1;
+        const activities  = _isSummary
+            ? _branches.reduce((all,b) => all.concat(b.activities||[]),[])
+            : (_acts || []);
         if(!activities || activities.length < 2) return;
 
         const grandR = { R0:0, R1:0 };
@@ -783,8 +797,10 @@ export const TableBlock = {
                 e.preventDefault();
 
                 const ai     = +e.target.dataset.ai;
-                const acts   = Store.get("activities");
-                const act    = acts[ai];
+                const _pab  = Store.get("activeBranch");
+                const acts   = Store.state.branches?.[_pab]?.activities;
+                const act    = acts?.[ai];
+                if(!act) return;
                 const single = !!act.singleFactor;
                 const rows   = text.trim().split("\n");
 

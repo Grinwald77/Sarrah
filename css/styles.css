@@ -1266,3 +1266,19 @@ tr.total .red {
     letter-spacing: 0;
     margin-top: 2px;
 }
+
+/* ── Murmuration canvas as logo ── */
+#sarrah-murmuration {
+    width: 68px !important;
+    height: 68px !important;
+    border-radius: 50%;
+    background: #000;
+    flex-shrink: 0;
+    display: block;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.12), 0 4px 20px rgba(0,0,0,0.5);
+}
+/* Remove old logo animation since it's now canvas */
+.logo {
+    animation: none !important;
+    filter: none !important;
+}

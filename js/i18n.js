@@ -53,6 +53,9 @@ export const Dict = {
         factorQty:      "Volume effect",
         factorPrice:    "Price effect",
         factorSingle:   "Single-factor Rev. Effect",
+        branchCount:    "Branches",
+        branch:         "Branch",
+        summary:        "Summary",
         placeholder:    "Press Build to create revenue tables. Set the number of activities, period, currency and scale above — then click Build.",
     },
 
@@ -107,6 +110,9 @@ export const Dict = {
         factorQty:      "Эффект объёма",
         factorPrice:    "Эффект цены",
         factorSingle:   "Эффект однофакт. видов",
+        branchCount:    "Филиалы",
+        branch:         "Филиал",
+        summary:        "Общий",
         placeholder:    "Нажмите Построить для создания таблиц выручки. Задайте количество видов деятельности, период, валюту и масштаб — затем нажмите Построить.",
     },
 
@@ -161,6 +167,9 @@ export const Dict = {
         factorQty:      "השפעת נפח",
         factorPrice:    "השפעת מחיר",
         factorSingle:   "השפעת פעילות חד-גורמית",
+        branchCount:    "סניפים",
+        branch:         "סניף",
+        summary:        "סיכום",
         placeholder:    "לחץ בנה כדי ליצור טבלאות הכנסות. הגדר את מספר הפעילויות, התקופה, המטבע וקנה המידה — ולאחר מכן לחץ בנה.",
     }
 };

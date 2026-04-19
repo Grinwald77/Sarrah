@@ -3,11 +3,11 @@ import { t } from '../i18n.js';
 
 export const TabsBlock = {
 
-    _editing: false,  // guard against re-render during edit
+    _editing: false,
 
     init(){
         Store.subscribe(() => {
-            if(this._editing) return;  // don't re-render while user is typing
+            if(this._editing) return;
             this.render();
         });
     },
@@ -26,14 +26,12 @@ export const TabsBlock = {
 
         let html = `<div class="tabs-bar">`;
 
-        // General tab
         const sumActive = activeBranch === -1;
         html += `<button class="tab-btn ${sumActive?"tab-active":""}" data-branch="-1">
             <span class="tab-icon">Σ</span>
             <span class="tab-label">${t("summary")}</span>
         </button>`;
 
-        // Branch tabs
         branches.forEach((b, i) => {
             const active = activeBranch === i;
             const name   = b.name || `${t("branch")} ${i+1}`;
@@ -49,60 +47,64 @@ export const TabsBlock = {
 
         // Single click → switch branch
         el.querySelectorAll(".tab-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
+            btn.addEventListener("click", () => {
                 if(this._editing) return;
                 Store.setActiveBranch(+btn.dataset.branch);
             });
         });
 
-        // Double click → rename inline (Excel style)
+        // Double click → rename
         el.querySelectorAll(".tab-renameable").forEach(label => {
             label.addEventListener("dblclick", (e) => {
                 e.stopPropagation();
                 e.preventDefault();
+                if(this._editing) return;  // already editing
 
                 const idx     = +label.dataset.branchIdx;
                 const current = label.textContent.trim();
 
-                // First switch to this branch silently (no emit)
+                // Switch to this branch silently
                 Store.state.activeBranch = idx;
                 Store._save();
 
                 this._editing = true;
 
-                // Replace label with input
-                label.innerHTML = `<input
-                    class="tab-inline-input"
-                    value="${current}"
-                    style="width:${Math.max(70, current.length * 9)}px"
-                >`;
+                // Replace with input
+                label.textContent = "";
+                const input = document.createElement("input");
+                input.className = "tab-inline-input";
+                input.value = current;
+                input.style.width = Math.max(70, current.length * 9) + "px";
+                label.appendChild(input);
 
-                const input = label.querySelector(".tab-inline-input");
                 input.focus();
                 input.select();
 
+                // One save function, called exactly once
+                let saved = false;
                 const save = () => {
+                    if(saved) return;
+                    saved = true;
                     this._editing = false;
                     const val = input.value.trim() || `${t("branch")} ${idx+1}`;
-                    // Restore label text
-                    label.innerHTML = val;
-                    // Save to store and re-render
                     Store.setBranchName(idx, val);
+                    // render() will be called by Store.emit() inside setBranchName
                 };
 
-                const cancel = () => {
-                    this._editing = false;
-                    label.innerHTML = current;
-                    Store.emit();  // re-render to restore state
-                };
-
-                input.addEventListener("blur",    save, { once: true });
-                input.addEventListener("keydown", (e) => {
-                    if(e.key === "Enter")  { e.preventDefault(); input.blur(); }
-                    if(e.key === "Escape") { input.removeEventListener("blur", save); cancel(); }
+                input.onblur    = save;
+                input.onkeydown = (e) => {
+                    if(e.key === "Enter"){
+                        e.preventDefault();
+                        save();
+                    }
+                    if(e.key === "Escape"){
+                        saved = true;  // prevent blur from saving
+                        this._editing = false;
+                        Store.emit();  // re-render with original name
+                    }
                     e.stopPropagation();
-                });
-                input.addEventListener("click", (e) => e.stopPropagation());
+                };
+                input.onclick = (e) => e.stopPropagation();
             });
         });
     }

@@ -201,9 +201,10 @@ export const TableBlock = {
             // multi:  inputs are qty/price, revenue is computed, so header = col0|col1|change|%
             const colsRevHdr   = `<th>${col0}</th><th>${col1}</th><th>${t("change")}</th><th>${t("changePct")}</th>`;
             const colsShareHdr = `<th>${col0}</th><th>${col1}</th><th>${t("deltaShare")}</th>`;
-            // single colspan: group(1) + rev0+rev1(2) + change+%(2) + share×3(3) = 8 cols total
-            // Revenue group header: in single covers only the 2 direct input cols
-            const revColspan = single ? "2" : "4";
+            // multi: group(1) + qty(2) + price(2) + [rev0,rev1,change,%](4) + share(3) = 12 cols
+            // single: group(1) + [rev0,rev1,change,%](4) + share(3) = 8 cols
+            // In both cases Revenue header spans 4 columns
+            const revColspan = "4";
 
             const actName  = act.name || "";
             const colIcon  = collapsed ? "+" : "−";

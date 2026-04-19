@@ -6,6 +6,8 @@ export const Store = {
             try{
                 const parsed = JSON.parse(saved);
                 parsed.built = false;
+                parsed.branches = [];
+                parsed.activeBranch = 0;
                 return parsed;
             }catch(e){}
         }

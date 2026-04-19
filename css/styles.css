@@ -1341,3 +1341,64 @@ td input[readonly] {
     pointer-events: none;
 }
 
+
+/* ── Tab branch name editing ── */
+.tab-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    bottom: -2px;
+}
+.tab-wrapper-active .tab-btn {
+    border-bottom: 2px solid #ffffff;
+}
+.tab-name-input {
+    height: 22px;
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: #1a3660;
+    background: #f0f6ff;
+    border: none;
+    border-top: 1px solid #c8d4e8;
+    border-radius: 0 0 4px 4px;
+    outline: none;
+    width: 100%;
+    text-align: center;
+    letter-spacing: 0.03em;
+}
+.tab-name-input:focus {
+    background: #e0eeff;
+    color: #1d4ed8;
+}
+
+/* ── Excel-style inline tab rename ── */
+.tab-renameable {
+    cursor: pointer;
+}
+.tab-renameable:hover {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+}
+.tab-label-editing {
+    padding: 0;
+}
+.tab-inline-input {
+    height: 18px;
+    min-width: 50px;
+    padding: 0 4px;
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 500;
+    color: #1a3660;
+    background: #fff;
+    border: 1.5px solid #1d4ed8;
+    border-radius: 2px;
+    outline: none;
+    text-align: center;
+    box-shadow: 0 0 0 2px rgba(29,78,216,0.2);
+}
+/* Remove old bottom-input styles */
+.tab-wrapper, .tab-wrapper-active, .tab-name-input { display: none !important; }

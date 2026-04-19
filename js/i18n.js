@@ -174,7 +174,7 @@ export const Dict = {
         summary:        "כללי",
         renameBranch:   "שנה שם",
         placeholder:    "לחץ בנה כדי ליצור טבלאות הכנסות. הגדר את מספר הפעילויות, התקופה, המטבע וקנה המידה — ולאחר מכן לחץ בנה.",
-    }
+    },
 
     de:{
         language:       "Sprache",

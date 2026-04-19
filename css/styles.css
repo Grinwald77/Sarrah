@@ -1402,3 +1402,56 @@ td input[readonly] {
 }
 /* Remove old bottom-input styles */
 .tab-wrapper, .tab-wrapper-active, .tab-name-input { display: none !important; }
+
+/* ===================================================
+   SARRAH BI — v4.9 patches
+   =================================================== */
+
+/* ── 2) Static logo restore ── */
+.logo {
+    height: 68px;
+    animation: none !important;
+    filter: none !important;
+}
+#sarrah-murmuration { display: none !important; }
+
+/* ── 5) First qty column centered ── */
+#tableBlock td:nth-child(2),
+#tableBlock th:nth-child(2) {
+    text-align: center !important;
+}
+#tableBlock td:nth-child(2) input {
+    text-align: center !important;
+}
+
+/* ── 6) Hebrew font — use Noto Sans Hebrew for consistent sizing ── */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600&display=swap');
+
+[dir="rtl"],
+[dir="rtl"] body {
+    font-family: 'Noto Sans Hebrew', 'IBM Plex Sans', sans-serif !important;
+}
+[dir="rtl"] th,
+[dir="rtl"] td,
+[dir="rtl"] input,
+[dir="rtl"] select,
+[dir="rtl"] button,
+[dir="rtl"] .analysis-label,
+[dir="rtl"] .section-title,
+[dir="rtl"] .section-meta,
+[dir="rtl"] .activity-title-text,
+[dir="rtl"] .ctrl-label,
+[dir="rtl"] .logo-main,
+[dir="rtl"] .logo-sub {
+    font-family: 'Noto Sans Hebrew', 'IBM Plex Sans', sans-serif !important;
+    font-size: 13px !important;
+    letter-spacing: 0 !important;
+    line-height: 1.5 !important;
+}
+[dir="rtl"] th {
+    font-size: 11px !important;
+}
+[dir="rtl"] .logo-main {
+    font-size: 28px !important;
+}
+

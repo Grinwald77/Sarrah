@@ -15,7 +15,7 @@ export const TopBlock = {
         <div class="top-bar">
 
             <div class="logo-block">
-                <canvas id="sarrah-murmuration" width="96" height="96"></canvas>
+                <img src="assets/logo.png" class="logo" alt="Sarrah">
                 <div class="logo-text">
                     <div class="logo-main">Sarrah BI Model:</div>
                     <div class="logo-sub">Revenue &amp; Cost Factor Analysis</div>
@@ -92,7 +92,6 @@ export const TopBlock = {
 
         this.bind();
         this.fillYears();
-        this._startMurmuration();
 
         document.getElementById("periodType").value = state.periodType || "quarters";
         this.fillPeriods();

@@ -3,18 +3,16 @@ import { t } from '../i18n.js';
 
 export const TabsBlock = {
 
-    _editing: false,
-
     init(){
-        Store.subscribe(() => {
-            if(this._editing) return;
-            this.render();
-        });
+        Store.subscribe(() => this.render());
     },
 
     render(){
         const el = document.getElementById("tabsBlock");
         if(!el) return;
+
+        // Don't re-render if an input is currently active inside tabsBlock
+        if(el.querySelector(".tab-inline-input")) return;
 
         if(!Store.get("built")){ el.innerHTML = ""; return; }
 
@@ -47,70 +45,70 @@ export const TabsBlock = {
         html += `</div>`;
         el.innerHTML = html;
 
-        this._bindTabs(el);
-    },
-
-    _bindTabs(el){
-        // Track clicks per label for "second click on active = edit"
+        // Single click → switch; click on already-active → edit
         el.querySelectorAll(".tab-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
-                if(this._editing) return;
-
-                const idx = +btn.dataset.branch;
+                const idx      = +btn.dataset.branch;
                 const isActive = Store.get("activeBranch") === idx;
 
                 if(!isActive){
-                    // First click — just switch
                     Store.setActiveBranch(idx);
                     return;
                 }
 
-                // Already on this tab — check if click was on the label text
-                const label = btn.querySelector(".tab-label[data-branch-idx]");
-                if(label && idx >= 0){
-                    this._startEdit(label, idx);
+                // Click on active branch label → start editing
+                if(idx >= 0){
+                    const label = btn.querySelector(".tab-label[data-branch-idx]");
+                    if(label) this._startEdit(el, label, idx);
                 }
             });
         });
     },
 
-    _startEdit(label, idx){
-        if(this._editing) return;
-        this._editing = true;
-
+    _startEdit(container, label, idx){
         const current = label.textContent.trim();
 
-        // Replace label text with input
+        // Swap label text for input in-place
         label.textContent = "";
         const input = document.createElement("input");
         input.className = "tab-inline-input";
-        input.value = current;
-        input.style.width = Math.max(70, current.length * 9) + "px";
+        input.value     = current;
+        input.style.width = Math.max(80, current.length * 9) + "px";
         label.appendChild(input);
-        input.focus();
-        input.select();
 
-        let done = false;
-        const save = () => {
-            if(done) return;
-            done = true;
-            this._editing = false;
+        // Focus without triggering blur immediately
+        setTimeout(() => { input.focus(); input.select(); }, 0);
+
+        let committed = false;
+
+        const commit = () => {
+            if(committed) return;
+            committed = true;
             const val = input.value.trim() || `${t("branch")} ${idx+1}`;
+            // Restore label before store update to avoid flicker
+            label.textContent = val;
             Store.setBranchName(idx, val);
         };
-        const cancel = () => {
-            if(done) return;
-            done = true;
-            this._editing = false;
+
+        const revert = () => {
+            if(committed) return;
+            committed = true;
+            label.textContent = current;
+            // No store update needed — just re-render
             Store.emit();
         };
 
-        input.onblur    = save;
-        input.onkeydown = (e) => {
-            if(e.key === "Enter")  { e.preventDefault(); save(); }
-            if(e.key === "Escape") { input.onblur = null; cancel(); }
+        input.addEventListener("blur",    commit);
+        input.addEventListener("keydown", (e) => {
+            if(e.key === "Enter")  { e.preventDefault(); input.blur(); }
+            if(e.key === "Escape") {
+                input.removeEventListener("blur", commit);
+                revert();
+            }
             e.stopPropagation();
-        };
-        input.onclick = (e) => e.stopPropagation();
+        });
+        // Prevent click inside input from bubbling to btn
+        input.addEventListener("click",   (e) => e.stopPropagation());
+        input.addEventListener("mousedown",(e) => e.stopPropagation());
     }
 };

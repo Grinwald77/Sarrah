@@ -370,42 +370,85 @@ export const TableBlock = {
     },
 
 
-    // ── Aggregate all branches for Summary tab ──
-    // Each activity summed across branches (same index = same activity)
+    // ── Aggregate branches for General tab ──
+    // Logic:
+    // 1. Multi-factor activities: summed by position index across all branches
+    // 2. All single-factor activities from ALL branches: merged into ONE combined activity
     _aggregateBranches(branches){
         if(!branches.length) return [];
-        const first = branches[0].activities || [];
-        const result = first.map((act, ai) => ({
-            name:         act.name,
-            groupCount:   act.groupCount,
-            singleFactor: act.singleFactor,
-            groups: (act.groups || []).map((g, gi) => {
-                // Sum this group across all branches
-                let q0=0, q1=0, p0Sum=0, p1Sum=0, rev0=0, rev1=0, pCount=0;
-                branches.forEach(b => {
-                    const bg = b.activities?.[ai]?.groups?.[gi];
-                    if(!bg) return;
-                    if(act.singleFactor){
-                        rev0 += +bg.revenue0 || 0;
-                        rev1 += +bg.revenue1 || 0;
-                    } else {
-                        q0 += +bg.quantity0 || 0;
-                        q1 += +bg.quantity1 || 0;
-                        // Weighted average price: total_revenue / total_qty
-                        p0Sum += (+bg.quantity0||0) * (+bg.price0||0);
-                        p1Sum += (+bg.quantity1||0) * (+bg.price1||0);
-                        pCount++;
-                    }
+
+        // Separate multi and single across all branches
+        // Find max number of multi-factor activities across branches
+        let maxMulti = 0;
+        branches.forEach(b => {
+            const multiCount = (b.activities||[]).filter(a => !a.singleFactor).length;
+            if(multiCount > maxMulti) maxMulti = multiCount;
+        });
+
+        const result = [];
+
+        // ── Multi-factor: aggregate by position ──
+        for(let mi = 0; mi < maxMulti; mi++){
+            // Collect all multi-factor acts at position mi from each branch
+            const multiActs = [];
+            branches.forEach(b => {
+                const multis = (b.activities||[]).filter(a => !a.singleFactor);
+                if(multis[mi]) multiActs.push(multis[mi]);
+            });
+            if(!multiActs.length) continue;
+
+            const first = multiActs[0];
+            const maxGroups = Math.max(...multiActs.map(a => (a.groups||[]).length));
+
+            const groups = [];
+            for(let gi = 0; gi < maxGroups; gi++){
+                let q0=0, q1=0, p0Sum=0, p1Sum=0;
+                multiActs.forEach(act => {
+                    const g = act.groups?.[gi];
+                    if(!g) return;
+                    q0    += +g.quantity0||0;
+                    q1    += +g.quantity1||0;
+                    p0Sum += (+g.quantity0||0) * (+g.price0||0);
+                    p1Sum += (+g.quantity1||0) * (+g.price1||0);
                 });
-                if(act.singleFactor){
-                    return { ...g, revenue0: rev0, revenue1: rev1 };
-                } else {
-                    const avgP0 = q0 ? p0Sum / q0 : 0;
-                    const avgP1 = q1 ? p1Sum / q1 : 0;
-                    return { ...g, quantity0: q0, quantity1: q1, price0: Math.round(avgP0), price1: Math.round(avgP1) };
-                }
-            })
-        }));
+                const avgP0 = q0 ? p0Sum/q0 : 0;
+                const avgP1 = q1 ? p1Sum/q1 : 0;
+                const baseG = first.groups?.[gi] || {};
+                groups.push({ ...baseG, quantity0:q0, quantity1:q1, price0:Math.round(avgP0), price1:Math.round(avgP1) });
+            }
+
+            result.push({
+                name:         first.name,
+                groupCount:   maxGroups,
+                singleFactor: false,
+                groups
+            });
+        }
+
+        // ── Single-factor: ALL single acts from ALL branches → one combined activity ──
+        const allSingleGroups = [];
+        let singleName = t("singleFactor");
+        branches.forEach(b => {
+            (b.activities||[]).filter(a => a.singleFactor).forEach(act => {
+                (act.groups||[]).forEach(g => {
+                    allSingleGroups.push({
+                        name:     act.name + (g.name ? " / "+g.name : ""),
+                        revenue0: +g.revenue0||0,
+                        revenue1: +g.revenue1||0
+                    });
+                });
+            });
+        });
+
+        if(allSingleGroups.length){
+            result.push({
+                name:         singleName,
+                groupCount:   allSingleGroups.length,
+                singleFactor: true,
+                groups:       allSingleGroups
+            });
+        }
+
         return result;
     },
 

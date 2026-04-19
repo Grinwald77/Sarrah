@@ -11,27 +11,19 @@ export const TabsBlock = {
         const el = document.getElementById("tabsBlock");
         if(!el) return;
 
-        if(!Store.get("built")){
-            el.innerHTML = "";
-            return;
-        }
+        if(!Store.get("built")){ el.innerHTML = ""; return; }
 
         const branchCount  = Store.get("branchCount") || 1;
         const branches     = Store.get("branches") || [];
         const activeBranch = Store.get("activeBranch");
 
-        // Only show tabs if more than 1 branch
-        if(branchCount <= 1 || branches.length <= 1){
-            el.innerHTML = "";
-            return;
-        }
+        if(branchCount <= 1 || branches.length <= 1){ el.innerHTML = ""; return; }
 
-        // Build tabs: Summary first, then each branch
         let html = `<div class="tabs-bar">`;
 
-        // Summary tab (activeBranch === -1)
+        // General tab — not renameable
         const sumActive = activeBranch === -1;
-        html += `<button class="tab-btn ${sumActive ? "tab-active" : ""}" data-branch="-1">
+        html += `<button class="tab-btn ${sumActive?"tab-active":""}" data-branch="-1">
             <span class="tab-icon">Σ</span>
             <span class="tab-label">${t("summary")}</span>
         </button>`;
@@ -39,21 +31,60 @@ export const TabsBlock = {
         // Branch tabs
         branches.forEach((b, i) => {
             const active = activeBranch === i;
-            html += `<button class="tab-btn ${active ? "tab-active" : ""}" data-branch="${i}">
-                <span class="tab-num">${i + 1}</span>
-                <span class="tab-label">${b.name || t("branch") + " " + (i+1)}</span>
+            const name   = b.name || `${t("branch")} ${i+1}`;
+            html += `
+            <button class="tab-btn ${active?"tab-active":""}" data-branch="${i}" title="${t("renameBranch")}">
+                <span class="tab-num">${i+1}</span>
+                <span class="tab-label tab-renameable" data-branch-idx="${i}">${name}</span>
             </button>`;
         });
 
         html += `</div>`;
         el.innerHTML = html;
 
-        // Bind clicks
+        // ── Tab switch on single click ──
         el.querySelectorAll(".tab-btn").forEach(btn => {
-            btn.onclick = () => {
-                const idx = +btn.dataset.branch;
-                Store.setActiveBranch(idx);
-            };
+            btn.addEventListener("click", (e) => {
+                // Don't switch if we just finished editing
+                if(e.target.classList.contains("tab-label-editing")) return;
+                Store.setActiveBranch(+btn.dataset.branch);
+            });
+        });
+
+        // ── Double-click on label → inline edit (Excel style) ──
+        el.querySelectorAll(".tab-renameable").forEach(label => {
+            label.addEventListener("dblclick", (e) => {
+                e.stopPropagation();
+                const idx     = +label.dataset.branchIdx;
+                const current = label.textContent;
+
+                // Replace span content with input
+                label.classList.add("tab-label-editing");
+                label.innerHTML = `<input
+                    class="tab-inline-input"
+                    value="${current}"
+                    style="width:${Math.max(60, current.length * 8)}px"
+                >`;
+
+                const input = label.querySelector(".tab-inline-input");
+                input.focus();
+                input.select();
+
+                const save = () => {
+                    const val = input.value.trim() || `${t("branch")} ${idx+1}`;
+                    label.classList.remove("tab-label-editing");
+                    label.textContent = val;
+                    Store.setBranchName(idx, val);
+                };
+
+                input.onblur   = save;
+                input.onkeydown = (e) => {
+                    if(e.key === "Enter")  { e.preventDefault(); input.blur(); }
+                    if(e.key === "Escape") { input.value = current; input.blur(); }
+                    e.stopPropagation();
+                };
+                input.onclick = (e) => e.stopPropagation();
+            });
         });
     }
 };

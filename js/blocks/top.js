@@ -28,6 +28,8 @@ export const TopBlock = {
                     <option value="en">EN</option>
                     <option value="ru">RU</option>
                     <option value="he">HE</option>
+                    <option value="de">DE</option>
+                    <option value="fr">FR</option>
                 </select>
 
                 <span class="label">${t("activityCount")}</span>

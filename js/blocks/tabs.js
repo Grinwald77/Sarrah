@@ -98,17 +98,22 @@ export const TabsBlock = {
             Store.emit();
         };
 
-        input.addEventListener("blur",    commit);
+        input.addEventListener("blur",    revert);  // click away = cancel
         input.addEventListener("keydown", (e) => {
-            if(e.key === "Enter")  { e.preventDefault(); input.blur(); }
+            if(e.key === "Enter")  { e.preventDefault();
+                input.removeEventListener("blur", revert);
+                commit(); }
             if(e.key === "Escape") {
-                input.removeEventListener("blur", commit);
+                input.removeEventListener("blur", revert);
                 revert();
             }
             e.stopPropagation();
         });
         // Prevent click inside input from bubbling to btn
-        input.addEventListener("click",   (e) => e.stopPropagation());
-        input.addEventListener("mousedown",(e) => e.stopPropagation());
+        input.addEventListener("click",    (e) => e.stopPropagation());
+        input.addEventListener("mousedown", (e) => e.stopPropagation());
+        // Prevent button from reacting to Space key while input is focused
+        input.addEventListener("keyup",    (e) => e.stopPropagation());
+        input.addEventListener("keypress", (e) => e.stopPropagation());
     }
 };

@@ -98,13 +98,13 @@ export const TabsBlock = {
             Store.emit();
         };
 
-        input.addEventListener("blur",    revert);  // click away = cancel
+        // blur (click away OR Enter) → save
+        // Escape → cancel
+        input.addEventListener("blur", commit);
         input.addEventListener("keydown", (e) => {
-            if(e.key === "Enter")  { e.preventDefault();
-                input.removeEventListener("blur", revert);
-                commit(); }
+            if(e.key === "Enter")  { e.preventDefault(); input.blur(); }
             if(e.key === "Escape") {
-                input.removeEventListener("blur", revert);
+                input.removeEventListener("blur", commit);
                 revert();
             }
             e.stopPropagation();

@@ -142,7 +142,7 @@ export const TopBlock = {
                     });
                 }
                 branches.push({
-                    name: prevBranch?.name || `${t("branch")} ${bi+1}`,
+                    name: `${t("branch")} ${bi+1}`,   // always reset on BUILD
                     activities
                 });
             }

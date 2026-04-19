@@ -3,8 +3,13 @@ import { t } from '../i18n.js';
 
 export const TabsBlock = {
 
+    _editing: false,
+
     init(){
-        Store.subscribe(() => this.render());
+        Store.subscribe(() => {
+            if(this._editing) return;
+            this.render();
+        });
     },
 
     render(){
@@ -21,7 +26,7 @@ export const TabsBlock = {
 
         let html = `<div class="tabs-bar">`;
 
-        // General tab — not renameable
+        // General tab
         const sumActive = activeBranch === -1;
         html += `<button class="tab-btn ${sumActive?"tab-active":""}" data-branch="-1">
             <span class="tab-icon">Σ</span>
@@ -33,58 +38,79 @@ export const TabsBlock = {
             const active = activeBranch === i;
             const name   = b.name || `${t("branch")} ${i+1}`;
             html += `
-            <button class="tab-btn ${active?"tab-active":""}" data-branch="${i}" title="${t("renameBranch")}">
+            <button class="tab-btn ${active?"tab-active":""}" data-branch="${i}">
                 <span class="tab-num">${i+1}</span>
-                <span class="tab-label tab-renameable" data-branch-idx="${i}">${name}</span>
+                <span class="tab-label" data-branch-idx="${i}">${name}</span>
             </button>`;
         });
 
         html += `</div>`;
         el.innerHTML = html;
 
-        // ── Tab switch on single click ──
+        this._bindTabs(el);
+    },
+
+    _bindTabs(el){
+        // Track clicks per label for "second click on active = edit"
         el.querySelectorAll(".tab-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
-                // Don't switch if we just finished editing
-                if(e.target.classList.contains("tab-label-editing")) return;
-                Store.setActiveBranch(+btn.dataset.branch);
+                if(this._editing) return;
+
+                const idx = +btn.dataset.branch;
+                const isActive = Store.get("activeBranch") === idx;
+
+                if(!isActive){
+                    // First click — just switch
+                    Store.setActiveBranch(idx);
+                    return;
+                }
+
+                // Already on this tab — check if click was on the label text
+                const label = btn.querySelector(".tab-label[data-branch-idx]");
+                if(label && idx >= 0){
+                    this._startEdit(label, idx);
+                }
             });
         });
+    },
 
-        // ── Double-click on label → inline edit (Excel style) ──
-        el.querySelectorAll(".tab-renameable").forEach(label => {
-            label.addEventListener("dblclick", (e) => {
-                e.stopPropagation();
-                const idx     = +label.dataset.branchIdx;
-                const current = label.textContent;
+    _startEdit(label, idx){
+        if(this._editing) return;
+        this._editing = true;
 
-                // Replace span content with input
-                label.classList.add("tab-label-editing");
-                label.innerHTML = `<input
-                    class="tab-inline-input"
-                    value="${current}"
-                    style="width:${Math.max(60, current.length * 8)}px"
-                >`;
+        const current = label.textContent.trim();
 
-                const input = label.querySelector(".tab-inline-input");
-                input.focus();
-                input.select();
+        // Replace label text with input
+        label.textContent = "";
+        const input = document.createElement("input");
+        input.className = "tab-inline-input";
+        input.value = current;
+        input.style.width = Math.max(70, current.length * 9) + "px";
+        label.appendChild(input);
+        input.focus();
+        input.select();
 
-                const save = () => {
-                    const val = input.value.trim() || `${t("branch")} ${idx+1}`;
-                    label.classList.remove("tab-label-editing");
-                    label.textContent = val;
-                    Store.setBranchName(idx, val);
-                };
+        let done = false;
+        const save = () => {
+            if(done) return;
+            done = true;
+            this._editing = false;
+            const val = input.value.trim() || `${t("branch")} ${idx+1}`;
+            Store.setBranchName(idx, val);
+        };
+        const cancel = () => {
+            if(done) return;
+            done = true;
+            this._editing = false;
+            Store.emit();
+        };
 
-                input.onblur   = save;
-                input.onkeydown = (e) => {
-                    if(e.key === "Enter")  { e.preventDefault(); input.blur(); }
-                    if(e.key === "Escape") { input.value = current; input.blur(); }
-                    e.stopPropagation();
-                };
-                input.onclick = (e) => e.stopPropagation();
-            });
-        });
+        input.onblur    = save;
+        input.onkeydown = (e) => {
+            if(e.key === "Enter")  { e.preventDefault(); save(); }
+            if(e.key === "Escape") { input.onblur = null; cancel(); }
+            e.stopPropagation();
+        };
+        input.onclick = (e) => e.stopPropagation();
     }
 };

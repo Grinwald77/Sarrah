@@ -11,7 +11,7 @@ export const TabsBlock = {
         const el = document.getElementById("tabsBlock");
         if(!el) return;
 
-        // Don't re-render if an input is currently active inside tabsBlock
+        // Don't re-render if actively editing
         if(el.querySelector(".tab-inline-input")) return;
 
         if(!Store.get("built")){ el.innerHTML = ""; return; }
@@ -24,36 +24,35 @@ export const TabsBlock = {
 
         let html = `<div class="tabs-bar">`;
 
-        // General tab
+        // General tab — div not button, no special key behaviour
         const sumActive = activeBranch === -1;
-        html += `<button class="tab-btn ${sumActive?"tab-active":""}" data-branch="-1">
+        html += `<div class="tab-btn ${sumActive?"tab-active":""}" data-branch="-1" role="tab">
             <span class="tab-icon">Σ</span>
             <span class="tab-label">${t("summary")}</span>
-        </button>`;
+        </div>`;
 
         // Branch tabs
         branches.forEach((b, i) => {
             const active = activeBranch === i;
             const name   = b.name || `${t("branch")} ${i+1}`;
             html += `
-            <button class="tab-btn ${active?"tab-active":""}" data-branch="${i}">
+            <div class="tab-btn ${active?"tab-active":""}" data-branch="${i}" role="tab">
                 <span class="tab-num">${i+1}</span>
                 <span class="tab-label" data-branch-idx="${i}">${name}</span>
-            </button>`;
+            </div>`;
         });
 
         html += `</div>`;
         el.innerHTML = html;
 
-        // Single click → switch; click on already-active → edit
-        el.querySelectorAll(".tab-btn").forEach(btn => {
-            // Prevent Space from triggering click on button (Mac behaviour)
-            btn.addEventListener("keydown", (e) => {
-                if(e.key === " ") e.preventDefault();
+        el.querySelectorAll(".tab-btn").forEach(tab => {
+            tab.addEventListener("mousedown", (e) => {
+                // Prevent any focus stealing
+                e.preventDefault();
             });
 
-            btn.addEventListener("click", (e) => {
-                const idx      = +btn.dataset.branch;
+            tab.addEventListener("click", (e) => {
+                const idx      = +tab.dataset.branch;
                 const isActive = Store.get("activeBranch") === idx;
 
                 if(!isActive){
@@ -61,28 +60,27 @@ export const TabsBlock = {
                     return;
                 }
 
-                // Click on active branch label → start editing
+                // Second click on active branch → edit name
                 if(idx >= 0){
-                    const label = btn.querySelector(".tab-label[data-branch-idx]");
-                    if(label) this._startEdit(el, label, idx);
+                    const label = tab.querySelector(".tab-label[data-branch-idx]");
+                    if(label) this._startEdit(label, idx);
                 }
             });
         });
     },
 
-    _startEdit(container, label, idx){
+    _startEdit(label, idx){
         const current = label.textContent.trim();
 
-        // Swap label text for input in-place
         label.textContent = "";
         const input = document.createElement("input");
-        input.className = "tab-inline-input";
-        input.value     = current;
+        input.className   = "tab-inline-input";
+        input.value       = current;
         input.style.width = Math.max(80, current.length * 9) + "px";
         label.appendChild(input);
 
-        // Focus without triggering blur immediately
-        setTimeout(() => { input.focus(); input.select(); }, 0);
+        input.focus();
+        input.select();
 
         let committed = false;
 
@@ -90,7 +88,6 @@ export const TabsBlock = {
             if(committed) return;
             committed = true;
             const val = input.value.trim() || `${t("branch")} ${idx+1}`;
-            // Restore label before store update to avoid flicker
             label.textContent = val;
             Store.setBranchName(idx, val);
         };
@@ -99,26 +96,26 @@ export const TabsBlock = {
             if(committed) return;
             committed = true;
             label.textContent = current;
-            // No store update needed — just re-render
             Store.emit();
         };
 
-        // blur (click away OR Enter) → save
-        // Escape → cancel
+        // blur = commit (click away or Enter)
         input.addEventListener("blur", commit);
+
         input.addEventListener("keydown", (e) => {
-            if(e.key === "Enter")  { e.preventDefault(); input.blur(); }
-            if(e.key === "Escape") {
+            if(e.key === "Enter"){
+                e.preventDefault();
+                input.blur();
+            }
+            if(e.key === "Escape"){
                 input.removeEventListener("blur", commit);
                 revert();
             }
+            // Stop ALL keys from bubbling — nothing outside should react
             e.stopPropagation();
         });
-        // Prevent click inside input from bubbling to btn
-        input.addEventListener("click",    (e) => e.stopPropagation());
+
         input.addEventListener("mousedown", (e) => e.stopPropagation());
-        // Prevent button from reacting to Space key while input is focused
-        input.addEventListener("keyup",    (e) => e.stopPropagation());
-        input.addEventListener("keypress", (e) => e.stopPropagation());
+        input.addEventListener("click",     (e) => e.stopPropagation());
     }
 };

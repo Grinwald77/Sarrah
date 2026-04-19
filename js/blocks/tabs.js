@@ -47,6 +47,11 @@ export const TabsBlock = {
 
         // Single click → switch; click on already-active → edit
         el.querySelectorAll(".tab-btn").forEach(btn => {
+            // Prevent Space from triggering click on button (Mac behaviour)
+            btn.addEventListener("keydown", (e) => {
+                if(e.key === " ") e.preventDefault();
+            });
+
             btn.addEventListener("click", (e) => {
                 const idx      = +btn.dataset.branch;
                 const isActive = Store.get("activeBranch") === idx;

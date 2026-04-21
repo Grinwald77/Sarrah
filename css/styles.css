@@ -1641,3 +1641,60 @@ td.indent { padding-left: 28px !important; }
     max-width: 400px;
 }
 
+
+/* ===================================================
+   v6.2 — Analysis block layout rebuild
+   =================================================== */
+
+/* Reset and rebuild analysis */
+#analysisBlock {
+    padding: 16px 24px;
+}
+#analysisBlock b {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.analysis-grid {
+    display: table;
+    width: auto;
+    border-spacing: 0 2px;
+}
+.analysis-row {
+    display: table-row;
+}
+.analysis-label {
+    display: table-cell;
+    font-size: 12px;
+    color: var(--text2);
+    padding: 3px 24px 3px 0;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.analysis-val,
+.analysis-value {
+    display: table-cell;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: right;
+    padding: 3px 0;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.analysis-divider {
+    display: table-row;
+    height: 6px;
+}
+.analysis-divider::after {
+    display: table-cell;
+    content: "";
+}
+
+/* Tabs Branch translation fix — force lang re-render */
+.tab-label { font-family: var(--font-head); }
+

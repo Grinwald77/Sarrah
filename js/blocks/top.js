@@ -21,6 +21,7 @@ export const TopBlock = {
                     <div class="logo-sub">Revenue &amp; Cost Factor Analysis</div>
                 </div>
             </div>
+            <div class="top-user-zone" id="topUserZone"></div>
 
             <div class="top-controls-zone">
 
@@ -123,6 +124,7 @@ export const TopBlock = {
         document.getElementById("type1").value  = p.type1  || "Actual";
 
         this.addNavigation();
+        this.renderUser();
 
         document.getElementById("lang").value         = state.language;
         document.getElementById("activityType").value  = state.activityType || "activities";
@@ -403,6 +405,21 @@ export const TopBlock = {
         else period0.selectedIndex = 0;
         if(prev1 && [...period1.options].some(o => o.value === prev1)) period1.value = prev1;
         else period1.selectedIndex = 0;
+    },
+
+    renderUser(){
+        const el = document.getElementById("topUserZone");
+        if(!el) return;
+        try{
+            const user = JSON.parse(localStorage.getItem("sarrah_user"));
+            if(!user){ el.innerHTML = ""; return; }
+            el.innerHTML = `
+                <div class="top-user">
+                    <img class="top-user-pic" src="${user.picture||""}" alt="">
+                    <span class="top-user-name">${user.name||user.email||""}</span>
+                    <button class="top-signout-btn" onclick="(function(){localStorage.removeItem('sarrah_user');window.location.href='index.html';})()">Sign out</button>
+                </div>`;
+        }catch(e){ el.innerHTML = ""; }
     },
 
     addNavigation(){

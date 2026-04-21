@@ -12,86 +12,90 @@ export const TopBlock = {
         const state = Store.state;
 
         document.getElementById("topBlock").innerHTML = `
-        <div class="top-bar">
+        <div class="top-bar top-bar-two-rows">
 
-            <div class="logo-block">
-                <img src="assets/logo.png" class="logo" alt="Sarrah">
-                <div class="logo-text">
-                    <div class="logo-main">Sarrah BI Model:</div>
-                    <div class="logo-sub">Revenue &amp; Cost Factor Analysis</div>
+            <div class="top-row top-row-1">
+                <div class="logo-block">
+                    <img src="assets/logo.png" class="logo" alt="Sarrah">
+                    <div class="logo-text">
+                        <div class="logo-main">Sarrah BI Model:</div>
+                        <div class="logo-sub">Revenue &amp; Cost Factor Analysis</div>
+                    </div>
+                </div>
+
+                <div class="top-group">
+                    <span class="label">${t("language")}</span>
+                    <select id="lang">
+                        <option value="en">EN</option>
+                        <option value="ru">RU</option>
+                        <option value="he">HE</option>
+                        <option value="de">DE</option>
+                        <option value="fr">FR</option>
+                    </select>
+
+                    <span class="label">${t("activityType")}</span>
+                    <select id="activityType">
+                        <option value="activities">${t("activities")}</option>
+                        <option value="projects">${t("projects")}</option>
+                    </select>
+
+                    <span class="label">${t("activityCount")}</span>
+                    <input id="activityCount" type="number" min="1" max="5" value="${state.activityCount}" style="width:44px">
+
+                    <span class="label">${t("branchCount")}</span>
+                    <input id="branchCount" type="number" min="1" max="10" value="${state.branchCount || 1}" style="width:44px">
+
+                    <span class="label">${t("periodType")}</span>
+                    <select id="periodType">
+                        <option value="weeks">${t("weeks")}</option>
+                        <option value="months">${t("months")}</option>
+                        <option value="quarters">${t("quarters")}</option>
+                        <option value="years">${t("years")}</option>
+                    </select>
+
+                    <span class="label">${t("currency")}</span>
+                    <select id="currencyScale">
+                        <option value="USD|units">$</option>
+                        <option value="USD|thousands">Thds $</option>
+                        <option value="USD|millions">Mln $</option>
+                        <option value="EUR|units">€</option>
+                        <option value="EUR|thousands">Thds €</option>
+                        <option value="EUR|millions">Mln €</option>
+                        <option value="ILS|units">₪</option>
+                        <option value="ILS|thousands">Thds ₪</option>
+                        <option value="ILS|millions">Mln ₪</option>
+                        <option value="RUB|units">₽</option>
+                        <option value="RUB|thousands">Thds ₽</option>
+                        <option value="RUB|millions">Mln ₽</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="top-group">
-                <span class="label">${t("language")}</span>
-                <select id="lang">
-                    <option value="en">EN</option>
-                    <option value="ru">RU</option>
-                    <option value="he">HE</option>
-                    <option value="de">DE</option>
-                    <option value="fr">FR</option>
-                </select>
+            <div class="top-row top-row-2">
+                <div class="top-group">
+                    <span class="label">${t("sourcePeriod")}</span>
+                    <select id="period0"></select>
+                    <select id="year0"></select>
+                    <select id="type0">
+                        <option value="Actual">${t("actual")}</option>
+                        <option value="Planned">${t("planned")}</option>
+                    </select>
+                </div>
 
-                <span class="label">${t("activityType")}</span>
-                <select id="activityType">
-                    <option value="activities">${t("activities")}</option>
-                    <option value="projects">${t("projects")}</option>
-                </select>
+                <div class="top-group">
+                    <span class="label">${t("current")}</span>
+                    <select id="period1"></select>
+                    <select id="year1"></select>
+                    <select id="type1">
+                        <option value="Actual">${t("actual")}</option>
+                        <option value="Planned">${t("planned")}</option>
+                    </select>
+                </div>
 
-                <span class="label">${t("activityCount")}</span>
-                <input id="activityCount" type="number" min="1" max="5" value="${state.activityCount}" style="width:44px">
-
-                <span class="label">${t("branchCount")}</span>
-                <input id="branchCount" type="number" min="1" max="10" value="${state.branchCount || 1}" style="width:44px">
-
-                <span class="label">${t("periodType")}</span>
-                <select id="periodType">
-                    <option value="weeks">${t("weeks")}</option>
-                    <option value="months">${t("months")}</option>
-                    <option value="quarters">${t("quarters")}</option>
-                    <option value="years">${t("years")}</option>
-               </select>
-
-                <span class="label">${t("currency")}</span>
-                <select id="currencyScale">
-                    <option value="USD|units">$</option>
-                    <option value="USD|thousands">Thds $</option>
-                    <option value="USD|millions">Mln $</option>
-                    <option value="EUR|units">€</option>
-                    <option value="EUR|thousands">Thds €</option>
-                    <option value="EUR|millions">Mln €</option>
-                    <option value="ILS|units">₪</option>
-                    <option value="ILS|thousands">Thds ₪</option>
-                    <option value="ILS|millions">Mln ₪</option>
-                    <option value="RUB|units">₽</option>
-                    <option value="RUB|thousands">Thds ₽</option>
-                    <option value="RUB|millions">Mln ₽</option>
-                </select>
-            </div>
-
-            <div class="top-group">
-                <span class="label">${t("source")}</span>
-                <select id="period0"></select>
-                <select id="year0"></select>
-                <select id="type0">
-                    <option value="Actual">${t("actual")}</option>
-                    <option value="Planned">${t("planned")}</option>
-                </select>
-            </div>
-
-            <div class="top-group">
-                <span class="label">${t("current")}</span>
-                <select id="period1"></select>
-                <select id="year1"></select>
-                <select id="type1">
-                    <option value="Actual">${t("actual")}</option>
-                    <option value="Planned">${t("planned")}</option>
-                </select>
-            </div>
-
-            <div class="top-group">
-                <button id="buildBtn" class="build-btn">${t("build")}</button>
-                <button id="testBtn" class="test-btn">${t("test")}</button>
+                <div class="top-group">
+                    <button id="buildBtn" class="build-btn">${t("build")}</button>
+                    <button id="testBtn" class="test-btn">${t("test")}</button>
+                </div>
             </div>
 
         </div>

@@ -80,8 +80,8 @@ export const Dict = {
         years:          "Годы",
 
         units:          "Единицы",
-        thousands:      "Тысячи",
-        millions:       "Миллионы",
+        thousands:      "Тыс.",
+        millions:       "Млн.",
 
         actual:         "Факт",
         planned:        "План",
@@ -141,8 +141,8 @@ export const Dict = {
         years:          "שנים",
 
         units:          "יחידות",
-        thousands:      "אלפים",
-        millions:       "מיליונים",
+        thousands:      "אלפ'",
+        millions:       "מיל'",
 
         actual:         "בפועל",
         planned:        "מתוכנן",
@@ -202,8 +202,8 @@ export const Dict = {
         years:          "Jahre",
 
         units:          "Einheiten",
-        thousands:      "Tausende",
-        millions:       "Millionen",
+        thousands:      "Tsd.",
+        millions:       "Mio.",
 
         actual:         "Ist",
         planned:        "Plan",
@@ -324,8 +324,8 @@ export const Dict = {
         years:          "Jahre",
 
         units:          "Einheiten",
-        thousands:      "Tausende",
-        millions:       "Millionen",
+        thousands:      "Tsd.",
+        millions:       "Mio.",
 
         actual:         "Ist",
         planned:        "Plan",

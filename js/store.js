@@ -21,6 +21,7 @@ export const Store = {
             activityCount: 2,
             built:         false,
 
+            activityType: "activities",
             language:   "en",
             currency:   "ILS",
             scale:      "units",

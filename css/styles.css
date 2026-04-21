@@ -1535,3 +1535,56 @@ td.indent { padding-left: 28px !important; }
     gap: 16px;
 }
 
+
+/* ===================================================
+   Top bar — logo zone + controls zone layout
+   =================================================== */
+
+.top-bar-two-rows {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+/* Logo zone — fixed width, never shrinks */
+.top-logo-zone {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    flex-shrink: 0;
+    border-inline-end: 1px solid rgba(255,255,255,0.1);
+    min-width: 220px;
+}
+
+/* Controls zone — takes remaining space, two rows inside */
+.top-controls-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.top-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 8px 20px;
+}
+
+.top-row-1 {
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+/* RTL — logo on right, controls on left */
+[dir="rtl"] .top-bar-two-rows {
+    flex-direction: row-reverse !important;
+}
+[dir="rtl"] .top-logo-zone {
+    border-inline-end: none;
+    border-inline-start: 1px solid rgba(255,255,255,0.1);
+}
+

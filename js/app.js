@@ -1,3 +1,4 @@
+import { Store }         from './store.js';
 import { TopBlock }      from './blocks/top.js';
 import { TabsBlock }     from './blocks/tabs.js';
 import { TableGeneral }  from './blocks/table-general.js';

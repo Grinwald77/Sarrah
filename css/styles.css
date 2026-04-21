@@ -1455,3 +1455,55 @@ td input[readonly] {
     font-size: 28px !important;
 }
 
+
+/* ===================================================
+   General tab — hierarchy rows
+   =================================================== */
+
+.row-total td { font-weight: 600; background: #1a3660; color: #fff; }
+.row-total td.green { color: #86efac !important; }
+.row-total td.red   { color: #fca5a5 !important; }
+
+.row-branch td {
+    background: #e8eef8;
+    font-weight: 500;
+    color: #1a3660;
+}
+.row-branch td.green { color: #1a7a3c !important; }
+.row-branch td.red   { color: #c0392b !important; }
+
+.row-group td { background: #fff; }
+
+td.indent { padding-left: 28px !important; }
+
+.collapse-branch-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 6px 0 0;
+    font-size: 12px;
+    color: #3a5070;
+    vertical-align: middle;
+}
+.collapse-icon-sm {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+}
+
+.branch-badge {
+    display: inline-block;
+    background: #e8eef8;
+    color: #1a3660;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.activity-block-multi,
+.activity-block-unique,
+.activity-block-single {
+    margin-bottom: 24px;
+}

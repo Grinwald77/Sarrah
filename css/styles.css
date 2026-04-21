@@ -1507,3 +1507,31 @@ td.indent { padding-left: 28px !important; }
 .activity-block-single {
     margin-bottom: 24px;
 }
+
+/* ===================================================
+   Top bar — two rows layout
+   =================================================== */
+
+.top-bar-two-rows {
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding: 0 !important;
+}
+
+.top-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 24px;
+    width: 100%;
+}
+
+.top-row-1 {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.top-row-2 {
+    gap: 16px;
+}
+

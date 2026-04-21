@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────
 import { Store }  from '../store.js';
 import { t }      from '../i18n.js';
-import { sectionMeta, renderFactors } from './table-helpers.js';
+import { sectionMeta } from './table-helpers.js';
 import { renderTableMulti,  bindTableMulti  } from './table-multi.js';
 import { renderTableUnique, bindTableUnique } from './table-unique.js';
 import { renderTableSingle, bindTableSingle } from './table-single.js';
@@ -83,12 +83,6 @@ export const TableGeneral = {
         if(singleData.length){
             html += renderTableSingle(singleData, `s${uid++}`);
         }
-
-        // ── Combined factor analysis for all General data ──
-        const allActivitiesForAnalysis = branches.flatMap(b => b.activities || []);
-        html += `<div class="general-analysis-wrap">`;
-        html += renderFactors(allActivitiesForAnalysis, t);
-        html += `</div>`;
 
         el.innerHTML = html;
 

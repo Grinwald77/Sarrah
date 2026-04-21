@@ -1751,3 +1751,14 @@ td.indent { padding-left: 28px !important; }
     white-space: nowrap;
 }
 .top-signout-btn:hover { color: #fff; }
+
+/* ── Top user zone — right side, v6.5b ── */
+.top-user-zone {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 20px !important;
+    border-inline-end: none !important;
+    border-inline-start: 1px solid rgba(255,255,255,0.1) !important;
+    flex-shrink: 0 !important;
+    margin-inline-start: auto !important;
+}

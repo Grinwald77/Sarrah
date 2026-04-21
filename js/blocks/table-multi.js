@@ -5,7 +5,7 @@
 //  Each level collapsible independently
 // ─────────────────────────────────────────────
 import { t } from '../i18n.js';
-import { fmt, periodLabel, groupRevs, renderFactors } from './table-helpers.js';
+import { fmt, periodLabel, groupRevs } from './table-helpers.js';
 
 // activityName: string
 // branchData: [{ branchName, activities: [act] }]
@@ -145,7 +145,6 @@ export function renderTableMulti(activityName, branchData, uid){
     });
 
     html += `</tbody></table>`;
-    html += renderFactors(allActivities, t);
     html += `</div></div>`;
     return html;
 }

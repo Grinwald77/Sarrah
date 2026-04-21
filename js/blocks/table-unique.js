@@ -5,7 +5,7 @@
 //  Hierarchy: Total → Branch label → Groups
 // ─────────────────────────────────────────────
 import { t } from '../i18n.js';
-import { fmt, periodLabel, groupRevs, renderFactors } from './table-helpers.js';
+import { fmt, periodLabel, groupRevs } from './table-helpers.js';
 
 export function renderTableUnique(activityName, branchName, act, uid){
     const col0 = periodLabel("type0","period0","year0");
@@ -110,7 +110,6 @@ export function renderTableUnique(activityName, branchName, act, uid){
     });
 
     html += `</tbody></table>`;
-    html += renderFactors([act], t);
     html += `</div></div>`;
     return html;
 }

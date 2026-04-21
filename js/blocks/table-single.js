@@ -4,7 +4,7 @@
 //  Hierarchy: Total → Branch → Activity/Group
 // ─────────────────────────────────────────────
 import { t } from '../i18n.js';
-import { fmt, periodLabel, groupRevs, renderFactors } from './table-helpers.js';
+import { fmt, periodLabel, groupRevs } from './table-helpers.js';
 
 // branchData: [{ branchName, activities: [singleFactor acts] }]
 export function renderTableSingle(branchData, uid){
@@ -124,7 +124,6 @@ export function renderTableSingle(branchData, uid){
     });
 
     html += `</tbody></table>`;
-    html += renderFactors(allActivities, t);
     html += `</div></div>`;
     return html;
 }

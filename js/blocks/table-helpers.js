@@ -49,6 +49,25 @@ export function sectionMeta(){
     return meta;
 }
 
+// Full table title: branch · activityName · periodCategory · period0–period1 · currency+scale
+export function tableTitle({ branchName, activityName, isSummary } = {}){
+    const p   = Store.get("periods") || {};
+    const sym = getCurrencySymbol();
+    const sc  = getScaleShort();
+    const pt  = Store.get("periodType") || "quarters";
+    const col0 = periodLabelText("type0","period0","year0");
+    const col1 = periodLabelText("type1","period1","year1");
+    const unit = [sc, sym].filter(Boolean).join(" ");
+
+    const parts = [];
+    if(branchName)   parts.push(branchName);
+    if(activityName) parts.push(activityName);
+    if(pt)           parts.push(pt.charAt(0).toUpperCase() + pt.slice(1));
+    parts.push(`${col0} — ${col1}`);
+    if(unit)         parts.push(unit);
+    return parts.join(" · ");
+}
+
 // Compute rev for a group
 export function groupRevs(g, single){
     const r0 = single ? (+g.revenue0||0) : (+g.quantity0||0)*(+g.price0||0);

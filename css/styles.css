@@ -1711,3 +1711,43 @@ td.indent { padding-left: 28px !important; }
     padding: 0 !important;
     padding-bottom: 1px !important;
 }
+
+/* ── Top bar user zone ── */
+.top-user-zone {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-inline-end: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+.top-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.top-user-pic {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.top-user-name {
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    font-family: var(--font-head);
+    white-space: nowrap;
+}
+.top-signout-btn {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-head);
+    text-decoration: underline;
+    padding: 0;
+    white-space: nowrap;
+}
+.top-signout-btn:hover { color: #fff; }

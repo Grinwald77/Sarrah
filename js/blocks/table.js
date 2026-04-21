@@ -124,14 +124,13 @@ export const TableBlock = {
         const activeBranch = Store.get("activeBranch");
         const isSummary    = branchCount > 1 && activeBranch === -1;
 
-        // Get activities for current view
-        let activities = [];
+        // General tab → delegate to TableGeneral
         if(isSummary){
-            // Summary: aggregate all branches into virtual activities
-            activities = this._aggregateBranches(branches);
-        } else {
-            activities = branches[activeBranch]?.activities || [];
+            import('../blocks/table-general.js').then(m => m.TableGeneral.render());
+            return;
         }
+
+        let activities = branches[activeBranch]?.activities || [];
 
         if(!activities || !activities.length){
             document.getElementById("tableBlock").innerHTML = `

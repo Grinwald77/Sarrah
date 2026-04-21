@@ -32,6 +32,12 @@ export const TopBlock = {
                     <option value="fr">FR</option>
                 </select>
 
+                <span class="label">${t("activityType")}</span>
+                <select id="activityType">
+                    <option value="activities">${t("activities")}</option>
+                    <option value="projects">${t("projects")}</option>
+                </select>
+
                 <span class="label">${t("activityCount")}</span>
                 <input id="activityCount" type="number" min="1" max="5" value="${state.activityCount}" style="width:44px">
 
@@ -40,25 +46,26 @@ export const TopBlock = {
 
                 <span class="label">${t("periodType")}</span>
                 <select id="periodType">
-                    <option value="months">${t("months")}</option>
                     <option value="weeks">${t("weeks")}</option>
+                    <option value="months">${t("months")}</option>
                     <option value="quarters">${t("quarters")}</option>
                     <option value="years">${t("years")}</option>
                </select>
 
                 <span class="label">${t("currency")}</span>
-                <select id="currency">
-                    <option value="USD">$</option>
-                    <option value="EUR">€</option>
-                    <option value="ILS">₪</option>
-                    <option value="RUB">₽</option>
-                </select>
-
-                <span class="label">${t("scale")}</span>
-                <select id="scale">
-                    <option value="units">${t("units")}</option>
-                    <option value="thousands">${t("thousands")}</option>
-                    <option value="millions">${t("millions")}</option>
+                <select id="currencyScale">
+                    <option value="USD|units">$</option>
+                    <option value="USD|thousands">Thds $</option>
+                    <option value="USD|millions">Mln $</option>
+                    <option value="EUR|units">€</option>
+                    <option value="EUR|thousands">Thds €</option>
+                    <option value="EUR|millions">Mln €</option>
+                    <option value="ILS|units">₪</option>
+                    <option value="ILS|thousands">Thds ₪</option>
+                    <option value="ILS|millions">Mln ₪</option>
+                    <option value="RUB|units">₽</option>
+                    <option value="RUB|thousands">Thds ₽</option>
+                    <option value="RUB|millions">Mln ₽</option>
                 </select>
             </div>
 
@@ -106,9 +113,11 @@ export const TopBlock = {
 
         this.addNavigation();
 
-        document.getElementById("lang").value     = state.language;
-        document.getElementById("currency").value = state.currency || "ILS";
-        document.getElementById("scale").value    = state.scale    || "units";
+        document.getElementById("lang").value = state.language;
+        document.getElementById("activityType").value = state.activityType || "activities";
+        const csEl = document.getElementById("currencyScale");
+        const csVal = (state.currency || "ILS") + "|" + (state.scale || "units");
+        if([...csEl.options].some(o => o.value === csVal)) csEl.value = csVal;
     },
 
 
@@ -186,6 +195,20 @@ export const TopBlock = {
         };
 
         // LANGUAGE
+        document.getElementById("currencyScale").onchange = (e) => {
+            const [cur, scl] = e.target.value.split("|");
+            Store.state.currency = cur;
+            Store.state.scale    = scl;
+            Store._save();
+            if(Store.get("built")) Store.emit();
+        };
+
+        document.getElementById("activityType").onchange = (e) => {
+            Store.state.activityType = e.target.value;
+            Store._save();
+            if(Store.get("built")) Store.emit();
+        };
+
         document.getElementById("lang").onchange = (e) => {
 
             const ui = this._captureUI();
@@ -272,8 +295,8 @@ export const TopBlock = {
 
     _captureUI(){
         return {
-            currency:   document.getElementById("currency")?.value,
-            scale:      document.getElementById("scale")?.value,
+            currency:   (document.getElementById("currencyScale")?.value||"ILS|units").split("|")[0],
+            scale:      (document.getElementById("currencyScale")?.value||"ILS|units").split("|")[1],
             activityCount: document.getElementById("activityCount").value,
             periodType: document.getElementById("periodType").value,
             year0:      document.getElementById("year0").value,
@@ -295,8 +318,11 @@ export const TopBlock = {
         document.getElementById("period1").value = ui.period1;
         document.getElementById("type0").value   = ui.type0;
         document.getElementById("type1").value   = ui.type1;
-        if(ui.currency) document.getElementById("currency").value = ui.currency;
-        if(ui.scale)    document.getElementById("scale").value    = ui.scale;
+        const csEl = document.getElementById("currencyScale");
+        if(csEl && ui.currency && ui.scale){
+            const csVal = ui.currency + "|" + ui.scale;
+            if([...csEl.options].some(o => o.value === csVal)) csEl.value = csVal;
+        }
     },
 
     fillYears(){
@@ -315,10 +341,22 @@ export const TopBlock = {
         const lang = Store.get("language");
 
         const months = {
-            en:["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
-            ru:["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
-            he:["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"]
+            en: ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
+            ru: ["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
+            he: ["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"],
+            de: ["Jan.","Feb.","Mär.","Apr.","Mai","Jun.","Jul.","Aug.","Sep.","Okt.","Nov.","Dez."],
+            fr: ["Jan.","Fév.","Mar.","Avr.","Mai","Jun.","Jul.","Aoû.","Sep.","Oct.","Nov.","Déc."]
         };
+
+        const quarters = {
+            en: ["Q1","Q2","Q3","Q4"],
+            ru: ["К1","К2","К3","К4"],
+            he: ["Q1","Q2","Q3","Q4"],
+            de: ["Q1","Q2","Q3","Q4"],
+            fr: ["T1","T2","T3","T4"]
+        };
+
+        const weekPrefix = { en:"W", ru:"Н", he:"W", de:"W", fr:"S" };
 
         const period0 = document.getElementById("period0");
         const period1 = document.getElementById("period1");
@@ -331,10 +369,11 @@ export const TopBlock = {
 
         period0.disabled = false; period1.disabled = false;
 
+        const pfx = weekPrefix[lang] || "W";
         let list = [];
-        if(type === "months")   list = months[lang] || months.en;
-        if(type === "weeks")    list = Array.from({length:52}, (_,i) => `W${i+1}`);
-        if(type === "quarters") list = ["Q1","Q2","Q3","Q4"];
+        if(type === "weeks")    list = Array.from({length:52}, (_,i) => `${pfx}${i+1}`);
+        if(type === "months")   list = months[lang]   || months.en;
+        if(type === "quarters") list = quarters[lang] || quarters.en;
 
         const prev0 = Store.get("periods")?.period0;
         const prev1 = Store.get("periods")?.period1;

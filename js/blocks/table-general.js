@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────
 import { Store }  from '../store.js';
 import { t }      from '../i18n.js';
-import { sectionMeta } from './table-helpers.js';
+import { sectionMeta, fmt, periodLabel } from './table-helpers.js';
 import { renderTableMulti,  bindTableMulti  } from './table-multi.js';
 import { renderTableUnique, bindTableUnique } from './table-unique.js';
 import { renderTableSingle, bindTableSingle } from './table-single.js';
@@ -82,6 +82,83 @@ export const TableGeneral = {
         // Single-factor table (type 3)
         if(singleData.length){
             html += renderTableSingle(singleData, `s${uid++}`);
+        }
+
+        // ── Grand Total across all tables ──
+        const col0 = periodLabel("type0","period0","year0");
+        const col1 = periodLabel("type1","period1","year1");
+
+        // Collect totals per activity name
+        const actTotals = new Map(); // name → {R0, R1}
+        let grandR0 = 0, grandR1 = 0;
+
+        branches.forEach((branch, bi) => {
+            (branch.activities||[]).forEach(act => {
+                const single = !!act.singleFactor;
+                const name = single ? t("factorSingle") : (act.name || `${t("activityName")} ${bi+1}`);
+                let R0=0, R1=0;
+                (act.groups||[]).forEach(g => {
+                    R0 += single ? (+g.revenue0||0) : (+g.quantity0||0)*(+g.price0||0);
+                    R1 += single ? (+g.revenue1||0) : (+g.quantity1||0)*(+g.price1||0);
+                });
+                const prev = actTotals.get(name) || {R0:0, R1:0};
+                actTotals.set(name, {R0: prev.R0+R0, R1: prev.R1+R1});
+                grandR0 += R0; grandR1 += R1;
+            });
+        });
+
+        if(actTotals.size > 0){
+            const gdR    = grandR1 - grandR0;
+            const gdRpct = grandR0 ? gdR/grandR0*100 : 0;
+
+            html += `
+            <div class="grand-total-block">
+                <div class="section-header" style="margin-bottom:0">
+                    <div class="section-title">${t("grandTotal")}</div>
+                    <div class="section-meta">${meta}</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>${t("activityName")}</th>
+                            <th>${col0}</th><th>${col1}</th>
+                            <th>${t("change")}</th><th>${t("changePct")}</th>
+                            <th>${col0}</th><th>${col1}</th>
+                            <th>${t("deltaShare")}</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            actTotals.forEach(({R0, R1}, name) => {
+                const d    = R1 - R0;
+                const dpct = R0 ? d/R0*100 : 0;
+                const s0   = grandR0 ? R0/grandR0*100 : 0;
+                const s1   = grandR1 ? R1/grandR1*100 : 0;
+                const ds   = s1 - s0;
+                html += `
+                    <tr>
+                        <td>${name}</td>
+                        <td>${fmt(R0)}</td><td>${fmt(R1)}</td>
+                        <td class="${d>=0?"green":"red"}">${fmt(d)}</td>
+                        <td>${dpct.toFixed(1)}%</td>
+                        <td>${s0.toFixed(1)}%</td><td>${s1.toFixed(1)}%</td>
+                        <td class="${ds>=0?"green":"red"}">${ds.toFixed(1)}</td>
+                    </tr>`;
+            });
+
+            html += `
+                    </tbody>
+                    <tfoot>
+                        <tr class="total">
+                            <td>${t("grandTotal")}</td>
+                            <td>${fmt(grandR0)}</td><td>${fmt(grandR1)}</td>
+                            <td class="${gdR>=0?"green":"red"}">${fmt(gdR)}</td>
+                            <td>${gdRpct.toFixed(1)}%</td>
+                            <td>100%</td><td>100%</td><td>0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>`;
         }
 
         el.innerHTML = html;

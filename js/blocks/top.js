@@ -21,7 +21,6 @@ export const TopBlock = {
                     <div class="logo-sub">Revenue &amp; Cost Factor Analysis</div>
                 </div>
             </div>
-            <div class="top-user-zone" id="topUserZone"></div>
 
             <div class="top-controls-zone">
 
@@ -105,6 +104,8 @@ export const TopBlock = {
                 </div>
 
             </div>
+
+            <div class="top-user-zone" id="topUserZone"></div>
 
         </div>
         `;

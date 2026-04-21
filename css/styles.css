@@ -1588,3 +1588,56 @@ td.indent { padding-left: 28px !important; }
     border-inline-start: 1px solid rgba(255,255,255,0.1);
 }
 
+
+/* ===================================================
+   v6.0 patches
+   =================================================== */
+
+/* 4. General tab total row — grey text on dark bg */
+.activity-block-multi  .row-total td,
+.activity-block-unique .row-total td,
+.activity-block-single .row-total td {
+    color: #b0bdd0 !important;
+    font-weight: 600;
+}
+.activity-block-multi  .row-total td.green,
+.activity-block-unique .row-total td.green,
+.activity-block-single .row-total td.green { color: #86efac !important; }
+.activity-block-multi  .row-total td.red,
+.activity-block-unique .row-total td.red,
+.activity-block-single .row-total td.red   { color: #fca5a5 !important; }
+
+/* 7. Analysis — values closer to labels */
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 16px;
+    max-width: 400px;
+}
+.analysis-row {
+    display: contents;
+}
+.analysis-label {
+    font-size: 12px;
+    color: var(--text2);
+    white-space: nowrap;
+    padding: 3px 0;
+}
+.analysis-val, .analysis-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: right;
+    padding: 3px 0;
+    white-space: nowrap;
+}
+
+/* General combined analysis wrap */
+.general-analysis-wrap {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 2px solid #c8d4e8;
+}
+.general-analysis-wrap .analysis-block {
+    max-width: 400px;
+}
+

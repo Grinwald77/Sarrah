@@ -1698,3 +1698,16 @@ td.indent { padding-left: 28px !important; }
 /* Tabs Branch translation fix — force lang re-render */
 .tab-label { font-family: var(--font-head); }
 
+
+/* ── Collapse icon centering fix ── */
+.collapse-icon-box {
+    width: 16px !important;
+    height: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    font-size: 14px !important;
+    padding: 0 !important;
+    padding-bottom: 1px !important;
+}

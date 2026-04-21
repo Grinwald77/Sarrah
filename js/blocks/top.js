@@ -236,15 +236,6 @@ export const TopBlock = {
             }
         };
 
-        document.getElementById("currency").onchange = (e) => {
-            if(!Store.get("built")){ Store.state.currency = e.target.value; Store._save(); }
-            else Store.set("currency", e.target.value);
-        };
-        document.getElementById("scale").onchange = (e) => {
-            if(!Store.get("built")){ Store.state.scale = e.target.value; Store._save(); }
-            else Store.set("scale", e.target.value);
-        };
-
         document.getElementById("activityCount").onchange = (e) => {
             let n = Math.min(5, Math.max(1, +e.target.value || 1));
             e.target.value = n;

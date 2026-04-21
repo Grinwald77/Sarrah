@@ -64,7 +64,7 @@ export const TopBlock = {
                         <select id="currency">
                             <option value="USD">$ US Dollar</option>
                             <option value="EUR">€ Euro</option>
-                            <option value="ILS">₪ New Shekel</option>
+                            <option value="ILS">₪ ILS</option>
                             <option value="RUB">₽ Ruble</option>
                         </select>
                     </div>

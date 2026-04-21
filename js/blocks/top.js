@@ -162,7 +162,7 @@ export const TopBlock = {
                     });
                 }
                 branches.push({
-                    name: `${t("branch")} ${bi+1}`,   // always reset on BUILD
+                    name: "",   // empty — tabs render t("branch") N dynamically
                     activities
                 });
             }
@@ -292,13 +292,15 @@ export const TopBlock = {
     },
 
     updateScaleLabels(currency){
-        const sym = { USD:"$", EUR:"€", ILS:"₪", RUB:"₽" }[currency] || currency;
-        const sel = document.getElementById("scale");
+        const sym  = { USD:"$", EUR:"€", ILS:"₪", RUB:"₽" }[currency] || currency;
+        const thds = t("thousands");
+        const mlns = t("millions");
+        const sel  = document.getElementById("scale");
         if(!sel) return;
         const cur = sel.value;
         sel.options[0].text = sym;
-        sel.options[1].text = `Thds ${sym}`;
-        sel.options[2].text = `Mln ${sym}`;
+        sel.options[1].text = `${thds} ${sym}`;
+        sel.options[2].text = `${mlns} ${sym}`;
         sel.value = cur;
     },
 

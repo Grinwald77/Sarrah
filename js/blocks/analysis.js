@@ -19,7 +19,6 @@ function fmtSigned(v){
 }
 function colorCls(v){ return v < 0 ? "red" : v > 0 ? "green" : ""; }
 
-// Summary row (label + value)
 function sumRow(label, value, colored = false){
     const cls = colored ? colorCls(value) : "";
     const val = colored ? fmtSigned(value) : fmt(value);
@@ -29,20 +28,102 @@ function sumRow(label, value, colored = false){
     </div>`;
 }
 
-// Render detail rows for one effect type across activities/groups
-// items: [{ label, value }]
-function detailSection(title, items, colorize = true){
-    if(!items.length) return "";
-    const rows = items.map(it => `
-        <div class="analysis-detail-row">
-            <span class="analysis-detail-label">${it.label}</span>
-            <span class="analysis-detail-val ${colorize ? colorCls(it.value) : ""}">${fmtSigned(it.value)}</span>
-        </div>`).join("");
-    return `
-    <div class="analysis-detail-block">
-        <div class="analysis-detail-title">${title}</div>
-        ${rows}
-    </div>`;
+// Build collapsible tree for one effect type
+// effectKey: 'q' | 'p' | 's'
+// branches: detailed branch data from calcDetailed
+function effectTree(title, effectKey, branches, multipleB, uid){
+    // Collect total for this effect across all branches
+    let total = 0;
+    branches.forEach(br => {
+        br.activities.forEach(act => {
+            if(effectKey === 's' && act.singleFactor){
+                act.groups.forEach(g => { total += g.s || 0; });
+            } else if(effectKey !== 's' && !act.singleFactor){
+                act.groups.forEach(g => { total += g[effectKey] || 0; });
+            }
+        });
+    });
+
+    if(total === 0) return "";
+
+    let html = `
+    <div class="af-effect" data-uid="${uid}">
+        <div class="af-effect-header" onclick="this.parentNode.classList.toggle('af-open')">
+            <span class="af-toggle">▶</span>
+            <span class="af-effect-title">${title}</span>
+            <span class="af-effect-total ${colorCls(total)}">${fmtSigned(total)}</span>
+        </div>
+        <div class="af-effect-body">`;
+
+    branches.forEach((br, bi) => {
+        let brTotal = 0;
+        const brActivities = [];
+
+        br.activities.forEach(act => {
+            let actTotal = 0;
+            const actGroups = [];
+
+            if(effectKey === 's' && act.singleFactor){
+                act.groups.forEach(g => {
+                    const v = g.s || 0;
+                    if(v !== 0){ actTotal += v; actGroups.push({ name: g.name, value: v }); }
+                });
+            } else if(effectKey !== 's' && !act.singleFactor){
+                act.groups.forEach(g => {
+                    const v = g[effectKey] || 0;
+                    if(v !== 0){ actTotal += v; actGroups.push({ name: g.name, value: v }); }
+                });
+            }
+
+            if(actTotal !== 0){
+                brTotal += actTotal;
+                brActivities.push({ name: act.name, total: actTotal, groups: actGroups });
+            }
+        });
+
+        if(brTotal === 0) return;
+
+        const brId = `${uid}-b${bi}`;
+        if(multipleB){
+            html += `
+            <div class="af-branch" data-uid="${brId}">
+                <div class="af-branch-header" onclick="this.parentNode.classList.toggle('af-open')">
+                    <span class="af-toggle">▶</span>
+                    <span class="af-branch-name">${br.name || t("branch") + " " + (bi+1)}</span>
+                    <span class="af-branch-total ${colorCls(brTotal)}">${fmtSigned(brTotal)}</span>
+                </div>
+                <div class="af-branch-body">`;
+        }
+
+        brActivities.forEach((act, ai) => {
+            const actId = `${brId}-a${ai}`;
+            html += `
+            <div class="af-activity" data-uid="${actId}">
+                <div class="af-activity-header" onclick="this.parentNode.classList.toggle('af-open')">
+                    <span class="af-toggle">▶</span>
+                    <span class="af-activity-name">${act.name}</span>
+                    <span class="af-activity-total ${colorCls(act.total)}">${fmtSigned(act.total)}</span>
+                </div>
+                <div class="af-activity-body">`;
+
+            act.groups.forEach(g => {
+                html += `
+                <div class="af-group-row">
+                    <span class="af-group-name">${g.name || t("group")}</span>
+                    <span class="af-group-val ${colorCls(g.value)}">${fmtSigned(g.value)}</span>
+                </div>`;
+            });
+
+            html += `</div></div>`;
+        });
+
+        if(multipleB){
+            html += `</div></div>`;
+        }
+    });
+
+    html += `</div></div>`;
+    return html;
 }
 
 export const AnalysisBlock = {
@@ -63,7 +144,6 @@ export const AnalysisBlock = {
         const isSummary    = branchCount > 1 && activeBranch === -1;
         const multipleB    = branchCount > 1;
 
-        // Determine which branches to analyse
         let branchesForAnalysis = [];
         if(isSummary){
             branchesForAnalysis = branches;
@@ -74,12 +154,10 @@ export const AnalysisBlock = {
 
         if(!branchesForAnalysis.length){ el.innerHTML = ""; return; }
 
-        // Use detailed calc
         const d = FactorModel.calcDetailed(branchesForAnalysis);
-
         if(d.R0 === 0 && d.R1 === 0){ el.innerHTML = ""; return; }
 
-        // ── Top summary ──
+        // Summary
         let html = `
         <div class="analysis-grid">
             ${sumRow(t("revenue") + " " + t("initial"), d.R0)}
@@ -91,36 +169,19 @@ export const AnalysisBlock = {
             ${d.hasSingle ? sumRow(t("factorSingle"), d.s, true) : ""}
         </div>`;
 
-        // ── Drill-down ──
-        // Build flat list of detail items per effect type
-        const qItems = [], pItems = [], sItems = [];
+        // Collapsible trees — only show if >1 group total
+        const totalGroups = branchesForAnalysis.reduce((n, br) =>
+            n + (br.activities||[]).reduce((m, act) => m + (act.groups||[]).length, 0), 0);
 
-        d.branches.forEach(br => {
-            const showBranch = multipleB;
-            const brPrefix   = showBranch ? `${br.name} / ` : "";
-
-            br.activities.forEach(act => {
-                if(!act.singleFactor){
-                    act.groups.forEach(g => {
-                        const label = `${brPrefix}${act.name} / ${g.name || t("group")}`;
-                        if(g.q !== 0) qItems.push({ label, value: g.q });
-                        if(g.p !== 0) pItems.push({ label, value: g.p });
-                    });
-                } else {
-                    act.groups.forEach(g => {
-                        const label = `${brPrefix}${act.name} / ${g.name || t("group")}`;
-                        if(g.s !== 0) sItems.push({ label, value: g.s });
-                    });
-                }
-            });
-        });
-
-        // Only show drill-down if there are multiple items
-        if(qItems.length > 1 || pItems.length > 1 || sItems.length > 1){
-            html += `<div class="analysis-drilldown">`;
-            if(qItems.length > 1) html += detailSection(t("factorQty"),   qItems);
-            if(pItems.length > 1) html += detailSection(t("factorPrice"),  pItems);
-            if(sItems.length > 1) html += detailSection(t("factorSingle"), sItems);
+        if(totalGroups > 1){
+            html += `<div class="af-trees">`;
+            if(d.hasMulti){
+                html += effectTree(t("factorQty"),   "q", d.branches, multipleB, "q");
+                html += effectTree(t("factorPrice"),  "p", d.branches, multipleB, "p");
+            }
+            if(d.hasSingle){
+                html += effectTree(t("factorSingle"), "s", d.branches, multipleB, "s");
+            }
             html += `</div>`;
         }
 

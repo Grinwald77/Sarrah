@@ -1908,3 +1908,25 @@ td.indent { padding-left: 28px !important; }
 .af-activity-header .af-toggle { color: #6a86aa; }
 .af-open > *:first-child .af-toggle { transform: rotate(90deg); }
 
+
+/* ── Analysis tree — values closer to labels ── */
+.af-effect-header,
+.af-branch-header,
+.af-activity-header,
+.af-group-row {
+    justify-content: flex-start !important;
+}
+.af-effect-total,
+.af-branch-total,
+.af-activity-total,
+.af-group-val {
+    margin-left: 16px !important;
+    flex: 0 0 auto !important;
+}
+.af-effect-title,
+.af-branch-name,
+.af-activity-name,
+.af-group-name {
+    flex: 0 1 auto !important;
+    max-width: 200px !important;
+}

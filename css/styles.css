@@ -1762,3 +1762,60 @@ td.indent { padding-left: 28px !important; }
     flex-shrink: 0 !important;
     margin-inline-start: auto !important;
 }
+
+/* ===================================================
+   Analysis drill-down — v6.8
+   =================================================== */
+
+.analysis-drilldown {
+    margin-top: 16px;
+    border-top: 1px solid #c8d4e8;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.analysis-detail-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.analysis-detail-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #1a3660;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--font-mono);
+    margin-bottom: 4px;
+}
+
+.analysis-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 2px 0 2px 8px;
+    border-left: 2px solid #e0e8f4;
+}
+
+.analysis-detail-label {
+    font-size: 11px;
+    color: var(--text2);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.analysis-detail-val {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+

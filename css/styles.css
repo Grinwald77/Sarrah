@@ -1930,3 +1930,10 @@ td.indent { padding-left: 28px !important; }
     flex: 0 1 auto !important;
     max-width: 200px !important;
 }
+
+/* Trees directly under summary — remove top border */
+.af-trees {
+    margin-top: 8px !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+}

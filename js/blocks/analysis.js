@@ -157,33 +157,30 @@ export const AnalysisBlock = {
         const d = FactorModel.calcDetailed(branchesForAnalysis);
         if(d.R0 === 0 && d.R1 === 0){ el.innerHTML = ""; return; }
 
-        // Summary
+        // Summary — no duplicate effect rows, trees go right after dR
+        let trees = "";
+        const totalGroups = branchesForAnalysis.reduce((n, br) =>
+            n + (br.activities||[]).reduce((m, act) => m + (act.groups||[]).length, 0), 0);
+
+        if(totalGroups >= 1){
+            trees += `<div class="af-trees">`;
+            if(d.hasMulti){
+                trees += effectTree(t("factorQty"),   "q", d.branches, multipleB, "q");
+                trees += effectTree(t("factorPrice"),  "p", d.branches, multipleB, "p");
+            }
+            if(d.hasSingle){
+                trees += effectTree(t("factorSingle"), "s", d.branches, multipleB, "s");
+            }
+            trees += `</div>`;
+        }
+
         let html = `
         <div class="analysis-grid">
             ${sumRow(t("revenue") + " " + t("initial"), d.R0)}
             ${sumRow(t("revenue") + " " + t("current"), d.R1)}
             ${sumRow(t("change"), d.dR, true)}
-            <div class="analysis-divider"></div>
-            ${d.hasMulti  ? sumRow(t("factorQty"),   d.q, true) : ""}
-            ${d.hasMulti  ? sumRow(t("factorPrice"),  d.p, true) : ""}
-            ${d.hasSingle ? sumRow(t("factorSingle"), d.s, true) : ""}
-        </div>`;
-
-        // Collapsible trees — only show if >1 group total
-        const totalGroups = branchesForAnalysis.reduce((n, br) =>
-            n + (br.activities||[]).reduce((m, act) => m + (act.groups||[]).length, 0), 0);
-
-        if(totalGroups > 1){
-            html += `<div class="af-trees">`;
-            if(d.hasMulti){
-                html += effectTree(t("factorQty"),   "q", d.branches, multipleB, "q");
-                html += effectTree(t("factorPrice"),  "p", d.branches, multipleB, "p");
-            }
-            if(d.hasSingle){
-                html += effectTree(t("factorSingle"), "s", d.branches, multipleB, "s");
-            }
-            html += `</div>`;
-        }
+        </div>
+        ${trees}`;
 
         el.innerHTML = `<b>${t("analysis")}</b>${html}`;
     }

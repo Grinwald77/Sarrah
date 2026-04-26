@@ -300,8 +300,9 @@ export const TableBlock = {
                 </tr>`;
             });
 
+            const discountTotalCells = showDiscount && !single ? `<td>—</td><td>—</td>` : "";
             const totalQPcells = !single
-                ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td><td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
+                ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td>${discountTotalCells}<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
                 : `<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`;
 
             html += `
@@ -687,15 +688,17 @@ export const TableBlock = {
             const tds = Array.from(tfoot.querySelectorAll("td"));
             // Find the delta td (has green/red class)
             if(!single){
-                // cols: name | q0 | q1 | avgP0 | avgP1 | R0 | R1 | dR | dRpct | 100% | 100% | 0
+                const fm3 = (Store.get("factorModel")||"2") === "3";
+                const r0idx = fm3 ? 7 : 5;
+                // cols: name | q0 | q1 | avgP0 | avgP1 | [disc0 | disc1] | R0 | R1 | dR | dRpct | 100% | 100% | 0
                 if(tds[1]) tds[1].textContent = totalQ0;
                 if(tds[2]) tds[2].textContent = totalQ1;
                 if(tds[3]) tds[3].textContent = Math.round(avgP0);
                 if(tds[4]) tds[4].textContent = Math.round(avgP1);
-                if(tds[5]) tds[5].textContent = fmt(R0);
-                if(tds[6]) tds[6].textContent = fmt(R1);
-                if(tds[7]){ tds[7].textContent = fmt(dR); tds[7].className = dR>=0 ? "green" : "red"; }
-                if(tds[8]) tds[8].textContent  = dRpct.toFixed(1)+"%";
+                if(tds[r0idx])   tds[r0idx].textContent   = fmt(R0);
+                if(tds[r0idx+1]) tds[r0idx+1].textContent = fmt(R1);
+                if(tds[r0idx+2]){ tds[r0idx+2].textContent = fmt(dR); tds[r0idx+2].className = dR>=0 ? "green" : "red"; }
+                if(tds[r0idx+3]) tds[r0idx+3].textContent = dRpct.toFixed(1)+"%";
             } else {
                 // cols: name | R0 | R1 | dR | dRpct | 100% | 100% | 0
                 if(tds[1]) tds[1].textContent = fmt(R0);

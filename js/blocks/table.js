@@ -191,7 +191,11 @@ export const TableBlock = {
                     r1[i] = (+g.quantity1||0) * ((+g.price1||0) - d1);
                 }
                 R0 += r0[i]; R1 += r1[i];
-                if(!single){ totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0; }
+                if(!single){
+                    totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0;
+                    totalD0 += (+g.quantity0||0) * (+g.discount0||0);
+                    totalD1 += (+g.quantity1||0) * (+g.discount1||0);
+                }
             });
 
             grandR.R0 += R0; grandR.R1 += R1;
@@ -201,6 +205,8 @@ export const TableBlock = {
             const dRpct = R0 ? dR/R0*100 : 0;
             const avgP0 = totalQ0 ? R0/totalQ0 : 0;
             const avgP1 = totalQ1 ? R1/totalQ1 : 0;
+            const avgD0 = totalQ0 ? totalD0/totalQ0 : 0;
+            const avgD1 = totalQ1 ? totalD1/totalQ1 : 0;
 
             const discountCols = showDiscount && !single ? `<th colspan="2">${t("discount")}</th>` : "";
             const discountSub  = showDiscount && !single ? `<th>${col0}</th><th>${col1}</th>` : "";
@@ -300,7 +306,7 @@ export const TableBlock = {
                 </tr>`;
             });
 
-            const discountTotalCells = showDiscount && !single ? `<td>—</td><td>—</td>` : "";
+            const discountTotalCells = showDiscount && !single ? `<td>${Math.round(avgD0)}</td><td>${Math.round(avgD1)}</td>` : "";
             const totalQPcells = !single
                 ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td>${discountTotalCells}<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
                 : `<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`;
@@ -645,6 +651,7 @@ export const TableBlock = {
                 r0[gi] = q0 * (p0 - dis0);
                 r1[gi] = q1 * (p1 - dis1);
                 totalQ0 += q0; totalQ1 += q1;
+                totalD0 += q0 * dis0; totalD1 += q1 * dis1;
             }
             R0 += r0[gi]; R1 += r1[gi];
         });
@@ -695,6 +702,8 @@ export const TableBlock = {
                 if(tds[2]) tds[2].textContent = totalQ1;
                 if(tds[3]) tds[3].textContent = Math.round(avgP0);
                 if(tds[4]) tds[4].textContent = Math.round(avgP1);
+                if(fm3 && tds[5]) tds[5].textContent = Math.round(totalQ0 ? totalD0/totalQ0 : 0);
+                if(fm3 && tds[6]) tds[6].textContent = Math.round(totalQ1 ? totalD1/totalQ1 : 0);
                 if(tds[r0idx])   tds[r0idx].textContent   = fmt(R0);
                 if(tds[r0idx+1]) tds[r0idx+1].textContent = fmt(R1);
                 if(tds[r0idx+2]){ tds[r0idx+2].textContent = fmt(dR); tds[r0idx+2].className = dR>=0 ? "green" : "red"; }

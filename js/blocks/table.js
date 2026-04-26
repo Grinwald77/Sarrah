@@ -154,9 +154,11 @@ export const TableBlock = {
             });
         });
 
-        const meta = sectionMeta();
-        const col0 = periodLabel("type0","period0","year0");
-        const col1 = periodLabel("type1","period1","year1");
+        const meta        = sectionMeta();
+        const col0        = periodLabel("type0","period0","year0");
+        const col1        = periodLabel("type1","period1","year1");
+        const factorModel = Store.get("factorModel") || "2";
+        const showDiscount = factorModel === "3";
 
         let html = `
         <div class="section-header">
@@ -180,8 +182,14 @@ export const TableBlock = {
             const r0=[], r1=[];
 
             groups.forEach((g, i) => {
-                r0[i] = single ? (+g.revenue0||0) : (+g.quantity0||0)*(+g.price0||0);
-                r1[i] = single ? (+g.revenue1||0) : (+g.quantity1||0)*(+g.price1||0);
+                if(single){
+                    r0[i] = +g.revenue0||0;
+                    r1[i] = +g.revenue1||0;
+                } else {
+                    const d0 = +g.discount0||0, d1 = +g.discount1||0;
+                    r0[i] = (+g.quantity0||0) * ((+g.price0||0) - d0);
+                    r1[i] = (+g.quantity1||0) * ((+g.price1||0) - d1);
+                }
                 R0 += r0[i]; R1 += r1[i];
                 if(!single){ totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0; }
             });
@@ -194,15 +202,16 @@ export const TableBlock = {
             const avgP0 = totalQ0 ? R0/totalQ0 : 0;
             const avgP1 = totalQ1 ? R1/totalQ1 : 0;
 
-            const qpCols     = !single ? `<th colspan="2">${t("quantity")}</th><th colspan="2">${t("price")}</th>` : "";
-            const colsQP     = !single ? `<th>${col0}</th><th>${col1}</th><th>${col0}</th><th>${col1}</th>` : "";
+            const discountCols = showDiscount && !single ? `<th colspan="2">${t("discount")}</th>` : "";
+            const discountSub  = showDiscount && !single ? `<th>${col0}</th><th>${col1}</th>` : "";
+            const qpCols     = !single ? `<th colspan="2">${t("quantity")}</th><th colspan="2">${t("price")}</th>${discountCols}` : "";
+            const colsQP     = !single ? `<th>${col0}</th><th>${col1}</th><th>${col0}</th><th>${col1}</th>${discountSub}` : "";
             // single: inputs ARE rev0/rev1 columns, so header = col0|col1 then change|%
             // multi:  inputs are qty/price, revenue is computed, so header = col0|col1|change|%
             const colsRevHdr   = `<th>${col0}</th><th>${col1}</th><th>${t("change")}</th><th>${t("changePct")}</th>`;
             const colsShareHdr = `<th>${col0}</th><th>${col1}</th><th>${t("deltaShare")}</th>`;
-            // multi: group(1) + qty(2) + price(2) + [rev0,rev1,change,%](4) + share(3) = 12 cols
+            // multi: group(1) + qty(2) + price(2) + discount(2) + [rev0,rev1,change,%](4) + share(3) = 14 cols
             // single: group(1) + [rev0,rev1,change,%](4) + share(3) = 8 cols
-            // In both cases Revenue header spans 4 columns
             const revColspan = "4";
 
             const actName  = act.name || "";
@@ -262,11 +271,16 @@ export const TableBlock = {
                 const da    = `data-ai="${ai}" data-gi="${gi}"`;
 
                 const ro = isSummary ? 'readonly tabindex="-1"' : '';
+                const discountInputs = showDiscount && !single ? `
+                    <td><input data-field="discount0" ${da} ${ro} value="${g.discount0||""}"></td>
+                    <td><input data-field="discount1" ${da} ${ro} value="${g.discount1||""}"></td>
+                ` : "";
                 const inputsQP = !single ? `
                     <td><input data-field="quantity0" ${da} ${ro} value="${g.quantity0||""}"></td>
                     <td><input data-field="quantity1" ${da} ${ro} value="${g.quantity1||""}"></td>
                     <td><input data-field="price0"    ${da} ${ro} value="${g.price0||""}"></td>
                     <td><input data-field="price1"    ${da} ${ro} value="${g.price1||""}"></td>
+                    ${discountInputs}
                     <td class="num">${fmt(r0[gi])}</td>
                     <td class="num">${fmt(r1[gi])}</td>
                 ` : `
@@ -529,7 +543,7 @@ export const TableBlock = {
                 if(!act) return;
                 const old = act.groups || [];
                 const groups = Array.from({length:n}, (_,i) =>
-                    old[i] || { name:`${t("group")} ${i+1}`, quantity0:0, quantity1:0, price0:0, price1:0, revenue0:0, revenue1:0 }
+                    old[i] || { name:`${t("group")} ${i+1}`, quantity0:0, quantity1:0, price0:0, price1:0, discount0:0, discount1:0, revenue0:0, revenue1:0 }
                 );
                 Store.setActivity(ai, { groupCount: n, groups }); // emits → re-render
             };
@@ -625,8 +639,10 @@ export const TableBlock = {
                 const q1 = parseFloat(d.quantity1 ?? g.quantity1) || 0;
                 const p0 = parseFloat(d.price0    ?? g.price0)    || 0;
                 const p1 = parseFloat(d.price1    ?? g.price1)    || 0;
-                r0[gi] = q0 * p0;
-                r1[gi] = q1 * p1;
+                const dis0 = parseFloat(d.discount0 ?? g.discount0) || 0;
+                const dis1 = parseFloat(d.discount1 ?? g.discount1) || 0;
+                r0[gi] = q0 * (p0 - dis0);
+                r1[gi] = q1 * (p1 - dis1);
                 totalQ0 += q0; totalQ1 += q1;
             }
             R0 += r0[gi]; R1 += r1[gi];

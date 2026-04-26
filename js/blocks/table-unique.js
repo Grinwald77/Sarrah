@@ -5,6 +5,7 @@
 //  Hierarchy: Total → Branch label → Groups
 // ─────────────────────────────────────────────
 import { t } from '../i18n.js';
+import { Store } from '../store.js';
 import { fmt, periodLabel, groupRevs } from './table-helpers.js';
 
 export function renderTableUnique(activityName, branchName, act, uid){
@@ -22,6 +23,7 @@ export function renderTableUnique(activityName, branchName, act, uid){
     const avgP0 = totalQ0 ? totalR0/totalQ0 : 0;
     const avgP1 = totalQ1 ? totalR1/totalQ1 : 0;
 
+    const showDiscount = (Store.get("factorModel") || "2") === "3";
     let html = `<div class="activity-block activity-block-unique" data-uid="${uid}">`;
 
     html += `
@@ -46,12 +48,14 @@ export function renderTableUnique(activityName, branchName, act, uid){
                 <th rowspan="2" class="col-name">${t("group")}</th>
                 <th colspan="2">${t("quantity")}</th>
                 <th colspan="2">${t("price")}</th>
+                ${showDiscount ? `<th colspan="2">${t("discount")}</th>` : ""}
                 <th colspan="4">${t("revenue")}</th>
                 <th colspan="3">${t("share")}</th>
             </tr>
             <tr>
                 <th>${col0}</th><th>${col1}</th>
                 <th>${col0}</th><th>${col1}</th>
+                ${showDiscount ? `<th>${col0}</th><th>${col1}</th>` : ""}
                 <th>${col0}</th><th>${col1}</th>
                 <th>${t("change")}</th><th>${t("changePct")}</th>
                 <th>${col0}</th><th>${col1}</th><th>${t("deltaShare")}</th>
@@ -65,6 +69,7 @@ export function renderTableUnique(activityName, branchName, act, uid){
             <td><strong>${t("total")}</strong></td>
             <td>${fmt(totalQ0)}</td><td>${fmt(totalQ1)}</td>
             <td>${fmt(avgP0)}</td><td>${fmt(avgP1)}</td>
+                    ${showDiscount ? `<td>—</td><td>—</td>` : ""}
             <td>${fmt(totalR0)}</td><td>${fmt(totalR1)}</td>
             <td class="${dR>=0?"green":"red"}">${fmt(dR)}</td>
             <td>${dRpct.toFixed(1)}%</td>
@@ -82,6 +87,7 @@ export function renderTableUnique(activityName, branchName, act, uid){
             </td>
             <td>${fmt(totalQ0)}</td><td>${fmt(totalQ1)}</td>
             <td>${fmt(avgP0)}</td><td>${fmt(avgP1)}</td>
+                    ${showDiscount ? `<td>—</td><td>—</td>` : ""}
             <td>${fmt(totalR0)}</td><td>${fmt(totalR1)}</td>
             <td class="${dR>=0?"green":"red"}">${fmt(dR)}</td>
             <td>${dRpct.toFixed(1)}%</td>

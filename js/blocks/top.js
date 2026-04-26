@@ -43,6 +43,13 @@ export const TopBlock = {
                         </select>
                     </div>
                     <div class="top-group">
+                        <span class="label">${t("factorModel")}</span>
+                        <select id="factorModel">
+                            <option value="2">${t("twoFactor")}</option>
+                            <option value="3">${t("threeFactor")}</option>
+                        </select>
+                    </div>
+                    <div class="top-group">
                         <span class="label">${t("activityCount")}</span>
                         <input id="activityCount" type="number" min="1" max="5" value="${state.activityCount}" style="width:44px">
                     </div>
@@ -129,6 +136,7 @@ export const TopBlock = {
 
         document.getElementById("lang").value         = state.language;
         document.getElementById("activityType").value  = state.activityType || "activities";
+        document.getElementById("factorModel").value   = state.factorModel  || "2";
         document.getElementById("currency").value      = state.currency || "ILS";
         this.updateScaleLabels(state.currency || "ILS");
         document.getElementById("scale").value         = state.scale    || "units";
@@ -223,6 +231,12 @@ export const TopBlock = {
 
         document.getElementById("activityType").onchange = (e) => {
             Store.state.activityType = e.target.value;
+            Store._save();
+            if(Store.get("built")) Store.emit();
+        };
+
+        document.getElementById("factorModel").onchange = (e) => {
+            Store.state.factorModel = e.target.value;
             Store._save();
             if(Store.get("built")) Store.emit();
         };

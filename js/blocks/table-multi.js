@@ -5,6 +5,7 @@
 //  Each level collapsible independently
 // ─────────────────────────────────────────────
 import { t } from '../i18n.js';
+import { Store } from '../store.js';
 import { fmt, periodLabel, groupRevs } from './table-helpers.js';
 
 // activityName: string
@@ -33,6 +34,7 @@ export function renderTableMulti(activityName, branchData, uid){
 
     // All activities flat for factor analysis
     const allActivities = branchData.flatMap(b => b.activities);
+    const showDiscount  = (Store.get("factorModel") || "2") === "3";
 
     let html = `<div class="activity-block activity-block-multi" data-uid="${uid}">`;
 
@@ -58,12 +60,14 @@ export function renderTableMulti(activityName, branchData, uid){
                 <th rowspan="2" class="col-name">${t("group")}</th>
                 <th colspan="2">${t("quantity")}</th>
                 <th colspan="2">${t("price")}</th>
+                ${showDiscount ? `<th colspan="2">${t("discount")}</th>` : ""}
                 <th colspan="4">${t("revenue")}</th>
                 <th colspan="3">${t("share")}</th>
             </tr>
             <tr>
                 <th>${col0}</th><th>${col1}</th>
                 <th>${col0}</th><th>${col1}</th>
+                ${showDiscount ? `<th>${col0}</th><th>${col1}</th>` : ""}
                 <th>${col0}</th><th>${col1}</th>
                 <th>${t("change")}</th><th>${t("changePct")}</th>
                 <th>${col0}</th><th>${col1}</th><th>${t("deltaShare")}</th>
@@ -79,6 +83,7 @@ export function renderTableMulti(activityName, branchData, uid){
             <td><strong>${t("total")}</strong></td>
             <td>${fmt(totalQ0)}</td><td>${fmt(totalQ1)}</td>
             <td>${fmt(avgP0)}</td><td>${fmt(avgP1)}</td>
+            ${showDiscount ? `<td>—</td><td>—</td>` : ""}
             <td>${fmt(totalR0)}</td><td>${fmt(totalR1)}</td>
             <td class="${totalDR>=0?"green":"red"}">${fmt(totalDR)}</td>
             <td>${totalDRpct.toFixed(1)}%</td>
@@ -113,6 +118,7 @@ export function renderTableMulti(activityName, branchData, uid){
             </td>
             <td>${fmt(bQ0)}</td><td>${fmt(bQ1)}</td>
             <td>${fmt(bAvgP0)}</td><td>${fmt(bAvgP1)}</td>
+            ${showDiscount ? `<td>—</td><td>—</td>` : ""}
             <td>${fmt(bR0)}</td><td>${fmt(bR1)}</td>
             <td class="${bDR>=0?"green":"red"}">${fmt(bDR)}</td>
             <td>${bDRpct.toFixed(1)}%</td>
@@ -134,6 +140,7 @@ export function renderTableMulti(activityName, branchData, uid){
                     <td class="indent">${g.name||`${t("group")} ${gi+1}`}</td>
                     <td>${fmt(+g.quantity0||0)}</td><td>${fmt(+g.quantity1||0)}</td>
                     <td>${fmt(+g.price0||0)}</td><td>${fmt(+g.price1||0)}</td>
+                    ${showDiscount ? `<td>${fmt(+g.discount0||0)}</td><td>${fmt(+g.discount1||0)}</td>` : ""}
                     <td>${fmt(r0)}</td><td>${fmt(r1)}</td>
                     <td class="${dr>=0?"green":"red"}">${fmt(dr)}</td>
                     <td>${drpct.toFixed(1)}%</td>

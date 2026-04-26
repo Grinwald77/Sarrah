@@ -165,8 +165,10 @@ export const AnalysisBlock = {
         if(totalGroups >= 1){
             trees += `<div class="af-trees">`;
             if(d.hasMulti){
-                trees += effectTree(t("factorQty"),   "q", d.branches, multipleB, "q");
-                trees += effectTree(t("factorPrice"),  "p", d.branches, multipleB, "p");
+                trees += effectTree(t("factorQty"),      "q", d.branches, multipleB, "q");
+                trees += effectTree(t("factorPrice"),     "p", d.branches, multipleB, "p");
+                if(d.hasDiscount)
+                    trees += effectTree(t("factorDiscount"), "d", d.branches, multipleB, "d");
             }
             if(d.hasSingle){
                 trees += effectTree(t("factorSingle"), "s", d.branches, multipleB, "s");

@@ -70,8 +70,14 @@ export function tableTitle({ branchName, activityName, isSummary } = {}){
 
 // Compute rev for a group
 export function groupRevs(g, single){
-    const r0 = single ? (+g.revenue0||0) : (+g.quantity0||0)*(+g.price0||0);
-    const r1 = single ? (+g.revenue1||0) : (+g.quantity1||0)*(+g.price1||0);
+    if(single){
+        return { r0: +g.revenue0||0, r1: +g.revenue1||0 };
+    }
+    const fm = Store.get("factorModel") || "2";
+    const d0 = fm === "3" ? (+g.discount0||0) : 0;
+    const d1 = fm === "3" ? (+g.discount1||0) : 0;
+    const r0 = (+g.quantity0||0) * ((+g.price0||0) - d0);
+    const r1 = (+g.quantity1||0) * ((+g.price1||0) - d1);
     return { r0, r1 };
 }
 

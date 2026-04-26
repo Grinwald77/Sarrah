@@ -191,11 +191,7 @@ export const TableBlock = {
                     r1[i] = (+g.quantity1||0) * ((+g.price1||0) - d1);
                 }
                 R0 += r0[i]; R1 += r1[i];
-                if(!single){
-                    totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0;
-                    totalD0 += (+g.quantity0||0) * (+g.discount0||0);
-                    totalD1 += (+g.quantity1||0) * (+g.discount1||0);
-                }
+                if(!single){ totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0; }
             });
 
             grandR.R0 += R0; grandR.R1 += R1;
@@ -205,8 +201,6 @@ export const TableBlock = {
             const dRpct = R0 ? dR/R0*100 : 0;
             const avgP0 = totalQ0 ? R0/totalQ0 : 0;
             const avgP1 = totalQ1 ? R1/totalQ1 : 0;
-            const avgD0 = totalQ0 ? totalD0/totalQ0 : 0;
-            const avgD1 = totalQ1 ? totalD1/totalQ1 : 0;
 
             const discountCols = showDiscount && !single ? `<th colspan="2">${t("discount")}</th>` : "";
             const discountSub  = showDiscount && !single ? `<th>${col0}</th><th>${col1}</th>` : "";
@@ -306,9 +300,8 @@ export const TableBlock = {
                 </tr>`;
             });
 
-            const discountTotalCells = showDiscount && !single ? `<td>${Math.round(avgD0)}</td><td>${Math.round(avgD1)}</td>` : "";
             const totalQPcells = !single
-                ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td>${discountTotalCells}<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
+                ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td><td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
                 : `<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`;
 
             html += `
@@ -651,7 +644,6 @@ export const TableBlock = {
                 r0[gi] = q0 * (p0 - dis0);
                 r1[gi] = q1 * (p1 - dis1);
                 totalQ0 += q0; totalQ1 += q1;
-                totalD0 += q0 * dis0; totalD1 += q1 * dis1;
             }
             R0 += r0[gi]; R1 += r1[gi];
         });
@@ -695,19 +687,15 @@ export const TableBlock = {
             const tds = Array.from(tfoot.querySelectorAll("td"));
             // Find the delta td (has green/red class)
             if(!single){
-                const fm3 = (Store.get("factorModel")||"2") === "3";
-                const r0idx = fm3 ? 7 : 5;
-                // cols: name | q0 | q1 | avgP0 | avgP1 | [disc0 | disc1] | R0 | R1 | dR | dRpct | 100% | 100% | 0
+                // cols: name | q0 | q1 | avgP0 | avgP1 | R0 | R1 | dR | dRpct | 100% | 100% | 0
                 if(tds[1]) tds[1].textContent = totalQ0;
                 if(tds[2]) tds[2].textContent = totalQ1;
                 if(tds[3]) tds[3].textContent = Math.round(avgP0);
                 if(tds[4]) tds[4].textContent = Math.round(avgP1);
-                if(fm3 && tds[5]) tds[5].textContent = Math.round(totalQ0 ? totalD0/totalQ0 : 0);
-                if(fm3 && tds[6]) tds[6].textContent = Math.round(totalQ1 ? totalD1/totalQ1 : 0);
-                if(tds[r0idx])   tds[r0idx].textContent   = fmt(R0);
-                if(tds[r0idx+1]) tds[r0idx+1].textContent = fmt(R1);
-                if(tds[r0idx+2]){ tds[r0idx+2].textContent = fmt(dR); tds[r0idx+2].className = dR>=0 ? "green" : "red"; }
-                if(tds[r0idx+3]) tds[r0idx+3].textContent = dRpct.toFixed(1)+"%";
+                if(tds[5]) tds[5].textContent = fmt(R0);
+                if(tds[6]) tds[6].textContent = fmt(R1);
+                if(tds[7]){ tds[7].textContent = fmt(dR); tds[7].className = dR>=0 ? "green" : "red"; }
+                if(tds[8]) tds[8].textContent  = dRpct.toFixed(1)+"%";
             } else {
                 // cols: name | R0 | R1 | dR | dRpct | 100% | 100% | 0
                 if(tds[1]) tds[1].textContent = fmt(R0);
@@ -859,7 +847,7 @@ export const TableBlock = {
 
     // ── Excel paste ──
     _bindPaste(){
-        const targets = document.querySelectorAll("#tableBlock tbody input");
+        const targets = document.querySelectorAll("#tableBlock tbody input, .act-name-inline");
         targets.forEach(input => {
             input.onpaste = (e) => {
                 const text = e.clipboardData.getData("text");
@@ -887,10 +875,6 @@ export const TableBlock = {
                     } else {
                         g.quantity0 = +c[1]||0; g.quantity1 = +c[2]||0;
                         g.price0    = +c[3]||0; g.price1    = +c[4]||0;
-                        // 3-factor: also paste discount columns if present
-                        if((Store.get("factorModel")||"2") === "3"){
-                            g.discount0 = +c[5]||0; g.discount1 = +c[6]||0;
-                        }
                     }
                 });
 

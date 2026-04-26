@@ -208,11 +208,6 @@ export const TopBlock = {
                             g.quantity1 = Math.floor(Math.random()*200) + 10;
                             g.price0    = Math.round((Math.random()*9000 + 1000) / 10) * 10;
                             g.price1    = Math.round((Math.random()*9000 + 1000) / 10) * 10;
-                            // Fill discount only in 3-factor mode
-                            if((Store.get("factorModel") || "2") === "3"){
-                                g.discount0 = Math.round((Math.random()*500) / 10) * 10;
-                                g.discount1 = Math.round((Math.random()*500) / 10) * 10;
-                            }
                         }
                     });
                 });

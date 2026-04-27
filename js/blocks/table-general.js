@@ -98,8 +98,16 @@ export const TableGeneral = {
                 const name = single ? t("factorSingle") : (act.name || `${t("activityName")} ${bi+1}`);
                 let R0=0, R1=0;
                 (act.groups||[]).forEach(g => {
-                    R0 += single ? (+g.revenue0||0) : (+g.quantity0||0)*(+g.price0||0);
-                    R1 += single ? (+g.revenue1||0) : (+g.quantity1||0)*(+g.price1||0);
+                    if(single){
+                        R0 += +g.revenue0||0;
+                        R1 += +g.revenue1||0;
+                    } else {
+                        const fm3 = (Store.get("factorModel")||"2") === "3";
+                        const d0 = fm3 ? (+g.discount0||0) : 0;
+                        const d1 = fm3 ? (+g.discount1||0) : 0;
+                        R0 += (+g.quantity0||0) * ((+g.price0||0) - d0);
+                        R1 += (+g.quantity1||0) * ((+g.price1||0) - d1);
+                    }
                 });
                 const prev = actTotals.get(name) || {R0:0, R1:0};
                 actTotals.set(name, {R0: prev.R0+R0, R1: prev.R1+R1});

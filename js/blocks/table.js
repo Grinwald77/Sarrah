@@ -1,5 +1,6 @@
 import { Store } from '../store.js';
 import { t } from '../i18n.js';
+import { TableGeneral } from './table-general.js';
 
 // ─────────────────────────────────────────────
 //  Helpers
@@ -126,7 +127,7 @@ export const TableBlock = {
 
         // General tab → delegate to TableGeneral
         if(isSummary){
-            import('../blocks/table-general.js').then(m => m.TableGeneral.render());
+            TableGeneral.render();
             return;
         }
 

@@ -181,11 +181,14 @@ export const TopBlock = {
             // If >1 branch start on Summary tab, else on branch 0
             const activeBranch = nb > 1 ? -1 : 0;
 
-            Store.set("activityCount", n);
-            Store.set("branchCount",   nb);
-            Store.set("activeBranch",  activeBranch);
-            Store.set("built",         true);
-            Store.set("branches",      branches);
+            // Atomic update — set all at once then emit once
+            Store.state.activityCount = n;
+            Store.state.branchCount   = nb;
+            Store.state.activeBranch  = activeBranch;
+            Store.state.built         = true;
+            Store.state.branches      = branches;
+            Store._save();
+            Store.emit();
         };
 
         // TEST — fill active branch with random data (not summary)

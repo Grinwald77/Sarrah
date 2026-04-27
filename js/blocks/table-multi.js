@@ -23,14 +23,19 @@ export function renderTableMulti(activityName, branchData, uid){
             (act.groups||[]).forEach(g => {
                 const { r0, r1 } = groupRevs(g, false);
                 totalR0 += r0; totalR1 += r1;
-                totalQ0 += +g.quantity0||0;
-                totalQ1 += +g.quantity1||0;
+                totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0;
+                totalD0 += (+g.quantity0||0)*(+g.discount0||0);
+                totalD1 += (+g.quantity1||0)*(+g.discount1||0);
             });
         });
     });
     const totalDR    = totalR1 - totalR0;
     const totalDRpct = totalR0 ? totalDR/totalR0*100 : 0;
-    const grandShare0 = 100, grandShare1 = 100; // total is 100% of itself
+    const avgP0 = totalQ0 ? (totalR0 + totalD0) / totalQ0 : 0;
+    const avgP1 = totalQ1 ? (totalR1 + totalD1) / totalQ1 : 0;
+    const avgD0 = totalQ0 ? totalD0 / totalQ0 : 0;
+    const avgD1 = totalQ1 ? totalD1 / totalQ1 : 0;
+    const grandShare0 = 100, grandShare1 = 100;
 
     // All activities flat for factor analysis
     const allActivities = branchData.flatMap(b => b.activities);
@@ -76,8 +81,6 @@ export function renderTableMulti(activityName, branchData, uid){
         <tbody>`;
 
     // Total row
-    const avgP0 = totalQ0 ? totalR0/totalQ0 : 0;
-    const avgP1 = totalQ1 ? totalR1/totalQ1 : 0;
     html += `
         <tr class="row-total">
             <td><strong>${t("total")}</strong></td>
@@ -92,12 +95,14 @@ export function renderTableMulti(activityName, branchData, uid){
 
     // Branch rows
     branchData.forEach(({ branchName, activities }, bi) => {
-        let bR0=0, bR1=0, bQ0=0, bQ1=0;
+        let bR0=0, bR1=0, bQ0=0, bQ1=0, bD0=0, bD1=0;
         activities.forEach(act => {
             (act.groups||[]).forEach(g => {
                 const { r0, r1 } = groupRevs(g, false);
                 bR0 += r0; bR1 += r1;
                 bQ0 += +g.quantity0||0; bQ1 += +g.quantity1||0;
+                bD0 += (+g.quantity0||0)*(+g.discount0||0);
+                bD1 += (+g.quantity1||0)*(+g.discount1||0);
             });
         });
         const bDR    = bR1 - bR0;
@@ -105,8 +110,10 @@ export function renderTableMulti(activityName, branchData, uid){
         const bS0    = totalR0 ? bR0/totalR0*100 : 0;
         const bS1    = totalR1 ? bR1/totalR1*100 : 0;
         const bDS    = bS1 - bS0;
-        const bAvgP0 = bQ0 ? bR0/bQ0 : 0;
-        const bAvgP1 = bQ1 ? bR1/bQ1 : 0;
+        const bAvgP0 = bQ0 ? (bR0+bD0)/bQ0 : 0;
+        const bAvgP1 = bQ1 ? (bR1+bD1)/bQ1 : 0;
+        const bAvgD0 = bQ0 ? bD0/bQ0 : 0;
+        const bAvgD1 = bQ1 ? bD1/bQ1 : 0;
 
         html += `
         <tr class="row-branch" data-branch-row="${uid}-${bi}">

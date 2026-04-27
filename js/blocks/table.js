@@ -178,7 +178,7 @@ export const TableBlock = {
             const single    = !!act.singleFactor;
             const collapsed = !!this._collapsed[ai];
 
-            let R0=0, R1=0, totalQ0=0, totalQ1=0;
+            let R0=0, R1=0, totalQ0=0, totalQ1=0, totalD0=0, totalD1=0;
             const r0=[], r1=[];
 
             groups.forEach((g, i) => {
@@ -191,7 +191,11 @@ export const TableBlock = {
                     r1[i] = (+g.quantity1||0) * ((+g.price1||0) - d1);
                 }
                 R0 += r0[i]; R1 += r1[i];
-                if(!single){ totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0; }
+                if(!single){
+                    totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0;
+                    totalD0 += (+g.quantity0||0) * (+g.discount0||0);
+                    totalD1 += (+g.quantity1||0) * (+g.discount1||0);
+                }
             });
 
             grandR.R0 += R0; grandR.R1 += R1;
@@ -201,6 +205,8 @@ export const TableBlock = {
             const dRpct = R0 ? dR/R0*100 : 0;
             const avgP0 = totalQ0 ? R0/totalQ0 : 0;
             const avgP1 = totalQ1 ? R1/totalQ1 : 0;
+            const avgD0 = totalQ0 ? totalD0/totalQ0 : 0;
+            const avgD1 = totalQ1 ? totalD1/totalQ1 : 0;
 
             const discountCols = showDiscount && !single ? `<th colspan="2">${t("discount")}</th>` : "";
             const discountSub  = showDiscount && !single ? `<th>${col0}</th><th>${col1}</th>` : "";
@@ -300,7 +306,7 @@ export const TableBlock = {
                 </tr>`;
             });
 
-            const discountTotalCells = showDiscount && !single ? `<td>—</td><td>—</td>` : "";
+            const discountTotalCells = showDiscount && !single ? `<td>${Math.round(avgD0)}</td><td>${Math.round(avgD1)}</td>` : "";
             const totalQPcells = !single
                 ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td>${discountTotalCells}<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
                 : `<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`;

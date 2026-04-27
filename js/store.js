@@ -7,7 +7,7 @@ export const Store = {
                 const parsed = JSON.parse(saved);
                 parsed.built = false;   // always reset built on page load
                 parsed.branches = [];   // clear all — BUILD will recreate
-                parsed.activeBranch = 0;
+                // activeBranch kept as saved — BUILD sets -1 for multi-branch
                 return parsed;
             }catch(e){}
         }

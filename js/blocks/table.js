@@ -191,7 +191,11 @@ export const TableBlock = {
                     r1[i] = (+g.quantity1||0) * ((+g.price1||0) - d1);
                 }
                 R0 += r0[i]; R1 += r1[i];
-                if(!single){ totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0; }
+                if(!single){
+                    totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0;
+                    totalD0 += (+g.quantity0||0) * (+g.discount0||0);
+                    totalD1 += (+g.quantity1||0) * (+g.discount1||0);
+                }
             });
 
             grandR.R0 += R0; grandR.R1 += R1;
@@ -300,7 +304,7 @@ export const TableBlock = {
                 </tr>`;
             });
 
-            const discountTotalCells = showDiscount && !single ? `<td>—</td><td>—</td>` : "";
+            const discountTotalCells = showDiscount && !single ? `<td>${Math.round(avgD0)}</td><td>${Math.round(avgD1)}</td>` : "";
             const totalQPcells = !single
                 ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td>${discountTotalCells}<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
                 : `<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`;

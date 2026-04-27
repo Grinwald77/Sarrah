@@ -17,7 +17,7 @@ export function renderTableMulti(activityName, branchData, uid){
     const col1 = periodLabel("type1","period1","year1");
 
     // Compute totals across all branches
-    let totalR0=0, totalR1=0, totalQ0=0, totalQ1=0;
+    let totalR0=0, totalR1=0, totalQ0=0, totalQ1=0, totalD0=0, totalD1=0;
     branchData.forEach(({ activities }) => {
         activities.forEach(act => {
             (act.groups||[]).forEach(g => {
@@ -83,7 +83,7 @@ export function renderTableMulti(activityName, branchData, uid){
             <td><strong>${t("total")}</strong></td>
             <td>${fmt(totalQ0)}</td><td>${fmt(totalQ1)}</td>
             <td>${fmt(avgP0)}</td><td>${fmt(avgP1)}</td>
-            ${showDiscount ? `<td>—</td><td>—</td>` : ""}
+            ${showDiscount ? `<td>${Math.round(avgD0)}</td><td>${Math.round(avgD1)}</td>` : ""}
             <td>${fmt(totalR0)}</td><td>${fmt(totalR1)}</td>
             <td class="${totalDR>=0?"green":"red"}">${fmt(totalDR)}</td>
             <td>${totalDRpct.toFixed(1)}%</td>
@@ -118,7 +118,7 @@ export function renderTableMulti(activityName, branchData, uid){
             </td>
             <td>${fmt(bQ0)}</td><td>${fmt(bQ1)}</td>
             <td>${fmt(bAvgP0)}</td><td>${fmt(bAvgP1)}</td>
-            ${showDiscount ? `<td>—</td><td>—</td>` : ""}
+            ${showDiscount ? `<td>${Math.round(bAvgD0)}</td><td>${Math.round(bAvgD1)}</td>` : ""}
             <td>${fmt(bR0)}</td><td>${fmt(bR1)}</td>
             <td class="${bDR>=0?"green":"red"}">${fmt(bDR)}</td>
             <td>${bDRpct.toFixed(1)}%</td>

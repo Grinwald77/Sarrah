@@ -12,16 +12,20 @@ export function renderTableUnique(activityName, branchName, act, uid){
     const col0 = periodLabel("type0","period0","year0");
     const col1 = periodLabel("type1","period1","year1");
 
-    let totalR0=0, totalR1=0, totalQ0=0, totalQ1=0;
+    let totalR0=0, totalR1=0, totalQ0=0, totalQ1=0, totalD0=0, totalD1=0;
     (act.groups||[]).forEach(g => {
         const { r0, r1 } = groupRevs(g, false);
         totalR0 += r0; totalR1 += r1;
         totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0;
+        totalD0 += (+g.quantity0||0)*(+g.discount0||0);
+        totalD1 += (+g.quantity1||0)*(+g.discount1||0);
     });
     const dR    = totalR1 - totalR0;
     const dRpct = totalR0 ? dR/totalR0*100 : 0;
-    const avgP0 = totalQ0 ? totalR0/totalQ0 : 0;
-    const avgP1 = totalQ1 ? totalR1/totalQ1 : 0;
+    const avgP0 = totalQ0 ? (totalR0 + totalD0) / totalQ0 : 0;
+    const avgP1 = totalQ1 ? (totalR1 + totalD1) / totalQ1 : 0;
+    const avgD0 = totalQ0 ? totalD0 / totalQ0 : 0;
+    const avgD1 = totalQ1 ? totalD1 / totalQ1 : 0;
 
     const showDiscount = (Store.get("factorModel") || "2") === "3";
     let html = `<div class="activity-block activity-block-unique" data-uid="${uid}">`;
@@ -69,7 +73,7 @@ export function renderTableUnique(activityName, branchName, act, uid){
             <td><strong>${t("total")}</strong></td>
             <td>${fmt(totalQ0)}</td><td>${fmt(totalQ1)}</td>
             <td>${fmt(avgP0)}</td><td>${fmt(avgP1)}</td>
-                    ${showDiscount ? `<td>—</td><td>—</td>` : ""}
+                    ${showDiscount ? `<td>${Math.round(avgD0)}</td><td>${Math.round(avgD1)}</td>` : ""}
             <td>${fmt(totalR0)}</td><td>${fmt(totalR1)}</td>
             <td class="${dR>=0?"green":"red"}">${fmt(dR)}</td>
             <td>${dRpct.toFixed(1)}%</td>
@@ -87,7 +91,7 @@ export function renderTableUnique(activityName, branchName, act, uid){
             </td>
             <td>${fmt(totalQ0)}</td><td>${fmt(totalQ1)}</td>
             <td>${fmt(avgP0)}</td><td>${fmt(avgP1)}</td>
-                    ${showDiscount ? `<td>—</td><td>—</td>` : ""}
+                    ${showDiscount ? `<td>${Math.round(avgD0)}</td><td>${Math.round(avgD1)}</td>` : ""}
             <td>${fmt(totalR0)}</td><td>${fmt(totalR1)}</td>
             <td class="${dR>=0?"green":"red"}">${fmt(dR)}</td>
             <td>${dRpct.toFixed(1)}%</td>

@@ -300,8 +300,9 @@ export const TableBlock = {
                 </tr>`;
             });
 
+            const discountTotalCells = showDiscount && !single ? `<td>—</td><td>—</td>` : "";
             const totalQPcells = !single
-                ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td><td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
+                ? `<td>${totalQ0}</td><td>${totalQ1}</td><td>${Math.round(avgP0)}</td><td>${Math.round(avgP1)}</td>${discountTotalCells}<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`
                 : `<td>${fmt(R0)}</td><td>${fmt(R1)}</td>`;
 
             html += `

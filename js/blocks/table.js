@@ -865,7 +865,7 @@ export const TableBlock = {
 
     // ── Excel paste ──
     _bindPaste(){
-        const targets = document.querySelectorAll("#tableBlock tbody input, .act-name-inline");
+        const targets = document.querySelectorAll("#tableBlock tbody input");
         targets.forEach(input => {
             input.onpaste = (e) => {
                 const text = e.clipboardData.getData("text");
@@ -893,6 +893,9 @@ export const TableBlock = {
                     } else {
                         g.quantity0 = +c[1]||0; g.quantity1 = +c[2]||0;
                         g.price0    = +c[3]||0; g.price1    = +c[4]||0;
+                        if((Store.get("factorModel")||"2") === "3"){
+                            g.discount0 = +c[5]||0; g.discount1 = +c[6]||0;
+                        }
                     }
                 });
 

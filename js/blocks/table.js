@@ -865,7 +865,7 @@ export const TableBlock = {
 
     // ── Excel paste ──
     _bindPaste(){
-        const targets = document.querySelectorAll("#tableBlock tbody input");
+        const targets = document.querySelectorAll("#tableBlock tbody input, .act-name-inline");
         targets.forEach(input => {
             input.onpaste = (e) => {
                 const text = e.clipboardData.getData("text");

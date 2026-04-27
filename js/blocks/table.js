@@ -192,9 +192,11 @@ export const TableBlock = {
                 }
                 R0 += r0[i]; R1 += r1[i];
                 if(!single){
-                    totalQ0 += +g.quantity0||0; totalQ1 += +g.quantity1||0;
-                    totalD0 += (+g.quantity0||0) * (+g.discount0||0);
-                    totalD1 += (+g.quantity1||0) * (+g.discount1||0);
+                    const _q0 = +g.quantity0||0, _q1 = +g.quantity1||0;
+                    const _p0 = +g.price0||0,    _p1 = +g.price1||0;
+                    const _d0 = +g.discount0||0, _d1 = +g.discount1||0;
+                    totalQ0 += _q0; totalQ1 += _q1;
+                    totalD0 += _q0 * _d0; totalD1 += _q1 * _d1;
                 }
             });
 
@@ -203,10 +205,10 @@ export const TableBlock = {
 
             const dR    = R1 - R0;
             const dRpct = R0 ? dR/R0*100 : 0;
-            const avgP0 = totalQ0 ? R0/totalQ0 : 0;
-            const avgP1 = totalQ1 ? R1/totalQ1 : 0;
-            const avgD0 = totalQ0 ? totalD0/totalQ0 : 0;
-            const avgD1 = totalQ1 ? totalD1/totalQ1 : 0;
+            const avgP0 = totalQ0 ? (R0 + totalD0) / totalQ0 : 0;  // brutto
+            const avgP1 = totalQ1 ? (R1 + totalD1) / totalQ1 : 0;
+            const avgD0 = totalQ0 ? totalD0 / totalQ0 : 0;
+            const avgD1 = totalQ1 ? totalD1 / totalQ1 : 0;
 
             const discountCols = showDiscount && !single ? `<th colspan="2">${t("discount")}</th>` : "";
             const discountSub  = showDiscount && !single ? `<th>${col0}</th><th>${col1}</th>` : "";
@@ -633,7 +635,7 @@ export const TableBlock = {
         const draft  = this._draft[ai] || {};
         const groups = act.groups || [];
 
-        let R0=0, R1=0, totalQ0=0, totalQ1=0;
+        let R0=0, R1=0, totalQ0=0, totalQ1=0, totalBrutto0=0, totalBrutto1=0, totalD0=0, totalD1=0;
         const r0=[], r1=[];
 
         groups.forEach((g, gi) => {
@@ -642,23 +644,28 @@ export const TableBlock = {
                 r0[gi] = parseFloat(d.revenue0 ?? g.revenue0) || 0;
                 r1[gi] = parseFloat(d.revenue1 ?? g.revenue1) || 0;
             } else {
-                const q0 = parseFloat(d.quantity0 ?? g.quantity0) || 0;
-                const q1 = parseFloat(d.quantity1 ?? g.quantity1) || 0;
-                const p0 = parseFloat(d.price0    ?? g.price0)    || 0;
-                const p1 = parseFloat(d.price1    ?? g.price1)    || 0;
+                const q0   = parseFloat(d.quantity0 ?? g.quantity0) || 0;
+                const q1   = parseFloat(d.quantity1 ?? g.quantity1) || 0;
+                const p0   = parseFloat(d.price0    ?? g.price0)    || 0;
+                const p1   = parseFloat(d.price1    ?? g.price1)    || 0;
                 const dis0 = parseFloat(d.discount0 ?? g.discount0) || 0;
                 const dis1 = parseFloat(d.discount1 ?? g.discount1) || 0;
                 r0[gi] = q0 * (p0 - dis0);
                 r1[gi] = q1 * (p1 - dis1);
-                totalQ0 += q0; totalQ1 += q1;
+                totalQ0      += q0;       totalQ1      += q1;
+                totalBrutto0 += q0 * p0;  totalBrutto1 += q1 * p1;
+                totalD0      += q0 * dis0; totalD1     += q1 * dis1;
             }
             R0 += r0[gi]; R1 += r1[gi];
         });
 
         const dR    = R1 - R0;
         const dRpct = R0 ? dR / R0 * 100 : 0;
-        const avgP0 = totalQ0 ? R0 / totalQ0 : 0;
-        const avgP1 = totalQ1 ? R1 / totalQ1 : 0;
+        const avgP0 = totalQ0 ? totalBrutto0 / totalQ0 : 0;
+        const avgP1 = totalQ1 ? totalBrutto1 / totalQ1 : 0;
+        const avgD0 = totalQ0 ? totalD0 / totalQ0 : 0;
+        const avgD1 = totalQ1 ? totalD1 / totalQ1 : 0;
+        const fm3   = (Store.get("factorModel")||"2") === "3";
 
         // Update per-row computed cells
         block.querySelectorAll("tbody tr[data-gi]").forEach(row => {
@@ -694,15 +701,18 @@ export const TableBlock = {
             const tds = Array.from(tfoot.querySelectorAll("td"));
             // Find the delta td (has green/red class)
             if(!single){
-                // cols: name | q0 | q1 | avgP0 | avgP1 | R0 | R1 | dR | dRpct | 100% | 100% | 0
+                // 2-factor: name|q0|q1|avgP0|avgP1|R0|R1|dR|dRpct|100%|100%|0
+                // 3-factor: name|q0|q1|avgP0|avgP1|avgD0|avgD1|R0|R1|dR|dRpct|100%|100%|0
+                const r0idx = fm3 ? 7 : 5;
                 if(tds[1]) tds[1].textContent = totalQ0;
                 if(tds[2]) tds[2].textContent = totalQ1;
                 if(tds[3]) tds[3].textContent = Math.round(avgP0);
                 if(tds[4]) tds[4].textContent = Math.round(avgP1);
-                if(tds[5]) tds[5].textContent = fmt(R0);
-                if(tds[6]) tds[6].textContent = fmt(R1);
-                if(tds[7]){ tds[7].textContent = fmt(dR); tds[7].className = dR>=0 ? "green" : "red"; }
-                if(tds[8]) tds[8].textContent  = dRpct.toFixed(1)+"%";
+                if(fm3){ if(tds[5]) tds[5].textContent = Math.round(avgD0); if(tds[6]) tds[6].textContent = Math.round(avgD1); }
+                if(tds[r0idx])   tds[r0idx].textContent   = fmt(R0);
+                if(tds[r0idx+1]) tds[r0idx+1].textContent = fmt(R1);
+                if(tds[r0idx+2]){ tds[r0idx+2].textContent = fmt(dR); tds[r0idx+2].className = dR>=0 ? "green" : "red"; }
+                if(tds[r0idx+3]) tds[r0idx+3].textContent = dRpct.toFixed(1)+"%";
             } else {
                 // cols: name | R0 | R1 | dR | dRpct | 100% | 100% | 0
                 if(tds[1]) tds[1].textContent = fmt(R0);

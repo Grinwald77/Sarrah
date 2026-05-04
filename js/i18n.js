@@ -10,6 +10,7 @@ export const Dict = {
         scale:          "Scale",
         sourcePeriod:   "Source period",
         current:        "Current",
+        saveData:       "Save data",
         build:          "Build",
         test:           "Test",
 
@@ -26,10 +27,10 @@ export const Dict = {
         planned:        "Planned",
 
         group:          "Group",
-        quantity:       "Qty",
-        discount:       "Discount",
+        quantity:       "Quantity",
+        discount:       "Av. Discount",
         factorDiscount: "Discount effect",
-        price:          "Price",
+        price:          "Av. Price",
         revenue:        "Revenue",
         share:          "Share",
         initial:        "Initial",
@@ -47,6 +48,7 @@ export const Dict = {
         revenueOf:      "Revenue",
         by:             "by",
 
+        selected:       "Selected",
         total:          "Total",
         totalRevenue:   "Total Revenue",
         grandTotal:     "Grand Total",
@@ -76,6 +78,7 @@ export const Dict = {
         scale:          "Масштаб",
         sourcePeriod:   "Исходный период",
         current:        "Текущий",
+        saveData:       "Сохранять данные",
         build:          "Построить",
         test:           "Тест",
 
@@ -92,10 +95,10 @@ export const Dict = {
         planned:        "План",
 
         group:          "Группа",
-        quantity:       "Кол-во",
-        discount:       "Скидка",
+        quantity:       "Количество",
+        discount:       "Ср. скидка",
         factorDiscount: "Эффект скидки",
-        price:          "Цена",
+        price:          "Ср. цена",
         revenue:        "Выручка",
         share:          "Доля",
         initial:        "Исходный",
@@ -113,6 +116,7 @@ export const Dict = {
         revenueOf:      "Выручка",
         by:             "по",
 
+        selected:       "Выбранные",
         total:          "Итого",
         totalRevenue:   "Итого выручка",
         grandTotal:     "Общий итог",
@@ -142,6 +146,7 @@ export const Dict = {
         scale:          "קנה מידה",
         sourcePeriod:   "תקופת מקור",
         current:        "נוכחי",
+        saveData:       "שמור נתונים",
         build:          "בנה",
         test:           "בדיקה",
 
@@ -159,9 +164,9 @@ export const Dict = {
 
         group:          "קבוצה",
         quantity:       "כמות",
-        discount:       "הנחה",
+        discount:       "הנחה ממוצעת",
         factorDiscount: "אפקט הנחה",
-        price:          "מחיר",
+        price:          "מחיר ממוצע",
         revenue:        "הכנסות",
         share:          "נתח",
         initial:        "ראשוני",
@@ -208,6 +213,7 @@ export const Dict = {
         scale:          "Maßstab",
         sourcePeriod:   "Ausgangsperiode",
         current:        "Aktuell",
+        saveData:       "Daten speichern",
         build:          "Erstellen",
         test:           "Test",
 
@@ -225,9 +231,9 @@ export const Dict = {
 
         group:          "Gruppe",
         quantity:       "Menge",
-        discount:       "Rabatt",
+        discount:       "Ø Rabatt",
         factorDiscount: "Rabatteffekt",
-        price:          "Preis",
+        price:          "Ø Preis",
         revenue:        "Umsatz",
         share:          "Anteil",
         initial:        "Anfang",
@@ -245,6 +251,7 @@ export const Dict = {
         revenueOf:      "Umsatz",
         by:             "nach",
 
+        selected:       "Ausgewählt",
         total:          "Gesamt",
         totalRevenue:   "Gesamtumsatz",
         grandTotal:     "Gesamtsumme",
@@ -274,6 +281,7 @@ export const Dict = {
         scale:          "Échelle",
         sourcePeriod:   "Source period",
         current:        "Actuel",
+ saveData:       "Sauvegarder",
         build:          "Construire",
         test:           "Test",
 
@@ -290,10 +298,10 @@ export const Dict = {
         planned:        "Planifié",
 
         group:          "Groupe",
-        quantity:       "Qté",
-        discount:       "Remise",
+        quantity:       "Quantité",
+        discount:       "Remise moy.",
         factorDiscount: "Effet remise",
-        price:          "Prix",
+        price:          "Prix moy.",
         revenue:        "Chiffre d'affaires",
         share:          "Part",
         initial:        "Initial",
@@ -311,6 +319,8 @@ export const Dict = {
         revenueOf:      "CA",
         by:             "par",
 
+        selected:       "Selected",
+        selected:       "Sélectionné",
         total:          "Total",
         totalRevenue:   "CA total",
         grandTotal:     "Total général",
@@ -340,6 +350,7 @@ export const Dict = {
         scale:          "Maßstab",
         sourcePeriod:   "Ausgangsperiode",
         current:        "Aktuell",
+        saveData:       "Daten speichern",
         build:          "Erstellen",
         test:           "Test",
 
@@ -357,9 +368,9 @@ export const Dict = {
 
         group:          "Gruppe",
         quantity:       "Menge",
-        discount:       "Rabatt",
+        discount:       "Ø Rabatt",
         factorDiscount: "Rabatteffekt",
-        price:          "Preis",
+        price:          "Ø Preis",
         revenue:        "Umsatz",
         share:          "Anteil",
         initial:        "Anfang",
@@ -377,6 +388,7 @@ export const Dict = {
         revenueOf:      "Umsatz",
         by:             "nach",
 
+        selected:       "Ausgewählt",
         total:          "Gesamt",
         totalRevenue:   "Gesamtumsatz",
         grandTotal:     "Gesamtsumme",
@@ -406,6 +418,7 @@ export const Dict = {
         scale:          "Échelle",
         sourcePeriod:   "Source period",
         current:        "Actuel",
+ saveData:       "Sauvegarder",
         build:          "Construire",
         test:           "Test",
 
@@ -422,10 +435,10 @@ export const Dict = {
         planned:        "Planifié",
 
         group:          "Groupe",
-        quantity:       "Qté",
-        discount:       "Remise",
+        quantity:       "Quantité",
+        discount:       "Remise moy.",
         factorDiscount: "Effet remise",
-        price:          "Prix",
+        price:          "Prix moy.",
         revenue:        "Chiffre d'affaires",
         share:          "Part",
         initial:        "Initial",
@@ -443,6 +456,8 @@ export const Dict = {
         revenueOf:      "CA",
         by:             "par",
 
+        selected:       "Selected",
+        selected:       "Sélectionné",
         total:          "Total",
         totalRevenue:   "CA total",
         grandTotal:     "Total général",

@@ -1937,3 +1937,135 @@ td.indent { padding-left: 28px !important; }
     border-top: none !important;
     padding-top: 0 !important;
 }
+
+/* ── Save data toggle ── */
+.top-save-group {
+    border-left: 1px solid rgba(255,255,255,0.1);
+    padding-left: 16px !important;
+}
+.save-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+.save-toggle input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: #60a5fa;
+}
+.save-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    font-family: var(--font-head);
+}
+.save-toggle:hover .save-label { color: #fff; }
+
+/* ===================================================
+   Analysis Factor Table — v8.6
+   =================================================== */
+
+.af-summary {
+    display: table;
+    margin-bottom: 12px;
+}
+.af-sum-row {
+    display: table-row;
+    font-size: 12px;
+}
+.af-sum-row span {
+    display: table-cell;
+    padding: 2px 16px 2px 0;
+    color: var(--text2);
+    font-family: var(--font-head);
+}
+.af-sum-row span:last-child {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
+}
+.af-sum-dr span { font-weight: 600; }
+
+/* Table */
+.af-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-top: 8px;
+}
+.af-table th {
+    background: #1a3660;
+    color: #fff;
+    padding: 6px 10px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+.af-th-check { width: 24px; }
+.af-th-val   { text-align: right !important; width: 100px; }
+.af-th-pct   { text-align: right !important; width: 70px; }
+.af-sortable { cursor: pointer; user-select: none; }
+.af-sortable:hover { background: #1e4278; }
+
+/* Group header rows */
+.af-group-header {
+    background: #e8eef8;
+    cursor: pointer;
+}
+.af-group-header:hover { background: #dce6f5; }
+.af-group-header td {
+    padding: 6px 10px;
+    font-weight: 600;
+    color: #1a3660;
+}
+.af-group-name { display: flex; align-items: center; gap: 6px; }
+.af-arrow { font-size: 9px; color: #6a86aa; transition: transform 0.15s; }
+
+/* Detail rows */
+.af-detail-row td {
+    padding: 4px 10px;
+    border-bottom: 1px solid #f0f4fb;
+    color: var(--text2);
+}
+.af-detail-name {
+    padding-left: 24px !important;
+    font-family: var(--font-head);
+    font-size: 11px;
+}
+
+/* Value columns */
+.af-table td:nth-child(3),
+.af-table td:nth-child(4),
+.af-table th:nth-child(3),
+.af-table th:nth-child(4) {
+    text-align: right;
+    font-family: var(--font-mono);
+}
+
+/* Total row */
+.af-total-row {
+    background: #1a3660;
+    color: #fff;
+}
+.af-total-row td {
+    padding: 7px 10px;
+    font-weight: 600;
+    font-size: 11px;
+    color: #b0bdd0;
+}
+.af-total-row td.green { color: #86efac !important; }
+.af-total-row td.red   { color: #fca5a5 !important; }
+
+/* Checkboxes */
+.af-check, .af-check-group {
+    cursor: pointer;
+    accent-color: #1d4ed8;
+    width: 13px;
+    height: 13px;
+}
+

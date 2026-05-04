@@ -2,131 +2,47 @@ import { Store }       from '../store.js';
 import { FactorModel } from '../models/factor.js';
 import { t }           from '../i18n.js';
 
-function getScaleDiv(){
-    const s = Store.get("scale");
-    if(s === "thousands") return 1000;
-    if(s === "millions")  return 1000000;
-    return 1;
-}
 function fmt(v){
-    const val = v / getScaleDiv();
-    return val.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
+    return v.toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
 }
 function fmtSigned(v){
-    const val = v / getScaleDiv();
-    const str = Math.abs(val).toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
+    const str = Math.abs(v).toLocaleString(undefined, { minimumFractionDigits:0, maximumFractionDigits:2 });
     return (v >= 0 ? "+" : "−") + str;
 }
 function colorCls(v){ return v < 0 ? "red" : v > 0 ? "green" : ""; }
+function pct(part, total){ return total ? (part / Math.abs(total) * 100) : 0; }
 
-function sumRow(label, value, colored = false){
-    const cls = colored ? colorCls(value) : "";
-    const val = colored ? fmtSigned(value) : fmt(value);
-    return `<div class="analysis-row">
-        <span class="analysis-label">${label}</span>
-        <span class="analysis-val ${cls}">${val}</span>
-    </div>`;
-}
+// Build flat list of factor rows from detailed data
+function buildFactorRows(d, multipleB){
+    const rows = [];
 
-// Build collapsible tree for one effect type
-// effectKey: 'q' | 'p' | 's'
-// branches: detailed branch data from calcDetailed
-function effectTree(title, effectKey, branches, multipleB, uid){
-    // Collect total for this effect across all branches
-    let total = 0;
-    branches.forEach(br => {
+    d.branches.forEach(br => {
+        const brPrefix = multipleB ? `${br.name} / ` : "";
+
         br.activities.forEach(act => {
-            if(effectKey === 's' && act.singleFactor){
-                act.groups.forEach(g => { total += g.s || 0; });
-            } else if(effectKey !== 's' && !act.singleFactor){
-                act.groups.forEach(g => { total += g[effectKey] || 0; });
+            if(!act.singleFactor){
+                act.groups.forEach(g => {
+                    const label = `${brPrefix}${act.name} / ${g.name || t("group")}`;
+                    if(g.q !== 0) rows.push({ key:"q", label, value: g.q, effect: t("factorQty") });
+                    if(g.p !== 0) rows.push({ key:"p", label, value: g.p, effect: t("factorPrice") });
+                    if(g.d)       rows.push({ key:"d", label, value: g.d, effect: t("factorDiscount") });
+                });
+            } else {
+                act.groups.forEach(g => {
+                    const label = `${brPrefix}${act.name} / ${g.name || t("group")}`;
+                    if(g.s !== 0) rows.push({ key:"s", label, value: g.s, effect: t("factorSingle") });
+                });
             }
         });
     });
 
-    if(total === 0) return "";
-
-    let html = `
-    <div class="af-effect" data-uid="${uid}">
-        <div class="af-effect-header" onclick="this.parentNode.classList.toggle('af-open')">
-            <span class="af-toggle">▶</span>
-            <span class="af-effect-title">${title}</span>
-            <span class="af-effect-total ${colorCls(total)}">${fmtSigned(total)}</span>
-        </div>
-        <div class="af-effect-body">`;
-
-    branches.forEach((br, bi) => {
-        let brTotal = 0;
-        const brActivities = [];
-
-        br.activities.forEach(act => {
-            let actTotal = 0;
-            const actGroups = [];
-
-            if(effectKey === 's' && act.singleFactor){
-                act.groups.forEach(g => {
-                    const v = g.s || 0;
-                    if(v !== 0){ actTotal += v; actGroups.push({ name: g.name, value: v }); }
-                });
-            } else if(effectKey !== 's' && !act.singleFactor){
-                act.groups.forEach(g => {
-                    const v = g[effectKey] || 0;
-                    if(v !== 0){ actTotal += v; actGroups.push({ name: g.name, value: v }); }
-                });
-            }
-
-            if(actTotal !== 0){
-                brTotal += actTotal;
-                brActivities.push({ name: act.name, total: actTotal, groups: actGroups });
-            }
-        });
-
-        if(brTotal === 0) return;
-
-        const brId = `${uid}-b${bi}`;
-        if(multipleB){
-            html += `
-            <div class="af-branch" data-uid="${brId}">
-                <div class="af-branch-header" onclick="this.parentNode.classList.toggle('af-open')">
-                    <span class="af-toggle">▶</span>
-                    <span class="af-branch-name">${br.name || t("branch") + " " + (bi+1)}</span>
-                    <span class="af-branch-total ${colorCls(brTotal)}">${fmtSigned(brTotal)}</span>
-                </div>
-                <div class="af-branch-body">`;
-        }
-
-        brActivities.forEach((act, ai) => {
-            const actId = `${brId}-a${ai}`;
-            html += `
-            <div class="af-activity" data-uid="${actId}">
-                <div class="af-activity-header" onclick="this.parentNode.classList.toggle('af-open')">
-                    <span class="af-toggle">▶</span>
-                    <span class="af-activity-name">${act.name}</span>
-                    <span class="af-activity-total ${colorCls(act.total)}">${fmtSigned(act.total)}</span>
-                </div>
-                <div class="af-activity-body">`;
-
-            act.groups.forEach(g => {
-                html += `
-                <div class="af-group-row">
-                    <span class="af-group-name">${g.name || t("group")}</span>
-                    <span class="af-group-val ${colorCls(g.value)}">${fmtSigned(g.value)}</span>
-                </div>`;
-            });
-
-            html += `</div></div>`;
-        });
-
-        if(multipleB){
-            html += `</div></div>`;
-        }
-    });
-
-    html += `</div></div>`;
-    return html;
+    return rows;
 }
 
 export const AnalysisBlock = {
+    _checked: {},   // uid → bool
+    _sortDir: 0,    // 0=none, 1=asc, -1=desc
+    _rows: [],
 
     init(){
         Store.subscribe(()      => this.render());
@@ -145,45 +61,135 @@ export const AnalysisBlock = {
         const multipleB    = branchCount > 1;
 
         let branchesForAnalysis = [];
-        if(isSummary){
-            branchesForAnalysis = branches;
-        } else {
-            const b = branches[activeBranch];
-            if(b) branchesForAnalysis = [b];
-        }
+        if(isSummary){ branchesForAnalysis = branches; }
+        else { const b = branches[activeBranch]; if(b) branchesForAnalysis = [b]; }
 
         if(!branchesForAnalysis.length){ el.innerHTML = ""; return; }
 
         const d = FactorModel.calcDetailed(branchesForAnalysis);
         if(d.R0 === 0 && d.R1 === 0){ el.innerHTML = ""; return; }
 
-        // Summary — no duplicate effect rows, trees go right after dR
-        let trees = "";
-        const totalGroups = branchesForAnalysis.reduce((n, br) =>
-            n + (br.activities||[]).reduce((m, act) => m + (act.groups||[]).length, 0), 0);
+        // Build rows
+        const rows = buildFactorRows(d, multipleB);
+        this._rows = rows;
 
-        if(totalGroups >= 1){
-            trees += `<div class="af-trees">`;
-            if(d.hasMulti){
-                trees += effectTree(t("factorQty"),      "q", d.branches, multipleB, "q");
-                trees += effectTree(t("factorPrice"),     "p", d.branches, multipleB, "p");
-                if(d.hasDiscount)
-                    trees += effectTree(t("factorDiscount"), "d", d.branches, multipleB, "d");
-            }
-            if(d.hasSingle){
-                trees += effectTree(t("factorSingle"), "s", d.branches, multipleB, "s");
-            }
-            trees += `</div>`;
-        }
+        // Init checkboxes — default all checked
+        rows.forEach((r, i) => {
+            const uid = `f${i}`;
+            if(this._checked[uid] === undefined) this._checked[uid] = true;
+        });
+
+        // Sort
+        let displayRows = [...rows.map((r,i) => ({...r, uid:`f${i}`}))];
+        if(this._sortDir === 1)  displayRows.sort((a,b) => a.value - b.value);
+        if(this._sortDir === -1) displayRows.sort((a,b) => b.value - a.value);
+
+        // Checked total
+        const checkedTotal = displayRows
+            .filter(r => this._checked[r.uid])
+            .reduce((s,r) => s + r.value, 0);
+
+        const sortIcon = ['↕','↑','↓'][this._sortDir === 0 ? 0 : this._sortDir === 1 ? 1 : 2];
 
         let html = `
-        <div class="analysis-grid">
-            ${sumRow(t("revenue") + " " + t("initial"), d.R0)}
-            ${sumRow(t("revenue") + " " + t("current"), d.R1)}
-            ${sumRow(t("change"), d.dR, true)}
+        <b>${t("analysis")}</b>
+        <div class="af-summary">
+            <div class="af-sum-row"><span>${t("revenue")} ${t("initial")}</span><span>${fmt(d.R0)}</span></div>
+            <div class="af-sum-row"><span>${t("revenue")} ${t("current")}</span><span>${fmt(d.R1)}</span></div>
+            <div class="af-sum-row af-sum-dr"><span>${t("change")}</span><span class="${colorCls(d.dR)}">${fmtSigned(d.dR)}</span></div>
         </div>
-        ${trees}`;
 
-        el.innerHTML = `<b>${t("analysis")}</b>${html}`;
+        <table class="af-table">
+            <thead>
+                <tr>
+                    <th class="af-th-check"></th>
+                    <th class="af-th-name">${t("factorQty").replace(" effect","")}</th>
+                    <th class="af-th-val">${t("change")}</th>
+                    <th class="af-th-pct af-sortable" onclick="window._afSort()">
+                        % ${sortIcon}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+        // Group by effect type — collapsible
+        const groups = {};
+        displayRows.forEach(r => {
+            if(!groups[r.effect]) groups[r.effect] = [];
+            groups[r.effect].push(r);
+        });
+
+        Object.entries(groups).forEach(([effect, items]) => {
+            const effectTotal = items.reduce((s,r) => s + r.value, 0);
+            const effectPct   = pct(effectTotal, d.dR);
+            const gid = `g_${effect.replace(/\s/g,'_')}`;
+            const allChecked  = items.every(r => this._checked[r.uid]);
+
+            html += `
+            <tr class="af-group-header" onclick="window._afToggleGroup('${gid}')">
+                <td><input type="checkbox" class="af-check-group" data-gid="${gid}"
+                    ${allChecked ? "checked" : ""}
+                    onclick="event.stopPropagation();window._afCheckGroup('${gid}',this.checked)"
+                ></td>
+                <td class="af-group-name">
+                    <span class="af-arrow" id="arr_${gid}">▶</span>
+                    ${effect}
+                </td>
+                <td class="${colorCls(effectTotal)}">${fmtSigned(effectTotal)}</td>
+                <td class="${colorCls(effectTotal)}">${effectPct.toFixed(1)}%</td>
+            </tr>`;
+
+            items.forEach(r => {
+                const rowPct = pct(r.value, d.dR);
+                html += `
+            <tr class="af-detail-row" data-gid="${gid}" style="display:none">
+                <td><input type="checkbox" class="af-check" data-uid="${r.uid}"
+                    ${this._checked[r.uid] ? "checked" : ""}
+                    onclick="window._afCheck('${r.uid}',this.checked)"
+                ></td>
+                <td class="af-detail-name">${r.label}</td>
+                <td class="${colorCls(r.value)}">${fmtSigned(r.value)}</td>
+                <td class="${colorCls(r.value)}">${rowPct.toFixed(1)}%</td>
+            </tr>`;
+            });
+        });
+
+        const checkedPct = pct(checkedTotal, d.dR);
+        html += `
+            </tbody>
+            <tfoot>
+                <tr class="af-total-row">
+                    <td></td>
+                    <td>${t("total")} (${t("selected")||"selected"})</td>
+                    <td class="${colorCls(checkedTotal)}">${fmtSigned(checkedTotal)}</td>
+                    <td class="${colorCls(checkedTotal)}">${checkedPct.toFixed(1)}%</td>
+                </tr>
+            </tfoot>
+        </table>`;
+
+        el.innerHTML = html;
+
+        // Global handlers
+        window._afSort = () => {
+            this._sortDir = this._sortDir === 0 ? 1 : this._sortDir === 1 ? -1 : 0;
+            this.render();
+        };
+        window._afCheck = (uid, checked) => {
+            this._checked[uid] = checked;
+            this.render();
+        };
+        window._afCheckGroup = (gid, checked) => {
+            document.querySelectorAll(`[data-gid="${gid}"][data-uid]`).forEach(el => {
+                this._checked[el.dataset.uid] = checked;
+            });
+            this.render();
+        };
+        window._afToggleGroup = (gid) => {
+            const rows = document.querySelectorAll(`tr[data-gid="${gid}"]`);
+            const arr  = document.getElementById(`arr_${gid}`);
+            const open = rows[0]?.style.display !== "none";
+            rows.forEach(r => r.style.display = open ? "none" : "");
+            if(arr) arr.textContent = open ? "▶" : "▼";
+        };
     }
 };

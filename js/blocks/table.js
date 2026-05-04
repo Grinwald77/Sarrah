@@ -163,7 +163,7 @@ export const TableBlock = {
 
         let html = `
         <div class="section-header">
-            <div class="section-title">${t("revenueBy")}</div>
+            <div class="section-title">${t("revenueOf")} ${t("by")} ${t(Store.get("activityType") || "activities")}</div>
             <div class="section-meta">${meta}</div>
             <div class="collapse-all-btns">
                 <button class="collapse-all-btn" id="collapseAllBtn">${t("collapseAll")}</button>

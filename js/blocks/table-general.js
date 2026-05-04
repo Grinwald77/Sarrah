@@ -57,7 +57,7 @@ export const TableGeneral = {
         // ── Step 2: Build HTML ──
         let html = `
         <div class="section-header">
-            <div class="section-title">${t("revenueBy")}</div>
+            <div class="section-title">${t("revenueOf")} ${t("by")} ${t(Store.get("activityType") || "activities")}</div>
             <div class="section-meta">${meta}</div>
         </div>`;
 

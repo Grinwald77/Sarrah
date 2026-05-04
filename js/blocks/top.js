@@ -108,6 +108,12 @@ export const TopBlock = {
                         <button id="buildBtn" class="build-btn">${t("build")}</button>
                         <button id="testBtn" class="test-btn">${t("test")}</button>
                     </div>
+                    <div class="top-group top-save-group">
+                        <label class="save-toggle">
+                            <input type="checkbox" id="saveDataToggle" checked>
+                            <span class="save-label">${t("saveData")}</span>
+                        </label>
+                    </div>
                 </div>
 
             </div>

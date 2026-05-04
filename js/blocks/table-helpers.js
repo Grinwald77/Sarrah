@@ -5,9 +5,7 @@ import { Store } from '../store.js';
 import { t }     from '../i18n.js';
 
 export function getScaleDiv(){
-    const s = Store.get("scale");
-    if(s === "thousands") return 1000;
-    if(s === "millions")  return 1000000;
+    // Scale display disabled until DB connected — kept for analytics text only
     return 1;
 }
 export function getCurrencySymbol(){

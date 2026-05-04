@@ -2151,3 +2151,23 @@ td.indent { padding-left: 28px !important; }
 .af-l1 .af-chkmark { border-color:rgba(255,255,255,0.5); background:transparent; }
 .af-l1 .af-chk input:checked + .af-chkmark { background:#4ade80; border-color:#4ade80; }
 
+
+/* ── Contrast fix — dark bg = light text, light bg = dark text ── */
+.af-l1 td { color:#ffffff !important; }
+.af-l1 td.green { color:#86efac !important; }
+.af-l1 td.red   { color:#fca5a5 !important; }
+
+.af-l2 td { color:#1a2f4a !important; }
+.af-l2 td.green { color:#15803d !important; }
+.af-l2 td.red   { color:#b91c1c !important; }
+
+.af-l3 td { color:#2d3f5a !important; }
+.af-l3 td.green { color:#15803d !important; }
+.af-l3 td.red   { color:#b91c1c !important; }
+.af-dim td { opacity:0.45 !important; }
+
+.af-foot td { color:#e2e8f0 !important; }
+.af-foot td.green { color:#86efac !important; }
+.af-foot td.red   { color:#fca5a5 !important; }
+
+.af-table thead th { color:#ffffff !important; }

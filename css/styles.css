@@ -2069,3 +2069,85 @@ td.indent { padding-left: 28px !important; }
     height: 13px;
 }
 
+
+/* ===================================================
+   Analysis Table v8.7
+   =================================================== */
+
+.af-summary { display:table; margin-bottom:10px; }
+.af-sr { display:table-row; font-size:12px; }
+.af-sr span { display:table-cell; padding:2px 12px 2px 0; color:var(--text2); font-family:var(--font-head); }
+.af-sv { font-family:var(--font-mono) !important; font-weight:500; color:var(--text) !important; }
+.af-sr-dr .af-sv { font-weight:700 !important; }
+
+/* Table */
+.af-table { width:100%; border-collapse:collapse; font-size:11px; }
+.af-table thead th { background:#1a3660; color:#fff; padding:6px 8px; font-size:10px; font-weight:600; letter-spacing:0.04em; white-space:nowrap; }
+.af-tc  { width:28px; }
+.af-tn  { }
+.af-tv  { width:120px; text-align:left !important; }
+.af-tp  { width:64px; text-align:left !important; cursor:pointer; user-select:none; }
+.af-tp:hover { background:#1e4278; }
+
+/* Values LEFT-aligned close to labels */
+.af-table td:nth-child(3),
+.af-table td:nth-child(4) { font-family:var(--font-mono); font-size:11px; padding-left:8px; }
+
+/* Level 1 — factor */
+.af-l1 { background:#1a3660; }
+.af-l1 td { padding:7px 8px; color:#e2e8f0; font-weight:600; font-size:11px; }
+.af-l1 td.green { color:#86efac !important; }
+.af-l1 td.red   { color:#fca5a5 !important; }
+.af-l1n { display:flex; align-items:center; gap:6px; }
+
+/* Level 2 — branch */
+.af-l2 { background:#e8eef8; }
+.af-l2 td { padding:5px 8px; color:#1a3660; font-weight:500; }
+.af-l2n { display:flex; align-items:center; gap:6px; padding-left:8px !important; }
+
+/* Level 3 — group */
+.af-l3 td { padding:4px 8px; border-bottom:1px solid #f0f4fb; color:var(--text2); }
+.af-l3n { padding-left:20px !important; font-size:11px; }
+.af-dim td { opacity:0.5; }
+
+/* ± toggle */
+.af-pm {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; border-radius:3px;
+    background:rgba(255,255,255,0.15); color:inherit;
+    font-size:12px; font-weight:700; cursor:pointer;
+    flex-shrink:0; line-height:1;
+    font-family:var(--font-mono);
+    transition:background 0.12s;
+}
+.af-l2 .af-pm { background:rgba(26,54,96,0.15); }
+.af-pm:hover { background:rgba(255,255,255,0.3); }
+
+/* Sort icons */
+.afs-none { color:rgba(255,255,255,0.5); font-size:10px; }
+.afs-asc  { color:#4ade80; font-size:10px; }
+.afs-desc { color:#f87171; font-size:10px; }
+
+/* Footer */
+.af-foot td { padding:7px 8px; background:#1a3660; color:#b0bdd0; font-weight:600; font-size:11px; font-family:var(--font-mono); }
+.af-foot td.green { color:#86efac !important; }
+.af-foot td.red   { color:#fca5a5 !important; }
+
+/* Green checkbox */
+.af-chk { display:inline-flex; align-items:center; cursor:pointer; }
+.af-chk input { position:absolute; opacity:0; width:0; height:0; }
+.af-chkmark {
+    width:14px; height:14px; border-radius:3px;
+    border:2px solid #4ade80; background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:background 0.12s;
+}
+.af-chk input:checked + .af-chkmark {
+    background:#4ade80; border-color:#4ade80;
+}
+.af-chk input:checked + .af-chkmark::after {
+    content:"✓"; font-size:9px; color:#fff; font-weight:700; line-height:1;
+}
+.af-l1 .af-chkmark { border-color:rgba(255,255,255,0.5); background:transparent; }
+.af-l1 .af-chk input:checked + .af-chkmark { background:#4ade80; border-color:#4ade80; }
+

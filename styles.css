@@ -1,0 +1,2192 @@
+/* ===================================================
+   SARRAH BI — Minimal White Theme
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600&display=swap');
+
+/* ===== ПЕРЕМЕННЫЕ ===== */
+:root {
+    --bg:        #ffffff;
+    --bg2:       #fafafa;
+    --bg3:       #f5f5f5;
+    --bg4:       #efefef;
+    --surface:   #e8e8e8;
+
+    --border:    #e8e8e8;
+    --border2:   #d0d0d0;
+
+    --text:      #111111;
+    --text2:     #444444;
+    --text3:     #999999;
+
+    --accent:    #111111;
+    --accent2:   #444444;
+
+    --green:     #1a7a3c;
+    --green-bg:  #f0faf4;
+    --red:       #c0392b;
+    --red-bg:    #fdf3f2;
+
+    --radius:    4px;
+    --radius-lg: 6px;
+
+    --font-head: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-body: 'IBM Plex Sans', sans-serif;
+}
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ===== TOP BAR ===== */
+.top-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+
+    background: #1a3660;
+    padding: 12px 24px;
+    border-bottom: none;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.22);
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* ===== ЛОГО ===== */
+.logo-block {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-right: 20px;
+    padding-right: 20px;
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.logo { height: 68px; }
+
+.logo-main {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 32px;
+    letter-spacing: -0.8px;
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.logo-sub {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* ===== ГРУППЫ ===== */
+.top-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.09);
+}
+.top-group:hover {
+    background: rgba(255,255,255,0.13);
+    border-color: rgba(255,255,255,0.22);
+}
+
+/* ===== LABEL ===== */
+.label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* ===== INPUT / SELECT ===== */
+.top-bar input,
+.top-bar select {
+    height: 28px;
+    padding: 0 8px;
+
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius);
+
+    color: #1a2e4a;
+    font-family: var(--font-mono);
+    font-size: 12px;
+
+    cursor: pointer;
+    transition: all 0.12s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.top-bar select {
+    padding-right: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%231a2e4a'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 7px center;
+    background-color: rgba(255,255,255,0.92);
+}
+
+.top-bar input:focus,
+.top-bar select:focus {
+    outline: none;
+    border-color: #93c5fd;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(147,197,253,0.35);
+}
+.top-bar input:hover,
+.top-bar select:hover {
+    background: #fff;
+    border-color: rgba(255,255,255,0.5);
+}
+
+/* ===== КНОПКИ ===== */
+button {
+    border: none;
+    border-radius: var(--radius);
+    padding: 7px 20px;
+    cursor: pointer;
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.18s ease;
+}
+button:active { transform: scale(0.97); }
+
+.build-btn {
+    background: #1d4ed8;
+    color: #fff;
+    border: 1px solid #1e40af;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.12) inset,
+        0 4px 12px rgba(29,78,216,0.45),
+        0 1px 3px rgba(0,0,0,0.2);
+}
+.build-btn:hover {
+    background: #2563eb;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.16) inset,
+        0 6px 20px rgba(37,99,235,0.55),
+        0 2px 6px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.test-btn {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 1px 3px rgba(29,78,216,0.1);
+}
+.test-btn:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+    box-shadow: 0 2px 8px rgba(29,78,216,0.18);
+    transform: translateY(-1px);
+}
+
+/* ===== АНИМАЦИЯ БЛОКОВ ===== */
+.block { animation: fadeUp 0.3s ease both; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== TABLE TITLE ===== */
+.table-title {
+    margin: 20px 24px 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.table-title::before {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 12px;
+    background: var(--text);
+    border-radius: 1px;
+    flex-shrink: 0;
+}
+
+/* ===== TABLE BLOCK ===== */
+#tableBlock {
+    padding: 0 24px 24px;
+}
+
+/* ===== TABLE ===== */
+table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid #c8d4e8;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(100,140,200,0.06),
+        0 4px 20px rgba(26,54,96,0.08),
+        0 1px 4px rgba(26,54,96,0.06);
+}
+
+/* ===== HEADER ===== */
+thead tr:first-child th {
+    background: #e8eef8;
+    border-bottom: 1px solid #c8d4e8;
+}
+thead tr:last-child th {
+    background: #f0f4fb;
+    border-bottom: 1px solid #d4dff0;
+}
+
+th {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 10px;
+    color: #5a7aaa;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 9px 10px;
+    border-right: 1px solid #d4dff0;
+    white-space: nowrap;
+}
+th:last-child { border-right: none; }
+th[colspan="2"], th[colspan="4"], th[colspan="3"] {
+    text-align: center;
+    color: #3a5a8a;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+}
+
+/* ===== CELLS ===== */
+td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #edf1f8;
+    border-right: 1px solid #edf1f8;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text2);
+    transition: background 0.1s;
+}
+td:last-child { border-right: none; }
+td:first-child {
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+}
+
+/* ===== INPUT В ТАБЛИЦЕ ===== */
+td input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text);
+    transition: all 0.14s;
+}
+td:first-child input { font-family: var(--font-body); font-size: 13px; }
+td input:hover {
+    border-color: #b0c4e8;
+    background: #f0f5ff;
+}
+td input:focus {
+    background: #e8f0ff;
+    border-color: #5b8dee;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(91,141,238,0.18);
+    color: #1a2e4a;
+}
+
+/* ===== ROW HOVER ===== */
+tbody tr:hover td {
+    background: #f0f4fb;
+}
+tbody tr:hover td input {
+    background: transparent;
+}
+
+/* ===== ACTIVE ROW ===== */
+tbody tr:focus-within td {
+    background: #e6edfa;
+    border-bottom-color: #c0d0ee;
+}
+tbody tr:focus-within td input:not(:focus) {
+    color: #1a2e4a;
+}
+
+/* ===== TOTAL ===== */
+tr.total td {
+    background: #1a3660;
+    border-top: 2px solid #1a3660;
+    border-bottom: none;
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+    font-size: 11px;
+}
+tr.total td:first-child {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+tr.total .green {
+    color: #6ee7a8 !important;
+    background: rgba(110,231,168,0.12);
+}
+tr.total .red {
+    color: #fca5a5 !important;
+    background: rgba(252,165,165,0.12);
+}
+
+/* ===== ЦВЕТА ===== */
+.green {
+    color: var(--green) !important;
+    background: var(--green-bg);
+    border-radius: 3px;
+    padding: 2px 6px;
+}
+.red {
+    color: var(--red) !important;
+    background: var(--red-bg);
+    border-radius: 3px;
+    padding: 2px 6px;
+}
+
+/* ===== ЧИСЛА ВПРАВО ===== */
+td:nth-child(n+6) { text-align: right; }
+
+/* ===== ANALYSIS BLOCK ===== */
+#analysisBlock {
+    margin: 0 24px 28px;
+    padding: 24px 36px;
+    background: var(--bg2);
+    border: 1px solid #c8d4e8;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 10px rgba(26,54,96,0.06);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 2.4;
+}
+#analysisBlock b {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    display: block;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #d4dff0;
+    margin-bottom: 8px;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+
+/* ===== SELECTION ===== */
+::selection { background: #e8e8e8; color: var(--text); }
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 900px) {
+    .top-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    table { font-size: 11px; margin: 0 12px 16px; width: calc(100% - 24px); }
+    .table-title { margin: 16px 12px 6px; }
+}
+
+/* ===================================================
+   SARRAH BI — Activity Blocks (v2 additions)
+   =================================================== */
+
+/* ── Section header ── */
+.section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin: 24px 24px 10px;
+}
+
+.section-title {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+}
+
+.section-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+/* ── Activity block ── */
+.activity-block {
+    margin: 0 24px 28px;
+    border: 1px solid #c8d4e8;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(100,140,200,0.04),
+        0 4px 20px rgba(26,54,96,0.07);
+}
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 18px;
+    background: #f0f4fb;
+    border-bottom: 1px solid #d4dff0;
+}
+
+.activity-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.activity-title {
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a3660;
+}
+
+.activity-name-display {
+    color: #1d4ed8;
+}
+
+.activity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.ctrl-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.activity-controls input[type="text"],
+.activity-controls input:not([type="number"]):not([type="checkbox"]) {
+    height: 26px;
+    padding: 0 8px;
+    background: #fff;
+    border: 1px solid #c8d4e8;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text);
+    min-width: 140px;
+    transition: all 0.12s;
+}
+.activity-controls input[type="number"] {
+    height: 26px;
+    padding: 0 6px;
+    background: #fff;
+    border: 1px solid #c8d4e8;
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+    transition: all 0.12s;
+}
+.activity-controls input:focus {
+    outline: none;
+    border-color: #5b8dee;
+    box-shadow: 0 0 0 2px rgba(91,141,238,0.18);
+}
+.activity-controls .act-name {
+    min-width: 160px;
+}
+
+.ctrl-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text2);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+}
+.ctrl-checkbox input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: #1d4ed8;
+}
+
+/* table inside activity block — override padding */
+.activity-block table {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+}
+
+/* ── Grand total block ── */
+.grand-total-block {
+    margin: 0 24px 28px;
+    border: 1px solid #1a3660;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(26,54,96,0.13);
+}
+
+.grand-total-block .section-header {
+    margin: 14px 18px 10px;
+}
+
+.grand-total-block table {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+}
+
+/* ── Analysis grid ── */
+.analysis-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+}
+
+.analysis-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #edf1f8;
+}
+.analysis-row:last-child { border-bottom: none; }
+
+.analysis-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.analysis-val {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.analysis-val.green { color: var(--green); }
+.analysis-val.red   { color: var(--red);   }
+
+.analysis-divider {
+    height: 1px;
+    background: #d4dff0;
+    margin: 4px 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .activity-block,
+    .grand-total-block { margin: 0 12px 20px; }
+    .activity-header { flex-direction: column; align-items: flex-start; }
+    .section-header  { margin: 16px 12px 8px; }
+}
+
+/* ===================================================
+   SARRAH BI — v2.1 patches: bigger fonts, inline name
+   =================================================== */
+
+/* ── Bigger table text ── */
+th {
+    font-size: 12px !important;
+    padding: 10px 12px !important;
+}
+td {
+    font-size: 13px !important;
+    padding: 7px 12px !important;
+}
+td:first-child {
+    font-size: 14px !important;
+}
+td input {
+    font-size: 13px !important;
+}
+td:first-child input {
+    font-size: 14px !important;
+}
+tr.total td {
+    font-size: 13px !important;
+}
+tr.total td:first-child {
+    font-size: 13px !important;
+}
+
+/* ── Activity header: name left, controls right ── */
+.activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #f0f4fb;
+    border-bottom: 1px solid #d4dff0;
+}
+
+/* Left side: inline name input + title text stacked */
+.activity-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* The big inline name field */
+.act-name-inline {
+    height: 32px;
+    padding: 0 10px;
+    background: #fff;
+    border: 1.5px solid #93c5fd;
+    border-radius: var(--radius);
+    font-family: var(--font-head);
+    font-size: 14px !important;
+    font-weight: 600;
+    color: #1a3660;
+    min-width: 180px;
+    max-width: 280px;
+    transition: all 0.14s;
+    box-shadow: 0 1px 4px rgba(29,78,216,0.08);
+}
+.act-name-inline:focus {
+    outline: none;
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 3px rgba(29,78,216,0.15);
+    background: #eff6ff;
+}
+.act-name-inline::placeholder {
+    color: #93a4c0;
+    font-weight: 400;
+}
+
+/* Title text next to input */
+.activity-title-text {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a3660;
+    white-space: nowrap;
+}
+.activity-title-text .activity-name-display {
+    color: #1d4ed8;
+}
+
+/* Section header bigger */
+.section-title {
+    font-size: 16px !important;
+}
+
+/* Column headers in activity header area */
+.section-meta {
+    font-size: 11px !important;
+}
+
+/* Colspan header text bigger */
+th[colspan="2"], th[colspan="4"], th[colspan="3"] {
+    font-size: 11px !important;
+}
+
+
+/* ===================================================
+   SARRAH BI — v2.2: collapse, centering, title fix
+   =================================================== */
+
+/* ── All td numbers centered ── */
+#tableBlock td {
+    text-align: center !important;
+}
+/* First column (name/group) stays left */
+#tableBlock td:first-child {
+    text-align: left !important;
+}
+/* Grand total first td stays left */
+.grand-total-block td:first-child {
+    text-align: left !important;
+}
+
+/* ── Activity title: "Revenue by" text + input inline ── */
+.activity-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.activity-title-text {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a3660;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── Collapse/expand all buttons ── */
+.collapse-all-btns {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.collapse-all-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: var(--radius);
+    color: rgba(255,255,255,0.75);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.14s;
+}
+.collapse-all-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+/* ── Per-table collapse button ── */
+.collapse-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    gap: 0;
+    position: relative;
+    flex-shrink: 0;
+}
+.collapse-btn:hover .collapse-icon-box {
+    background: #1d4ed8;
+    color: #fff;
+    border-color: #1d4ed8;
+}
+.collapse-btn:active { transform: scale(0.93); }
+
+/* The square icon box with + or − */
+.collapse-icon-box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #93a4c0;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1;
+    color: #5a7aaa;
+    background: #fff;
+    transition: all 0.14s;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+/* Elegant thin bracket lines above and below the box */
+.collapse-bracket {
+    display: block;
+    width: 8px;
+    height: 5px;
+    border-left: 1.5px solid #b0c4e8;
+    border-right: 1.5px solid #b0c4e8;
+    flex-shrink: 0;
+}
+.collapse-bracket-top {
+    border-top: 1.5px solid #b0c4e8;
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+}
+.collapse-bracket-bot {
+    border-bottom: 1.5px solid #b0c4e8;
+    border-top: none;
+    border-radius: 0 0 2px 2px;
+}
+.collapse-btn:hover .collapse-bracket {
+    border-color: #1d4ed8;
+}
+
+/* ── table-body-wrap transition ── */
+.table-body-wrap {
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+
+/* ===================================================
+   SARRAH BI — v2.3: center all, col widths
+   =================================================== */
+
+/* ── All td and th centered ── */
+#tableBlock th,
+#tableBlock td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* First column left-aligned */
+#tableBlock th:first-child,
+#tableBlock td:first-child {
+    text-align: left !important;
+}
+
+/* ── Column widths ── */
+#tableBlock table {
+    table-layout: fixed;
+}
+
+/* Name column wider */
+#tableBlock th:first-child,
+#tableBlock td:first-child {
+    width: 140px;
+    min-width: 100px;
+}
+
+/* Qty/Price/Revenue input columns */
+#tableBlock td input[data-field="quantity0"],
+#tableBlock td input[data-field="quantity1"] {
+    text-align: center;
+}
+#tableBlock td input[data-field="price0"],
+#tableBlock td input[data-field="price1"],
+#tableBlock td input[data-field="revenue0"],
+#tableBlock td input[data-field="revenue1"] {
+    text-align: right;
+}
+
+/* Computed cells right-aligned */
+#tableBlock td.num {
+    text-align: right !important;
+}
+
+/* Green/red cells centered */
+#tableBlock td.green,
+#tableBlock td.red {
+    text-align: center !important;
+}
+
+/* ── Grand total table ── */
+.grand-total-block th,
+.grand-total-block td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+.grand-total-block th:first-child,
+.grand-total-block td:first-child {
+    text-align: left !important;
+    width: 200px;
+}
+
+
+/* ===================================================
+   SARRAH BI — v2.4: collapse buttons visible fix
+   =================================================== */
+
+/* Collapse button — visible and clickable */
+.collapse-btn {
+    display: inline-flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 28px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    gap: 0;
+    margin-left: 6px;
+    flex-shrink: 0;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.collapse-icon-box {
+    width: 18px !important;
+    height: 18px !important;
+    border: 2px solid #5a7aaa !important;
+    border-radius: 3px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px !important;
+    font-weight: 700;
+    line-height: 1;
+    color: #1a3660 !important;
+    background: #fff !important;
+    transition: all 0.14s;
+    z-index: 1;
+    font-family: var(--font-mono);
+    opacity: 1 !important;
+}
+.collapse-btn:hover .collapse-icon-box {
+    background: #1d4ed8 !important;
+    color: #fff !important;
+    border-color: #1d4ed8 !important;
+}
+
+.collapse-bracket {
+    display: block !important;
+    width: 10px !important;
+    height: 5px !important;
+    border-left: 2px solid #93a4c0 !important;
+    border-right: 2px solid #93a4c0 !important;
+    opacity: 1 !important;
+}
+.collapse-bracket-top {
+    border-top: 2px solid #93a4c0 !important;
+    border-bottom: none !important;
+    border-radius: 2px 2px 0 0;
+}
+.collapse-bracket-bot {
+    border-bottom: 2px solid #93a4c0 !important;
+    border-top: none !important;
+    border-radius: 0 0 2px 2px;
+}
+.collapse-btn:hover .collapse-bracket {
+    border-color: #1d4ed8 !important;
+}
+
+/* Collapse-all buttons in section header */
+.collapse-all-btns {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    align-items: center;
+}
+.collapse-all-btn {
+    background: rgba(255,255,255,0.15) !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+    border-radius: var(--radius);
+    color: rgba(255,255,255,0.9) !important;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.14s;
+    opacity: 1 !important;
+}
+.collapse-all-btn:hover {
+    background: rgba(255,255,255,0.28) !important;
+    color: #fff !important;
+}
+
+
+/* analysis check row */
+.analysis-check .analysis-label {
+    font-size: 10px !important;
+    opacity: 0.65;
+    letter-spacing: 0.03em;
+}
+.analysis-check .analysis-val {
+    font-size: 11px !important;
+}
+
+/* ===================================================
+   SARRAH BI — v2.9 patches
+   =================================================== */
+
+/* Fix 5: No grey text — use dark blue/dark grey everywhere */
+.analysis-label { color: #2d3f5a !important; }
+.section-meta   { color: #3a5070 !important; }
+.table-title    { color: #3a5070 !important; }
+.label          { color: rgba(255,255,255,0.75) !important; }
+th              { color: #1a3660 !important; }
+td              { color: #1e2d42 !important; }
+td:first-child  { color: #111827 !important; }
+.ctrl-label     { color: #3a5070 !important; }
+.logo-sub       { color: rgba(255,255,255,0.65) !important; }
+
+/* Fix 6: Collapse All / Expand All — clearly visible */
+.section-header .collapse-all-btns {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.collapse-all-btn {
+    background: #1d4ed8 !important;
+    border: 1px solid #1e40af !important;
+    color: #ffffff !important;
+    font-family: var(--font-mono);
+    font-size: 11px !important;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 5px 14px !important;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    opacity: 1 !important;
+    font-weight: 600;
+}
+.collapse-all-btn:hover {
+    background: #2563eb !important;
+    box-shadow: 0 4px 12px rgba(29,78,216,0.35);
+    transform: translateY(-1px);
+}
+
+/* Fix 7: Empty placeholder */
+.empty-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    margin: 24px;
+    border: 2px dashed #c8d4e8;
+    border-radius: var(--radius-lg);
+    background: #f8fafd;
+    text-align: center;
+    gap: 16px;
+}
+.empty-placeholder-icon {
+    font-size: 36px;
+    color: #1d4ed8;
+    opacity: 0.5;
+    line-height: 1;
+}
+.empty-placeholder-text {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: #2d3f5a;
+    max-width: 480px;
+    line-height: 1.7;
+}
+
+/* Analysis check row text darker */
+.analysis-check .analysis-label {
+    color: #3a5070 !important;
+    font-size: 10px;
+}
+
+
+/* ── Total row contrast fix ── */
+tr.total td {
+    color: #e2e8f0 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+tr.total td:first-child {
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em;
+}
+tr.total .green {
+    color: #86efac !important;
+    background: rgba(134,239,172,0.15) !important;
+}
+tr.total .red {
+    color: #fca5a5 !important;
+    background: rgba(252,165,165,0.15) !important;
+}
+
+/* ── DataCloud canvas ── */
+#sarrah-murmuration {
+    width: 96px !important;
+    height: 96px !important;
+    border-radius: 50%;
+    background: #000;
+    flex-shrink: 0;
+    display: block;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15), 0 4px 24px rgba(0,0,0,0.6);
+}
+
+/* ===================================================
+   SARRAH BI — v4.2 patches
+   =================================================== */
+
+/* ── 1) Hebrew — elegant, not oversized ── */
+[dir="rtl"] th,
+[dir="rtl"] td,
+[dir="rtl"] .analysis-label,
+[dir="rtl"] .activity-title-text,
+[dir="rtl"] .ctrl-label {
+    font-size: 103% !important;
+    letter-spacing: 0 !important;
+    line-height: 1.5 !important;
+}
+[dir="rtl"] .section-meta,
+[dir="rtl"] .logo-sub {
+    font-size: 101% !important;
+    letter-spacing: 0 !important;
+}
+
+/* ── 2) Section meta — same weight/style as section-title ── */
+.section-meta {
+    font-family: var(--font-head) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #2d3f5a !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+/* ── 3) Two-line column headers ── */
+#tableBlock thead th {
+    white-space: normal !important;
+    vertical-align: middle !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+    padding: 7px 8px !important;
+}
+.th-type {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: #1a3660;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.th-period {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    color: #3a5070;
+    margin-top: 2px;
+    letter-spacing: 0;
+}
+
+/* ── 4) Center all columns except first ── */
+#tableBlock td:not(:first-child),
+#tableBlock th:not(:first-child) {
+    text-align: center !important;
+}
+#tableBlock td:first-child {
+    text-align: left !important;
+}
+#tableBlock th:first-child {
+    text-align: left !important;
+}
+#tableBlock td input {
+    text-align: center !important;
+}
+#tableBlock td:first-child input {
+    text-align: left !important;
+}
+#tableBlock td.num {
+    text-align: center !important;
+}
+
+/* Grand total table same centering */
+.grand-total-block td:not(:first-child),
+.grand-total-block th:not(:first-child) {
+    text-align: center !important;
+}
+.grand-total-block td:first-child,
+.grand-total-block th:first-child {
+    text-align: left !important;
+}
+
+
+/* ===================================================
+   SARRAH BI — Tabs (branches)
+   =================================================== */
+
+#tabsBlock {
+    padding: 0 24px;
+    margin-top: 8px;
+}
+
+.tabs-bar {
+    display: flex;
+    gap: 2px;
+    border-bottom: 2px solid #c8d4e8;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    background: #f0f4fb;
+    border: 1px solid #c8d4e8;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 500;
+    color: #5a7aaa;
+    cursor: pointer;
+    transition: all 0.14s;
+    white-space: nowrap;
+    text-transform: none;
+    letter-spacing: 0;
+    position: relative;
+    bottom: -2px;
+}
+.tab-btn:hover {
+    background: #e0e8f8;
+    color: #1a3660;
+    transform: none;
+}
+.tab-btn:active {
+    transform: scale(0.98);
+}
+
+/* Active tab */
+.tab-btn.tab-active {
+    background: #ffffff;
+    border-color: #c8d4e8;
+    border-bottom: 2px solid #ffffff;
+    color: #1a3660;
+    font-weight: 600;
+    z-index: 1;
+}
+
+/* Summary tab icon */
+.tab-icon {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1d4ed8;
+    font-family: var(--font-mono);
+}
+.tab-active .tab-icon {
+    color: #1d4ed8;
+}
+
+/* Branch number badge */
+.tab-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #e8eef8;
+    font-size: 10px;
+    font-weight: 600;
+    color: #3a5a8a;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+}
+.tab-active .tab-num {
+    background: #1d4ed8;
+    color: #fff;
+}
+
+/* Summary tab readonly styling */
+td input[readonly] {
+    background: transparent !important;
+    border-color: transparent !important;
+    color: var(--text2) !important;
+    cursor: default !important;
+    pointer-events: none;
+}
+
+
+/* ── Tab branch name editing ── */
+.tab-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    bottom: -2px;
+}
+.tab-wrapper-active .tab-btn {
+    border-bottom: 2px solid #ffffff;
+}
+.tab-name-input {
+    height: 22px;
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: #1a3660;
+    background: #f0f6ff;
+    border: none;
+    border-top: 1px solid #c8d4e8;
+    border-radius: 0 0 4px 4px;
+    outline: none;
+    width: 100%;
+    text-align: center;
+    letter-spacing: 0.03em;
+}
+.tab-name-input:focus {
+    background: #e0eeff;
+    color: #1d4ed8;
+}
+
+/* ── Excel-style inline tab rename ── */
+.tab-renameable {
+    cursor: pointer;
+}
+.tab-renameable:hover {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+}
+.tab-label-editing {
+    padding: 0;
+}
+.tab-inline-input {
+    height: 18px;
+    min-width: 50px;
+    padding: 0 4px;
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 500;
+    color: #1a3660;
+    background: #fff;
+    border: 1.5px solid #1d4ed8;
+    border-radius: 2px;
+    outline: none;
+    text-align: center;
+    box-shadow: 0 0 0 2px rgba(29,78,216,0.2);
+}
+/* Remove old bottom-input styles */
+.tab-wrapper, .tab-wrapper-active, .tab-name-input { display: none !important; }
+
+/* ===================================================
+   SARRAH BI — v4.9 patches
+   =================================================== */
+
+/* ── 2) Static logo restore ── */
+.logo {
+    height: 68px;
+    animation: none !important;
+    filter: none !important;
+}
+#sarrah-murmuration { display: none !important; }
+
+/* ── 5) First qty column centered ── */
+#tableBlock td:nth-child(2),
+#tableBlock th:nth-child(2) {
+    text-align: center !important;
+}
+#tableBlock td:nth-child(2) input {
+    text-align: center !important;
+}
+
+/* ── 6) Hebrew font — use Noto Sans Hebrew for consistent sizing ── */
+
+[dir="rtl"],
+[dir="rtl"] body {
+    font-family: 'Noto Sans Hebrew', 'IBM Plex Sans', sans-serif !important;
+}
+[dir="rtl"] th,
+[dir="rtl"] td,
+[dir="rtl"] input,
+[dir="rtl"] select,
+[dir="rtl"] button,
+[dir="rtl"] .analysis-label,
+[dir="rtl"] .section-title,
+[dir="rtl"] .section-meta,
+[dir="rtl"] .activity-title-text,
+[dir="rtl"] .ctrl-label,
+[dir="rtl"] .logo-main,
+[dir="rtl"] .logo-sub {
+    font-family: 'Noto Sans Hebrew', 'IBM Plex Sans', sans-serif !important;
+    font-size: 13px !important;
+    letter-spacing: 0 !important;
+    line-height: 1.5 !important;
+}
+[dir="rtl"] th {
+    font-size: 11px !important;
+}
+[dir="rtl"] .logo-main {
+    font-size: 28px !important;
+}
+
+
+/* ===================================================
+   General tab — hierarchy rows
+   =================================================== */
+
+.row-total td { font-weight: 600; background: #1a3660; color: #fff; }
+.row-total td.green { color: #86efac !important; }
+.row-total td.red   { color: #fca5a5 !important; }
+
+.row-branch td {
+    background: #e8eef8;
+    font-weight: 500;
+    color: #1a3660;
+}
+.row-branch td.green { color: #1a7a3c !important; }
+.row-branch td.red   { color: #c0392b !important; }
+
+.row-group td { background: #fff; }
+
+td.indent { padding-left: 28px !important; }
+
+.collapse-branch-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 6px 0 0;
+    font-size: 12px;
+    color: #3a5070;
+    vertical-align: middle;
+}
+.collapse-icon-sm {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+}
+
+.branch-badge {
+    display: inline-block;
+    background: #e8eef8;
+    color: #1a3660;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.activity-block-multi,
+.activity-block-unique,
+.activity-block-single {
+    margin-bottom: 24px;
+}
+
+/* ===================================================
+   Top bar — two rows layout
+   =================================================== */
+
+.top-bar-two-rows {
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding: 0 !important;
+}
+
+.top-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 24px;
+    width: 100%;
+}
+
+.top-row-1 {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.top-row-2 {
+    gap: 16px;
+}
+
+
+/* ===================================================
+   Top bar — logo zone + controls zone layout
+   =================================================== */
+
+.top-bar-two-rows {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+/* Logo zone — fixed width, never shrinks */
+.top-logo-zone {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    flex-shrink: 0;
+    border-inline-end: 1px solid rgba(255,255,255,0.1);
+    min-width: 220px;
+}
+
+/* Controls zone — takes remaining space, two rows inside */
+.top-controls-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.top-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 8px 20px;
+}
+
+.top-row-1 {
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+/* RTL — logo on right, controls on left */
+[dir="rtl"] .top-bar-two-rows {
+    flex-direction: row-reverse !important;
+}
+[dir="rtl"] .top-logo-zone {
+    border-inline-end: none;
+    border-inline-start: 1px solid rgba(255,255,255,0.1);
+}
+
+
+/* ===================================================
+   v6.0 patches
+   =================================================== */
+
+/* 4. General tab total row — grey text on dark bg */
+.activity-block-multi  .row-total td,
+.activity-block-unique .row-total td,
+.activity-block-single .row-total td {
+    color: #b0bdd0 !important;
+    font-weight: 600;
+}
+.activity-block-multi  .row-total td.green,
+.activity-block-unique .row-total td.green,
+.activity-block-single .row-total td.green { color: #86efac !important; }
+.activity-block-multi  .row-total td.red,
+.activity-block-unique .row-total td.red,
+.activity-block-single .row-total td.red   { color: #fca5a5 !important; }
+
+/* 7. Analysis — values closer to labels */
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 16px;
+    max-width: 400px;
+}
+.analysis-row {
+    display: contents;
+}
+.analysis-label {
+    font-size: 12px;
+    color: var(--text2);
+    white-space: nowrap;
+    padding: 3px 0;
+}
+.analysis-val, .analysis-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: right;
+    padding: 3px 0;
+    white-space: nowrap;
+}
+
+/* General combined analysis wrap */
+.general-analysis-wrap {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 2px solid #c8d4e8;
+}
+.general-analysis-wrap .analysis-block {
+    max-width: 400px;
+}
+
+
+/* ===================================================
+   v6.2 — Analysis block layout rebuild
+   =================================================== */
+
+/* Reset and rebuild analysis */
+#analysisBlock {
+    padding: 16px 24px;
+}
+#analysisBlock b {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.analysis-grid {
+    display: table;
+    width: auto;
+    border-spacing: 0 2px;
+}
+.analysis-row {
+    display: table-row;
+}
+.analysis-label {
+    display: table-cell;
+    font-size: 12px;
+    color: var(--text2);
+    padding: 3px 24px 3px 0;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.analysis-val,
+.analysis-value {
+    display: table-cell;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: right;
+    padding: 3px 0;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.analysis-divider {
+    display: table-row;
+    height: 6px;
+}
+.analysis-divider::after {
+    display: table-cell;
+    content: "";
+}
+
+/* Tabs Branch translation fix — force lang re-render */
+.tab-label { font-family: var(--font-head); }
+
+
+/* ── Collapse icon centering fix ── */
+.collapse-icon-box {
+    width: 16px !important;
+    height: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    font-size: 14px !important;
+    padding: 0 !important;
+    padding-bottom: 1px !important;
+}
+
+/* ── Top bar user zone ── */
+.top-user-zone {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-inline-end: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+.top-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.top-user-pic {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.top-user-name {
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    font-family: var(--font-head);
+    white-space: nowrap;
+}
+.top-signout-btn {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-head);
+    text-decoration: underline;
+    padding: 0;
+    white-space: nowrap;
+}
+.top-signout-btn:hover { color: #fff; }
+
+/* ── Top user zone — right side, v6.5b ── */
+.top-user-zone {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 20px !important;
+    border-inline-end: none !important;
+    border-inline-start: 1px solid rgba(255,255,255,0.1) !important;
+    flex-shrink: 0 !important;
+    margin-inline-start: auto !important;
+}
+
+/* ===================================================
+   Analysis drill-down — v6.8
+   =================================================== */
+
+.analysis-drilldown {
+    margin-top: 16px;
+    border-top: 1px solid #c8d4e8;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.analysis-detail-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.analysis-detail-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #1a3660;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--font-mono);
+    margin-bottom: 4px;
+}
+
+.analysis-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 2px 0 2px 8px;
+    border-left: 2px solid #e0e8f4;
+}
+
+.analysis-detail-label {
+    font-size: 11px;
+    color: var(--text2);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.analysis-detail-val {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+
+/* ===================================================
+   Analysis Factor Trees — v6.8b
+   =================================================== */
+
+.af-trees {
+    margin-top: 16px;
+    border-top: 1px solid #c8d4e8;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Effect level */
+.af-effect { border-radius: 6px; overflow: hidden; }
+.af-effect-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px;
+    background: #1a3660; color: #fff;
+    cursor: pointer; user-select: none;
+    border-radius: 6px;
+    transition: background 0.12s;
+}
+.af-effect-header:hover { background: #1e4278; }
+.af-effect-title { flex: 1; font-size: 12px; font-weight: 600; font-family: var(--font-head); }
+.af-effect-total { font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+.af-effect-body  { display: none; padding: 4px 0 4px 8px; }
+.af-effect.af-open > .af-effect-header { border-radius: 6px 6px 0 0; }
+.af-effect.af-open > .af-effect-body   { display: block; }
+
+/* Branch level */
+.af-branch { margin: 3px 0; }
+.af-branch-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 10px;
+    background: #e8eef8; color: #1a3660;
+    cursor: pointer; user-select: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+.af-branch-header:hover { background: #dce6f5; }
+.af-branch-name  { flex: 1; font-weight: 600; }
+.af-branch-total { font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
+.af-branch-body  { display: none; padding: 2px 0 2px 12px; }
+.af-branch.af-open > .af-branch-body { display: block; }
+
+/* Activity level */
+.af-activity { margin: 2px 0; }
+.af-activity-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 10px;
+    background: #f4f7fd; color: #2d3f5a;
+    cursor: pointer; user-select: none;
+    border-radius: 4px;
+    font-size: 11px;
+}
+.af-activity-header:hover { background: #eaf0fb; }
+.af-activity-name  { flex: 1; font-weight: 500; }
+.af-activity-total { font-family: var(--font-mono); font-size: 11px; }
+.af-activity-body  { display: none; padding: 2px 0 2px 12px; }
+.af-activity.af-open > .af-activity-body { display: block; }
+
+/* Group level */
+.af-group-row {
+    display: flex; align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: var(--text2);
+    border-left: 2px solid #dde6f4;
+    margin: 1px 0;
+}
+.af-group-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.af-group-val  { font-family: var(--font-mono); font-size: 11px; flex-shrink: 0; }
+
+/* Toggle arrow */
+.af-toggle {
+    font-size: 9px;
+    color: rgba(255,255,255,0.6);
+    transition: transform 0.15s;
+    flex-shrink: 0;
+    display: inline-block;
+}
+.af-branch-header .af-toggle,
+.af-activity-header .af-toggle { color: #6a86aa; }
+.af-open > *:first-child .af-toggle { transform: rotate(90deg); }
+
+
+/* ── Analysis tree — values closer to labels ── */
+.af-effect-header,
+.af-branch-header,
+.af-activity-header,
+.af-group-row {
+    justify-content: flex-start !important;
+}
+.af-effect-total,
+.af-branch-total,
+.af-activity-total,
+.af-group-val {
+    margin-left: 16px !important;
+    flex: 0 0 auto !important;
+}
+.af-effect-title,
+.af-branch-name,
+.af-activity-name,
+.af-group-name {
+    flex: 0 1 auto !important;
+    max-width: 200px !important;
+}
+
+/* Trees directly under summary — remove top border */
+.af-trees {
+    margin-top: 8px !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+}
+
+/* ── Save data toggle ── */
+.top-save-group {
+    border-left: 1px solid rgba(255,255,255,0.1);
+    padding-left: 16px !important;
+}
+.save-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+.save-toggle input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: #60a5fa;
+}
+.save-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    font-family: var(--font-head);
+}
+.save-toggle:hover .save-label { color: #fff; }
+
+/* ===================================================
+   Analysis Factor Table — v8.6
+   =================================================== */
+
+.af-summary {
+    display: table;
+    margin-bottom: 12px;
+}
+.af-sum-row {
+    display: table-row;
+    font-size: 12px;
+}
+.af-sum-row span {
+    display: table-cell;
+    padding: 2px 16px 2px 0;
+    color: var(--text2);
+    font-family: var(--font-head);
+}
+.af-sum-row span:last-child {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
+}
+.af-sum-dr span { font-weight: 600; }
+
+/* Table */
+.af-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-top: 8px;
+}
+.af-table th {
+    background: #1a3660;
+    color: #fff;
+    padding: 6px 10px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+.af-th-check { width: 24px; }
+.af-th-val   { text-align: right !important; width: 100px; }
+.af-th-pct   { text-align: right !important; width: 70px; }
+.af-sortable { cursor: pointer; user-select: none; }
+.af-sortable:hover { background: #1e4278; }
+
+/* Group header rows */
+.af-group-header {
+    background: #e8eef8;
+    cursor: pointer;
+}
+.af-group-header:hover { background: #dce6f5; }
+.af-group-header td {
+    padding: 6px 10px;
+    font-weight: 600;
+    color: #1a3660;
+}
+.af-group-name { display: flex; align-items: center; gap: 6px; }
+.af-arrow { font-size: 9px; color: #6a86aa; transition: transform 0.15s; }
+
+/* Detail rows */
+.af-detail-row td {
+    padding: 4px 10px;
+    border-bottom: 1px solid #f0f4fb;
+    color: var(--text2);
+}
+.af-detail-name {
+    padding-left: 24px !important;
+    font-family: var(--font-head);
+    font-size: 11px;
+}
+
+/* Value columns */
+.af-table td:nth-child(3),
+.af-table td:nth-child(4),
+.af-table th:nth-child(3),
+.af-table th:nth-child(4) {
+    text-align: right;
+    font-family: var(--font-mono);
+}
+
+/* Total row */
+.af-total-row {
+    background: #1a3660;
+    color: #fff;
+}
+.af-total-row td {
+    padding: 7px 10px;
+    font-weight: 600;
+    font-size: 11px;
+    color: #b0bdd0;
+}
+.af-total-row td.green { color: #86efac !important; }
+.af-total-row td.red   { color: #fca5a5 !important; }
+
+/* Checkboxes */
+.af-check, .af-check-group {
+    cursor: pointer;
+    accent-color: #1d4ed8;
+    width: 13px;
+    height: 13px;
+}
+
+
+/* ===================================================
+   Analysis Table v8.7
+   =================================================== */
+
+.af-summary { display:table; margin-bottom:10px; }
+.af-sr { display:table-row; font-size:12px; }
+.af-sr span { display:table-cell; padding:2px 12px 2px 0; color:var(--text2); font-family:var(--font-head); }
+.af-sv { font-family:var(--font-mono) !important; font-weight:500; color:var(--text) !important; }
+.af-sr-dr .af-sv { font-weight:700 !important; }
+
+/* Table */
+.af-table { width:100%; border-collapse:collapse; font-size:11px; }
+.af-table thead th { background:#1a3660; color:#fff; padding:6px 8px; font-size:10px; font-weight:600; letter-spacing:0.04em; white-space:nowrap; }
+.af-tc  { width:28px; }
+.af-tn  { }
+.af-tv  { width:120px; text-align:left !important; }
+.af-tp  { width:64px; text-align:left !important; cursor:pointer; user-select:none; }
+.af-tp:hover { background:#1e4278; }
+
+/* Values LEFT-aligned close to labels */
+.af-table td:nth-child(3),
+.af-table td:nth-child(4) { font-family:var(--font-mono); font-size:11px; padding-left:8px; }
+
+/* Level 1 — factor */
+.af-l1 { background:#1a3660; }
+.af-l1 td { padding:7px 8px; color:#e2e8f0; font-weight:600; font-size:11px; }
+.af-l1 td.green { color:#86efac !important; }
+.af-l1 td.red   { color:#fca5a5 !important; }
+.af-l1n { display:flex; align-items:center; gap:6px; }
+
+/* Level 2 — branch */
+.af-l2 { background:#e8eef8; }
+.af-l2 td { padding:5px 8px; color:#1a3660; font-weight:500; }
+.af-l2n { display:flex; align-items:center; gap:6px; padding-left:8px !important; }
+
+/* Level 3 — group */
+.af-l3 td { padding:4px 8px; border-bottom:1px solid #f0f4fb; color:var(--text2); }
+.af-l3n { padding-left:20px !important; font-size:11px; }
+.af-dim td { opacity:0.5; }
+
+/* ± toggle */
+.af-pm {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; border-radius:3px;
+    background:rgba(255,255,255,0.15); color:inherit;
+    font-size:12px; font-weight:700; cursor:pointer;
+    flex-shrink:0; line-height:1;
+    font-family:var(--font-mono);
+    transition:background 0.12s;
+}
+.af-l2 .af-pm { background:rgba(26,54,96,0.15); }
+.af-pm:hover { background:rgba(255,255,255,0.3); }
+
+/* Sort icons */
+.afs-none { color:rgba(255,255,255,0.5); font-size:10px; }
+.afs-asc  { color:#4ade80; font-size:10px; }
+.afs-desc { color:#f87171; font-size:10px; }
+
+/* Footer */
+.af-foot td { padding:7px 8px; background:#1a3660; color:#b0bdd0; font-weight:600; font-size:11px; font-family:var(--font-mono); }
+.af-foot td.green { color:#86efac !important; }
+.af-foot td.red   { color:#fca5a5 !important; }
+
+/* Green checkbox */
+.af-chk { display:inline-flex; align-items:center; cursor:pointer; }
+.af-chk input { position:absolute; opacity:0; width:0; height:0; }
+.af-chkmark {
+    width:14px; height:14px; border-radius:3px;
+    border:2px solid #4ade80; background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:background 0.12s;
+}
+.af-chk input:checked + .af-chkmark {
+    background:#4ade80; border-color:#4ade80;
+}
+.af-chk input:checked + .af-chkmark::after {
+    content:"✓"; font-size:9px; color:#fff; font-weight:700; line-height:1;
+}
+.af-l1 .af-chkmark { border-color:rgba(255,255,255,0.5); background:transparent; }
+.af-l1 .af-chk input:checked + .af-chkmark { background:#4ade80; border-color:#4ade80; }
+
+
+/* ── Contrast fix — dark bg = light text, light bg = dark text ── */
+.af-l1 td { color:#ffffff !important; }
+.af-l1 td.green { color:#86efac !important; }
+.af-l1 td.red   { color:#fca5a5 !important; }
+
+.af-l2 td { color:#1a2f4a !important; }
+.af-l2 td.green { color:#15803d !important; }
+.af-l2 td.red   { color:#b91c1c !important; }
+
+.af-l3 td { color:#2d3f5a !important; }
+.af-l3 td.green { color:#15803d !important; }
+.af-l3 td.red   { color:#b91c1c !important; }
+.af-dim td { opacity:0.45 !important; }
+
+.af-foot td { color:#e2e8f0 !important; }
+.af-foot td.green { color:#86efac !important; }
+.af-foot td.red   { color:#fca5a5 !important; }
+
+.af-table thead th { color:#ffffff !important; }
+
+/* ── Analysis table fixes v8.7c ── */
+
+/* No hover highlight on rows */
+.af-table tr:hover td { background: inherit !important; }
+.af-l1:hover td { background: inherit !important; }
+.af-l2:hover td { background: inherit !important; }
+.af-l3:hover td { background: inherit !important; }
+
+/* Header row — dark bg, white text */
+.af-table thead tr { background: #1a3660; }
+.af-table thead th { color: #ffffff !important; background: #1a3660 !important; }
+.af-tp:hover { background: #1e4278 !important; }
+
+/* Bigger sort triangles */
+.afs-none { font-size: 14px !important; }
+.afs-asc  { font-size: 14px !important; }
+.afs-desc { font-size: 14px !important; }
+

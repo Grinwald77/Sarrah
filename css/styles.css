@@ -2201,3 +2201,49 @@ td.indent { padding-left: 28px !important; }
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
+
+/* ── Sort triangles — same size as text ── */
+.afs-none, .afs-asc, .afs-desc {
+    font-size: 16px !important;
+    line-height: 1 !important;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+/* ── Analysis v8.8 — 4 levels + level buttons ── */
+
+.af-level-controls {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+.af-lvl-btn {
+    padding: 5px 12px;
+    background: #e8eef8;
+    color: #1a3660;
+    border: 1px solid #c8d4e8;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: var(--font-head);
+    cursor: pointer;
+    transition: all 0.12s;
+}
+.af-lvl-btn:hover {
+    background: #1a3660;
+    color: #fff;
+    border-color: #1a3660;
+}
+
+/* Level 3 — activity (between branch and group) */
+.af-l3 { background: #f4f7fd; }
+.af-l3 td { padding: 4px 8px; color: #2d3f5a !important; font-weight: 500; }
+.af-l3 td.green { color: #15803d !important; }
+.af-l3 td.red   { color: #b91c1c !important; }
+.af-l3n { display: flex; align-items: center; gap: 6px; padding-left: 16px !important; }
+
+/* Level 4 — group (leaf) */
+.af-l4 td { padding: 4px 8px; border-bottom: 1px solid #f0f4fb; color: #4a5b78 !important; }
+.af-l4 td.green { color: #15803d !important; }
+.af-l4 td.red   { color: #b91c1c !important; }
+.af-l4n { padding-left: 36px !important; font-size: 11px; }
+

@@ -24,6 +24,15 @@ init(){
 },
 
 render(){
+    try {
+        this._render();
+    } catch(e){
+        const el = document.getElementById("analysisBlock");
+        if(el) el.innerHTML = `<div style="color:#b91c1c;padding:8px;font-family:monospace;font-size:11px;">ERROR: ${e.message}<br>${e.stack||""}</div>`;
+    }
+},
+
+_render(){
     const el = document.getElementById("analysisBlock");
     if(!el) return;
     if(!Store.get("built")){ el.innerHTML = ""; return; }

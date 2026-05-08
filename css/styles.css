@@ -2080,3 +2080,33 @@ td.indent { padding-left: 28px !important; }
 .af-l3 .af-chkmark,
 .af-l4 .af-chkmark { border-color: #9ab0cc; }
 
+
+/* ── Analysis fixes ── */
+
+/* 1. Level 1 — light text */
+.af-l1 td { color: #e2e8f0 !important; }
+.af-l1 td.green { color: #86efac !important; }
+.af-l1 td.red   { color: #fca5a5 !important; }
+
+/* 2. Values closer to labels — remove fixed width, use auto */
+.af-tv { width: auto !important; min-width: 80px !important; }
+.af-tp { width: auto !important; min-width: 60px !important; }
+.af-table { table-layout: auto !important; }
+.af-table td:nth-child(3),
+.af-table td:nth-child(4) { padding-left: 6px !important; }
+
+/* 3. Sort triangles — 5x bigger */
+.afs-none { font-size: 40px !important; line-height: 1 !important; vertical-align: middle !important; }
+.afs-asc  { font-size: 40px !important; line-height: 1 !important; vertical-align: middle !important; color: #22c55e !important; }
+.afs-desc { font-size: 40px !important; line-height: 1 !important; vertical-align: middle !important; color: #ef4444 !important; }
+
+
+/* Analysis meta line */
+.af-meta {
+    font-size: 11px;
+    color: #6a86aa;
+    font-family: var(--font-mono);
+    padding: 6px 18px 8px;
+    border-bottom: 1px solid #e8eef8;
+    letter-spacing: 0.03em;
+}

@@ -1826,84 +1826,72 @@ td.indent { padding-left: 28px !important; }
 
 
 /* ===================================================
-   Analysis Block — clean design
+   Analysis Block — light background, solid design
    =================================================== */
 
-#analysisBlock {
-    padding: 16px 24px;
-}
-
-#analysisBlock b {
-    display: block;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-}
-
-/* Summary rows */
+/* Summary */
 .af-summary {
     display: table;
-    margin-bottom: 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 14px;
     padding-bottom: 12px;
-    width: 100%;
+    border-bottom: 1px solid #d4dff0;
 }
-.af-sr {
-    display: table-row;
-}
+.af-sr { display: table-row; }
 .af-sr span:first-child {
     display: table-cell;
     font-size: 12px;
-    color: var(--text2);
-    padding: 3px 20px 3px 0;
+    color: #6a86aa;
+    padding: 2px 20px 2px 0;
     font-family: var(--font-head);
+    white-space: nowrap;
 }
 .af-sv {
     display: table-cell;
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
-    color: var(--text);
+    color: #1a2f4a;
 }
-.af-sr-dr .af-sv { font-size: 13px; }
+.af-sr-dr .af-sv { font-size: 13px; font-weight: 700; }
 
-/* Level control buttons */
+/* Level buttons */
 .af-level-controls {
     display: flex;
     gap: 6px;
     margin-bottom: 12px;
 }
 .af-lvl-btn {
-    padding: 4px 12px;
-    background: transparent;
-    color: rgba(255,255,255,0.5);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 4px;
+    padding: 5px 14px;
+    background: #e8eef8;
+    color: #1a3660;
+    border: 1px solid #c8d4e8;
+    border-radius: 5px;
     font-size: 11px;
+    font-weight: 600;
     font-family: var(--font-head);
     cursor: pointer;
     transition: all 0.15s;
 }
 .af-lvl-btn:hover {
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    border-color: rgba(255,255,255,0.4);
+    background: #1a3660;
+    color: #ffffff;
+    border-color: #1a3660;
 }
 
-/* Table base */
+/* Table */
 .af-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 11px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #d4dff0;
 }
-.af-tc  { width: 26px; }
-.af-tn  { }
-.af-tv  { width: 130px; }
-.af-tp  {
-    width: 70px;
+.af-tc { width: 28px; }
+.af-tn { }
+.af-tv { width: 120px; }
+.af-tp {
+    width: 68px;
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
@@ -1911,135 +1899,126 @@ td.indent { padding-left: 28px !important; }
 
 /* Header */
 .af-table thead th {
-    background: #0f2544;
-    color: #fff;
-    padding: 7px 10px;
+    background: #1a3660;
+    color: #ffffff;
+    padding: 8px 10px;
     font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-weight: 700;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    border: none;
+    text-align: left;
 }
-.af-tp:hover { background: #1a3660; }
+.af-tp:hover { background: #243f72; }
 
-/* No hover on any row */
-.af-table tr:hover td { background: inherit !important; }
+/* No hover */
+.af-table tbody tr:hover td { background: inherit !important; }
 
-/* Values LEFT — close to labels */
+/* Values close to labels */
 .af-table td:nth-child(3),
 .af-table td:nth-child(4) {
     font-family: var(--font-mono);
     padding-left: 10px;
 }
 
-/* Level 1 — Factor: dark bg, WHITE text */
-.af-l1 { background: #1a3660; }
+/* Level 1 — Factor: dark navy, WHITE text */
+.af-l1 { background: #243f72; }
 .af-l1 td {
-    padding: 8px 10px;
+    padding: 9px 10px;
     color: #ffffff;
     font-weight: 700;
     font-size: 12px;
-    border-bottom: 2px solid #0f2544;
+    border-bottom: 2px solid #1a3660;
 }
 .af-l1 td.green { color: #86efac !important; }
 .af-l1 td.red   { color: #fca5a5 !important; }
-.af-l1n { display: flex; align-items: center; gap: 8px; }
+.af-l1n { display: flex; align-items: center; gap: 7px; }
 
-/* Level 2 — Branch: light grey bg, DARK text */
-.af-l2 { background: #f0f4fb; }
+/* Level 2 — Branch: light blue-grey, DARK text */
+.af-l2 { background: #edf2fb; }
 .af-l2 td {
-    padding: 6px 10px;
+    padding: 7px 10px;
     color: #1a2f4a;
     font-weight: 600;
-    border-bottom: 1px solid #dde6f4;
+    border-bottom: 1px solid #d4dff0;
 }
 .af-l2 td.green { color: #15803d !important; }
 .af-l2 td.red   { color: #b91c1c !important; }
-.af-l2n { display: flex; align-items: center; gap: 8px; padding-left: 12px !important; }
+.af-l2n { display: flex; align-items: center; gap: 7px; padding-left: 14px !important; }
 
-/* Level 3 — Activity: white bg, DARK text */
-.af-l3 { background: #ffffff; }
+/* Level 3 — Activity: white, medium dark text */
+.af-l3 { background: #f7f9fd; }
 .af-l3 td {
-    padding: 5px 10px;
-    color: #2d3f5a;
+    padding: 6px 10px;
+    color: #2d4060;
     font-weight: 500;
-    border-bottom: 1px solid #eef2f8;
+    border-bottom: 1px solid #e8eef8;
 }
 .af-l3 td.green { color: #15803d !important; }
 .af-l3 td.red   { color: #b91c1c !important; }
-.af-l3n { display: flex; align-items: center; gap: 8px; padding-left: 24px !important; }
+.af-l3n { display: flex; align-items: center; gap: 7px; padding-left: 26px !important; }
 
-/* Level 4 — Group: white bg, GREY text */
+/* Level 4 — Group: white, grey text */
 .af-l4 { background: #ffffff; }
 .af-l4 td {
-    padding: 4px 10px;
+    padding: 5px 10px;
     color: #5a7090;
-    border-bottom: 1px solid #f5f7fb;
+    border-bottom: 1px solid #f0f4fb;
 }
 .af-l4 td.green { color: #16a34a !important; }
 .af-l4 td.red   { color: #dc2626 !important; }
-.af-l4n { padding-left: 40px !important; font-size: 11px; }
-.af-dim td { opacity: 0.4 !important; }
+.af-l4n { padding-left: 44px !important; font-size: 11px; }
+.af-dim td { opacity: 0.35 !important; }
 
-/* +/- toggle button */
+/* +/- toggle */
 .af-pm {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
     border-radius: 3px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     font-family: var(--font-mono);
     cursor: pointer;
     flex-shrink: 0;
     line-height: 1;
     transition: opacity 0.12s;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
+    background: rgba(255,255,255,0.18);
+    color: #ffffff;
 }
 .af-l2 .af-pm, .af-l3 .af-pm {
-    background: rgba(26,54,96,0.1);
+    background: rgba(26,54,96,0.12);
     color: #1a3660;
 }
-.af-pm:hover { opacity: 0.7; }
+.af-pm:hover { opacity: 0.65; }
 
 /* Sort icons */
-.afs-none { color: rgba(255,255,255,0.4); font-size: 15px; margin-left: 4px; }
-.afs-asc  { color: #4ade80; font-size: 15px; margin-left: 4px; }
-.afs-desc { color: #f87171; font-size: 15px; margin-left: 4px; }
+.afs-none { color: rgba(255,255,255,0.5); font-size: 14px; margin-left: 3px; }
+.afs-asc  { color: #4ade80; font-size: 14px; margin-left: 3px; }
+.afs-desc { color: #f87171; font-size: 14px; margin-left: 3px; }
 
 /* Footer */
-.af-foot { background: #0f2544; }
+.af-foot { background: #1a3660; }
 .af-foot td {
-    padding: 8px 10px;
+    padding: 9px 10px;
     color: #c8d8f0;
     font-weight: 700;
     font-size: 11px;
     font-family: var(--font-mono);
-    border-top: 2px solid #1a3660;
+    border-top: 2px solid #243f72;
 }
 .af-foot td.green { color: #86efac !important; }
 .af-foot td.red   { color: #fca5a5 !important; }
 
 /* Green checkbox */
-.af-chk {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-}
-.af-chk input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+.af-chk { display: inline-flex; align-items: center; cursor: pointer; }
+.af-chk input { position: absolute; opacity: 0; width: 0; height: 0; }
 .af-chkmark {
     width: 14px;
     height: 14px;
     border-radius: 3px;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 2px solid rgba(255,255,255,0.35);
     background: transparent;
     display: flex;
     align-items: center;
@@ -2063,4 +2042,3 @@ td.indent { padding-left: 28px !important; }
 .af-l4 .af-chkmark {
     border-color: #9ab0cc;
 }
-

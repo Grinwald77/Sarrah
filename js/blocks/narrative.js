@@ -98,15 +98,13 @@ export function generateNarrative(d, checkedIds, currency, periods){
     d.branches.forEach((br, bi) => {
         br.activities.forEach((act, ai) => {
             act.groups.forEach((g, gi) => {
-                act.groups.forEach((gg, ggi) => {
-                    const isSingle = act.singleFactor;
-                    ["q","p","d","s"].forEach(k => {
-                        const id = `f_${k}_b${bi}_a${ai}_g${ggi}`;
-                        if(checkedIds.has(id)){
-                            selected[k] += isSingle ? (gg.s||0) : (gg[k]||0);
-                            hasSelected = true;
-                        }
-                    });
+                const isSingle = act.singleFactor;
+                ["q","p","d","s"].forEach(k => {
+                    const id = `f_${k}_b${bi}_a${ai}_g${gi}`;
+                    if(checkedIds.has(id)){
+                        selected[k] += isSingle ? (g.s||0) : (g[k]||0);
+                        hasSelected = true;
+                    }
                 });
             });
         });

@@ -2187,3 +2187,20 @@ td.indent { padding-left: 28px !important; }
 /* Hide old meta div */
 .af-meta { display: none !important; }
 
+
+/* ── Resizable column handle ── */
+.af-resizer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+    z-index: 1;
+}
+.af-resizer:hover,
+.af-resizer:active {
+    background: rgba(26,54,96,0.3);
+}
+.af-table thead th { overflow: hidden; }

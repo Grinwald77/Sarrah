@@ -216,6 +216,45 @@ export const AnalysisBlock = {
 
         el.innerHTML = html;
         this._bind(el, tree, bList);
+        this._makeResizable(el);
+    },
+
+    _makeResizable(el){
+        const table = el.querySelector(".af-table");
+        if(!table) return;
+        const ths = table.querySelectorAll("thead th");
+        ths.forEach(th => {
+            // Skip checkbox column
+            if(th.classList.contains("af-tc")) return;
+            const resizer = document.createElement("div");
+            resizer.className = "af-resizer";
+            th.style.position = "relative";
+            th.appendChild(resizer);
+
+            let startX, startW;
+            resizer.addEventListener("mousedown", e => {
+                startX = e.clientX;
+                startW = th.offsetWidth;
+                document.body.style.cursor = "col-resize";
+                document.body.style.userSelect = "none";
+
+                const onMove = e => {
+                    const w = Math.max(60, startW + e.clientX - startX);
+                    th.style.width = w + "px";
+                    th.style.minWidth = w + "px";
+                };
+                const onUp = () => {
+                    document.body.style.cursor = "";
+                    document.body.style.userSelect = "";
+                    document.removeEventListener("mousemove", onMove);
+                    document.removeEventListener("mouseup", onUp);
+                };
+                document.addEventListener("mousemove", onMove);
+                document.addEventListener("mouseup", onUp);
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
     },
 
     _chkHtml(ids, checked){

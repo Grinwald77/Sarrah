@@ -118,22 +118,14 @@ export const AnalysisBlock = {
         const unitLabel = [scaleTxt, currency].filter(Boolean).join(" ");
         const metaLabel = [p0label, "—", p1label, unitLabel ? "| " + unitLabel : ""].filter(Boolean).join(" ");
 
-        let html = \`
-        <b>\${t("analysis")}</b>
-        <div class="af-meta">\${metaLabel}</div>
+        let html = `
+        <b>${t("analysis")}</b>
+        <div class="af-meta">${metaLabel}</div>
         <div class="af-summary">
-            <div class="af-sr"><span>\${p0label}</span><span class="af-sv">\${fmt(d.R0)}</span></div>
-            <div class="af-sr"><span>\${p1label}</span><span class="af-sv">\${fmt(d.R1)}</span></div>
-            <div class="af-sr af-sr-dr"><span>\${t("change")}</span><span class="af-sv \${cls(d.dR)}">\${fmtSigned(d.dR)}</span></div>
-        </div>\`;
-        html = \`
-        <b>\${t("analysis")}</b>
-        <div class="af-meta">\${metaLabel}</div>
-        <div class="af-summary">
-            <div class="af-sr"><span>\${p0label}</span><span class="af-sv">\${fmt(d.R0)}</span></div>
-            <div class="af-sr"><span>\${p1label}</span><span class="af-sv">\${fmt(d.R1)}</span></div>
-            <div class="af-sr af-sr-dr"><span>\${t("change")}</span><span class="af-sv \${cls(d.dR)}">\${fmtSigned(d.dR)}</span></div>
-        </div>\`;
+            <div class="af-sr"><span>${p0label}</span><span class="af-sv">${fmt(d.R0)}</span></div>
+            <div class="af-sr"><span>${p1label}</span><span class="af-sv">${fmt(d.R1)}</span></div>
+            <div class="af-sr af-sr-dr"><span>${t("change")}</span><span class="af-sv ${cls(d.dR)}">${fmtSigned(d.dR)}</span></div>
+        </div>
         <div class="af-level-controls">
             <button class="af-lvl-btn" data-level="1">${lvlLabel} 1</button>
             <button class="af-lvl-btn" data-level="2">${lvlLabel} 2</button>

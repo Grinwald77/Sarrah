@@ -1,4 +1,5 @@
-import { Store }       from '../store.js';
+import { Store }         from '../store.js';
+import { generateNarrative } from './narrative.js';
 import { FactorModel } from '../models/factor.js';
 import { t }           from '../i18n.js';
 

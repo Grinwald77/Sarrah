@@ -2204,3 +2204,77 @@ td.indent { padding-left: 28px !important; }
     background: rgba(26,54,96,0.3);
 }
 .af-table thead th { overflow: hidden; }
+
+/* ── Analysis two-column layout ── */
+.af-two-col {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+}
+.af-left {
+    flex: 0 0 auto;
+    min-width: 300px;
+    max-width: 60%;
+    border-right: 1px solid #d4dff0;
+}
+.af-right {
+    flex: 1;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Narrative header */
+.af-narrative-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px 8px;
+    border-bottom: 1px solid #e8eef8;
+}
+.af-narrative-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1a3660;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+}
+.af-copy-btn {
+    padding: 4px 12px;
+    background: #e8eef8;
+    color: #1a3660;
+    border: 1px solid #c8d4e8;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+}
+.af-copy-btn:hover {
+    background: #1a3660;
+    color: #fff;
+    border-color: #1a3660;
+}
+
+/* Narrative text */
+.af-narrative-text {
+    font-family: var(--font-head);
+    font-size: 12px;
+    line-height: 1.7;
+    color: #2d3f5a;
+    padding: 14px 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    flex: 1;
+    background: #fafbfd;
+}
+
+@media (max-width: 900px) {
+    .af-two-col { flex-direction: column; }
+    .af-left { max-width: 100%; border-right: none; border-bottom: 1px solid #d4dff0; }
+    .af-right { min-width: 100%; }
+}

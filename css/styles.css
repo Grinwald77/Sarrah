@@ -2110,3 +2110,80 @@ td.indent { padding-left: 28px !important; }
     border-bottom: 1px solid #e8eef8;
     letter-spacing: 0.03em;
 }
+
+/* ── Analysis summary and table tight layout ── */
+
+/* Title + meta on same line */
+#analysisBlock b {
+    display: inline !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+.af-header-line {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid #d4dff0;
+    flex-wrap: wrap;
+}
+.af-header-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1a3660;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+}
+.af-header-meta {
+    font-size: 11px;
+    color: #6a86aa;
+    font-family: var(--font-mono);
+}
+
+/* Summary — values immediately after label, no stretch */
+.af-summary {
+    display: block !important;
+    padding: 10px 18px 10px !important;
+    width: auto !important;
+    border-bottom: 1px solid #e8eef8 !important;
+}
+.af-sr {
+    display: flex !important;
+    align-items: baseline;
+    gap: 8px;
+    padding: 3px 0 !important;
+}
+.af-sr span:first-child {
+    display: inline !important;
+    font-size: 11px;
+    color: #5a7aaa;
+    font-family: var(--font-mono) !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    white-space: nowrap;
+    padding: 0 !important;
+}
+.af-sv {
+    display: inline !important;
+    font-family: var(--font-mono) !important;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a2f4a;
+    white-space: nowrap;
+}
+
+/* Table — auto width, not stretched */
+.af-table {
+    width: auto !important;
+    min-width: 300px;
+    table-layout: auto !important;
+}
+.af-tv, .af-tp { width: auto !important; }
+.af-table td, .af-table th { white-space: nowrap; }
+
+/* Hide old meta div */
+.af-meta { display: none !important; }
+

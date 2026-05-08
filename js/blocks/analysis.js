@@ -105,13 +105,35 @@ export const AnalysisBlock = {
             : '<span class="afs-desc">\u25bc</span>';
 
         const lvlLabel = t("level") || "Level";
-        let html = `
-        <b>${t("analysis")}</b>
+        // Dynamic period labels from Store
+        const periods   = Store.get("periods") || {};
+        const p0type    = periods.type0 === "Planned" ? t("planned") : t("actual");
+        const p1type    = periods.type1 === "Planned" ? t("planned") : t("actual");
+        const p0period  = periods.period0 ? periods.period0 + " " + (periods.year0||"") : (periods.year0||"");
+        const p1period  = periods.period1 ? periods.period1 + " " + (periods.year1||"") : (periods.year1||"");
+        const p0label   = p0type + (p0period ? " " + p0period.trim() : "");
+        const p1label   = p1type + (p1period ? " " + p1period.trim() : "");
+        const currency  = { USD:"$", EUR:"€", ILS:"₪", RUB:"₽" }[Store.get("currency")||"ILS"] || "";
+        const scaleTxt  = Store.get("scale") === "thousands" ? t("thousands") : Store.get("scale") === "millions" ? t("millions") : "";
+        const unitLabel = [scaleTxt, currency].filter(Boolean).join(" ");
+        const metaLabel = [p0label, "—", p1label, unitLabel ? "| " + unitLabel : ""].filter(Boolean).join(" ");
+
+        let html = \`
+        <b>\${t("analysis")}</b>
+        <div class="af-meta">\${metaLabel}</div>
         <div class="af-summary">
-            <div class="af-sr"><span>${t("revenue")} 0</span><span class="af-sv">${fmt(d.R0)}</span></div>
-            <div class="af-sr"><span>${t("revenue")} 1</span><span class="af-sv">${fmt(d.R1)}</span></div>
-            <div class="af-sr af-sr-dr"><span>${t("change")}</span><span class="af-sv ${cls(d.dR)}">${fmtSigned(d.dR)}</span></div>
-        </div>
+            <div class="af-sr"><span>\${p0label}</span><span class="af-sv">\${fmt(d.R0)}</span></div>
+            <div class="af-sr"><span>\${p1label}</span><span class="af-sv">\${fmt(d.R1)}</span></div>
+            <div class="af-sr af-sr-dr"><span>\${t("change")}</span><span class="af-sv \${cls(d.dR)}">\${fmtSigned(d.dR)}</span></div>
+        </div>\`;
+        html = \`
+        <b>\${t("analysis")}</b>
+        <div class="af-meta">\${metaLabel}</div>
+        <div class="af-summary">
+            <div class="af-sr"><span>\${p0label}</span><span class="af-sv">\${fmt(d.R0)}</span></div>
+            <div class="af-sr"><span>\${p1label}</span><span class="af-sv">\${fmt(d.R1)}</span></div>
+            <div class="af-sr af-sr-dr"><span>\${t("change")}</span><span class="af-sv \${cls(d.dR)}">\${fmtSigned(d.dR)}</span></div>
+        </div>\`;
         <div class="af-level-controls">
             <button class="af-lvl-btn" data-level="1">${lvlLabel} 1</button>
             <button class="af-lvl-btn" data-level="2">${lvlLabel} 2</button>

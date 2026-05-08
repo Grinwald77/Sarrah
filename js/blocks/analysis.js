@@ -7,25 +7,34 @@ function fmt(v){
 }
 function fmtSigned(v){
     const s = Math.abs(v).toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:2});
-    return (v >= 0 ? "+" : "−") + s;
+    return (v >= 0 ? "+" : "\u2212") + s;
 }
 function cls(v){ return v < 0 ? "red" : v > 0 ? "green" : ""; }
 function pct(part, total){ return total ? (part / Math.abs(total) * 100) : 0; }
 
 export const AnalysisBlock = {
-    _checked:   {},   // id → bool
-    _collapsed: {},   // id → bool
-    _sortDir:   0,    // 0 none  1 asc  -1 desc
+    _checked:   {},
+    _collapsed: {},
+    _sortDir:   0,
 
     init(){
-        Store.subscribe(()      => this.render());
+        Store.subscribe(()         => this.render());
         Store.subscribeAnalysis(() => this.render());
     },
 
     render(){
+        try { this._render(); }
+        catch(e){
+            const el = document.getElementById("analysisBlock");
+            if(el) el.innerHTML = `<div style="color:red;padding:8px;font-size:11px">${e.message}</div>`;
+        }
+    },
+
+    _render(){
         const el = document.getElementById("analysisBlock");
         if(!el) return;
-        if(!Store.get("built")){ el.innerHTML = ""; return; }
+        if(!Store.get("built")){ el.innerHTML = ""; el.style.display = "none"; return; }
+        el.style.display = "";
 
         const branches    = Store.get("branches") || [];
         const branchCount = Store.get("branchCount") || 1;
@@ -34,13 +43,12 @@ export const AnalysisBlock = {
         const multiB      = branchCount > 1;
 
         const bList = isSummary ? branches : (branches[ab] ? [branches[ab]] : []);
-        if(!bList.length){ el.innerHTML = ""; return; }
+        if(!bList.length){ el.innerHTML = ""; el.style.display = "none"; return; }
 
         const d = FactorModel.calcDetailed(bList);
-        if(d.R0 === 0 && d.R1 === 0){ el.innerHTML = ""; return; }
+        if(d.R0 === 0 && d.R1 === 0){ el.innerHTML = ""; el.style.display = "none"; return; }
 
-        // ── Build factor-first structure ──
-        // factors[effectKey] = { label, branches[bi] = { name, groups[{id,label,value}] } }
+        // Build tree: factor -> branch -> activity -> group
         const EFFECTS = [
             { key:"q", label: t("factorQty")      },
             { key:"p", label: t("factorPrice")     },
@@ -48,53 +56,66 @@ export const AnalysisBlock = {
             { key:"s", label: t("factorSingle")    },
         ];
 
-        const factors = {};
-        EFFECTS.forEach(e => { factors[e.key] = { label: e.label, branches: [] }; });
-
-        d.branches.forEach((br, bi) => {
-            const bname = br.name || `${t("branch")} ${bi+1}`;
-            EFFECTS.forEach(e => {
-                const groups = [];
-                br.activities.forEach(act => {
+        const tree = [];
+        EFFECTS.forEach(e => {
+            const fid = "f_" + e.key;
+            const fNode = { id: fid, label: e.label, branches: [] };
+            d.branches.forEach((br, bi) => {
+                const bid = fid + "_b" + bi;
+                const bName = br.name || (t("branch") + " " + (bi+1));
+                const bNode = { id: bid, name: bName, activities: [] };
+                br.activities.forEach((act, ai) => {
                     if(e.key === "s" && !act.singleFactor) return;
-                    if(e.key !== "s" && act.singleFactor)  return;
-                    act.groups.forEach(g => {
+                    if(e.key !== "s" &&  act.singleFactor) return;
+                    const aid = bid + "_a" + ai;
+                    const groups = [];
+                    act.groups.forEach((g, gi) => {
                         const val = e.key === "s" ? (g.s||0) : (g[e.key]||0);
-                        if(val !== 0){
-                            const id = `${e.key}_b${bi}_${act.name}_${g.name||""}`;
-                            groups.push({ id, label:`${act.name} / ${g.name||t("group")}`, value:val });
-                        }
+                        if(val !== 0) groups.push({ id: aid + "_g" + gi, name: g.name || (t("group") + " " + (gi+1)), value: val });
                     });
+                    if(groups.length) bNode.activities.push({ id: aid, name: act.name, groups });
                 });
-                if(groups.length) factors[e.key].branches.push({ name:bname, bi, groups });
+                if(bNode.activities.length) fNode.branches.push(bNode);
             });
+            if(fNode.branches.length) tree.push(fNode);
         });
 
-        // Init checkboxes
-        Object.values(factors).forEach(f => f.branches.forEach(br =>
-            br.groups.forEach(g => { if(this._checked[g.id]===undefined) this._checked[g.id]=true; })
-        ));
+        if(!tree.length){ el.innerHTML = ""; el.style.display = "none"; return; }
 
-        // Checked total
-        let checkedTotal = 0;
-        Object.values(factors).forEach(f => f.branches.forEach(br =>
-            br.groups.forEach(g => { if(this._checked[g.id]) checkedTotal += g.value; })
-        ));
+        // Init checkboxes
+        tree.forEach(f => f.branches.forEach(b => b.activities.forEach(a =>
+            a.groups.forEach(g => { if(this._checked[g.id] === undefined) this._checked[g.id] = true; })
+        )));
+
+        // Sum helpers
+        const gChecked = (g)  => this._checked[g.id] ? g.value : 0;
+        const aChecked = (a)  => a.groups.reduce((s,g) => s + gChecked(g), 0);
+        const bChecked = (b)  => b.activities.reduce((s,a) => s + aChecked(a), 0);
+        const fChecked = (f)  => f.branches.reduce((s,b) => s + bChecked(b), 0);
+        const aFull    = (a)  => a.groups.reduce((s,g) => s + g.value, 0);
+        const bFull    = (b)  => b.activities.reduce((s,a) => s + aFull(a), 0);
+        const fFull    = (f)  => f.branches.reduce((s,b) => s + bFull(b), 0);
+        const grandChecked = tree.reduce((s,f) => s + fChecked(f), 0);
 
         // Sort icon
         const si = this._sortDir === 0
-            ? `<span class="afs-none">↕</span>`
+            ? '<span class="afs-none">\u2195</span>'
             : this._sortDir === 1
-            ? `<span class="afs-asc">▲</span>`
-            : `<span class="afs-desc">▼</span>`;
+            ? '<span class="afs-asc">\u25b2</span>'
+            : '<span class="afs-desc">\u25bc</span>';
 
-        // ── HTML ──
+        const lvlLabel = t("level") || "Level";
         let html = `
         <b>${t("analysis")}</b>
         <div class="af-summary">
             <div class="af-sr"><span>${t("revenue")} 0</span><span class="af-sv">${fmt(d.R0)}</span></div>
             <div class="af-sr"><span>${t("revenue")} 1</span><span class="af-sv">${fmt(d.R1)}</span></div>
             <div class="af-sr af-sr-dr"><span>${t("change")}</span><span class="af-sv ${cls(d.dR)}">${fmtSigned(d.dR)}</span></div>
+        </div>
+        <div class="af-level-controls">
+            <button class="af-lvl-btn" data-level="1">${lvlLabel} 1</button>
+            <button class="af-lvl-btn" data-level="2">${lvlLabel} 2</button>
+            <button class="af-lvl-btn" data-level="3">${lvlLabel} 3</button>
         </div>
         <table class="af-table">
         <thead><tr>
@@ -105,60 +126,64 @@ export const AnalysisBlock = {
         </tr></thead>
         <tbody>`;
 
-        EFFECTS.forEach(e => {
-            const f = factors[e.key];
-            if(!f.branches.length) return;
+        tree.forEach(f => {
+            const fSum  = fChecked(f);
+            const fOpen = !this._collapsed[f.id];
+            const fAllCh = f.branches.every(b => b.activities.every(a => a.groups.every(g => this._checked[g.id])));
+            const fIds   = f.branches.flatMap(b => b.activities.flatMap(a => a.groups.map(g => g.id)));
 
-            const fid  = `f_${e.key}`;
-            const fcol = f.branches.reduce((s,b) => s + b.groups.reduce((ss,g)=>ss+g.value,0), 0);
-            const fchecked = f.branches.reduce((s,b) => s + b.groups.filter(g=>this._checked[g.id]).reduce((ss,g)=>ss+g.value,0), 0);
-            const fopen = !this._collapsed[fid];
-
-            // Factor row (level 1)
             html += `<tr class="af-l1">
-                <td>${this._checkBox(fid, f.branches.flatMap(b=>b.groups))}</td>
-                <td class="af-l1n">
-                    <span class="af-pm" data-cid="${fid}">${fopen?"−":"+"}</span>
-                    ${f.label}
-                </td>
-                <td class="${cls(fchecked)}">${fmtSigned(fchecked)}</td>
-                <td class="${cls(fchecked)}">${pct(fchecked,d.dR).toFixed(1)}%</td>
+                <td>${this._chkHtml(fIds, fAllCh)}</td>
+                <td class="af-l1n"><span class="af-pm" data-cid="${f.id}">${fOpen ? "\u2212" : "+"}</span>${f.label}</td>
+                <td class="${cls(fSum)}">${fmtSigned(fSum)}</td>
+                <td class="${cls(fSum)}">${pct(fSum, d.dR).toFixed(1)}%</td>
             </tr>`;
 
-            if(!fopen) return;
+            if(!fOpen) return;
 
-            f.branches.forEach((br, bri) => {
-                const bid   = `${fid}_b${bri}`;
-                const bcol  = br.groups.reduce((s,g)=>s+g.value,0);
-                const bchecked = br.groups.filter(g=>this._checked[g.id]).reduce((s,g)=>s+g.value,0);
-                const bopen = !this._collapsed[bid];
+            f.branches.forEach(b => {
+                const bSum  = bChecked(b);
+                const bOpen = !this._collapsed[b.id];
+                const bAllCh = b.activities.every(a => a.groups.every(g => this._checked[g.id]));
+                const bIds   = b.activities.flatMap(a => a.groups.map(g => g.id));
 
                 if(multiB){
-                    // Branch row (level 2)
                     html += `<tr class="af-l2">
-                        <td>${this._checkBox(bid, br.groups)}</td>
-                        <td class="af-l2n">
-                            <span class="af-pm" data-cid="${bid}">${bopen?"−":"+"}</span>
-                            ${br.name}
-                        </td>
-                        <td class="${cls(bchecked)}">${fmtSigned(bchecked)}</td>
-                        <td class="${cls(bchecked)}">${pct(bchecked,d.dR).toFixed(1)}%</td>
+                        <td>${this._chkHtml(bIds, bAllCh)}</td>
+                        <td class="af-l2n"><span class="af-pm" data-cid="${b.id}">${bOpen ? "\u2212" : "+"}</span>${b.name}</td>
+                        <td class="${cls(bSum)}">${fmtSigned(bSum)}</td>
+                        <td class="${cls(bSum)}">${pct(bSum, d.dR).toFixed(1)}%</td>
                     </tr>`;
-                    if(!bopen) return;
+                    if(!bOpen) return;
                 }
 
-                // Sort groups (level 3)
-                let groups = [...br.groups];
-                if(this._sortDir ===  1) groups.sort((a,b) => a.value - b.value);
-                if(this._sortDir === -1) groups.sort((a,b) => b.value - a.value);
+                b.activities.forEach(a => {
+                    const aSum  = aChecked(a);
+                    const aOpen = !this._collapsed[a.id];
+                    const aAllCh = a.groups.every(g => this._checked[g.id]);
+                    const aIds   = a.groups.map(g => g.id);
 
-                groups.forEach(g => {
-                    html += `<tr class="af-l3 ${this._checked[g.id]?'':'af-dim'}">
-                        <td>${this._checkBox(g.id, [g])}</td>
-                        <td class="af-l3n">${g.label}</td>
-                        <td class="${cls(g.value)}">${fmtSigned(g.value)}</td>
-                        <td class="${cls(g.value)}">${pct(g.value,d.dR).toFixed(1)}%</td>
+                    html += `<tr class="af-l3">
+                        <td>${this._chkHtml(aIds, aAllCh)}</td>
+                        <td class="af-l3n"><span class="af-pm" data-cid="${a.id}">${aOpen ? "\u2212" : "+"}</span>${a.name}</td>
+                        <td class="${cls(aSum)}">${fmtSigned(aSum)}</td>
+                        <td class="${cls(aSum)}">${pct(aSum, d.dR).toFixed(1)}%</td>
                     </tr>`;
+
+                    if(!aOpen) return;
+
+                    let groups = [...a.groups];
+                    if(this._sortDir ===  1) groups.sort((x,y) => x.value - y.value);
+                    if(this._sortDir === -1) groups.sort((x,y) => y.value - x.value);
+
+                    groups.forEach(g => {
+                        html += `<tr class="af-l4 ${this._checked[g.id] ? "" : "af-dim"}">
+                            <td>${this._chkHtml([g.id], this._checked[g.id])}</td>
+                            <td class="af-l4n">${g.name}</td>
+                            <td class="${cls(g.value)}">${fmtSigned(g.value)}</td>
+                            <td class="${cls(g.value)}">${pct(g.value, d.dR).toFixed(1)}%</td>
+                        </tr>`;
+                    });
                 });
             });
         });
@@ -166,35 +191,46 @@ export const AnalysisBlock = {
         html += `</tbody>
         <tfoot><tr class="af-foot">
             <td></td>
-            <td>${t("total")} (${t("selected")||"selected"})</td>
-            <td class="${cls(checkedTotal)}">${fmtSigned(checkedTotal)}</td>
-            <td class="${cls(checkedTotal)}">${pct(checkedTotal,d.dR).toFixed(1)}%</td>
+            <td>${t("total")} (${t("selected") || "selected"})</td>
+            <td class="${cls(grandChecked)}">${fmtSigned(grandChecked)}</td>
+            <td class="${cls(grandChecked)}">${pct(grandChecked, d.dR).toFixed(1)}%</td>
         </tr></tfoot>
         </table>`;
 
         el.innerHTML = html;
-        this._bind(el, d);
+        this._bind(el, tree, bList);
     },
 
-    // Green checkbox HTML
-    _checkBox(id, groups){
-        const allChecked = groups.every(g => this._checked[g.id !== undefined ? g.id : id]);
-        // For group-level checkbox id IS the group id
-        const isLeaf = groups.length === 1 && groups[0].id === id;
-        const dataAttr = isLeaf ? `data-lid="${id}"` : `data-gid="${id}" data-ids="${groups.map(g=>g.id).join(',')}"`;
-        return `<label class="af-chk"><input type="checkbox" ${dataAttr} ${allChecked?'checked':''}><span class="af-chkmark"></span></label>`;
+    _chkHtml(ids, checked){
+        const idsStr = ids.join(",");
+        return `<label class="af-chk"><input type="checkbox" data-ids="${idsStr}" ${checked ? "checked" : ""}><span class="af-chkmark"></span></label>`;
     },
 
-    _bind(el, d){
-        // Sort
+    _bind(el, tree, bList){
         el.querySelector("#afsortbtn").addEventListener("click", () => {
             this._sortDir = this._sortDir === 0 ? 1 : this._sortDir === 1 ? -1 : 0;
             this.render();
         });
 
-        // Collapse/expand — ONLY the ± button
+        el.querySelectorAll(".af-lvl-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const lvl = +btn.dataset.level;
+                this._collapsed = {};
+                tree.forEach(f => {
+                    if(lvl < 2) this._collapsed[f.id] = true;
+                    f.branches.forEach(b => {
+                        if(lvl < 3) this._collapsed[b.id] = true;
+                        b.activities.forEach(a => {
+                            if(lvl < 4) this._collapsed[a.id] = true;
+                        });
+                    });
+                });
+                this.render();
+            });
+        });
+
         el.querySelectorAll("[data-cid]").forEach(pm => {
-            pm.addEventListener("click", (e) => {
+            pm.addEventListener("click", e => {
                 e.stopPropagation();
                 const id = pm.dataset.cid;
                 this._collapsed[id] = !this._collapsed[id];
@@ -202,19 +238,8 @@ export const AnalysisBlock = {
             });
         });
 
-        // Leaf checkboxes
-        el.querySelectorAll("input[data-lid]").forEach(cb => {
-            cb.addEventListener("change", (e) => {
-                e.stopPropagation();
-                this._checked[cb.dataset.lid] = cb.checked;
-                this.render();
-            });
-        });
-
-        // Group checkboxes (level 1 or 2)
         el.querySelectorAll("input[data-ids]").forEach(cb => {
-            cb.addEventListener("change", (e) => {
-                e.stopPropagation();
+            cb.addEventListener("change", () => {
                 cb.dataset.ids.split(",").forEach(id => { this._checked[id] = cb.checked; });
                 this.render();
             });

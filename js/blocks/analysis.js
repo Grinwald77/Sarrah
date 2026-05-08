@@ -116,6 +116,7 @@ export const AnalysisBlock = {
             <button class="af-lvl-btn" data-level="1">${lvlLabel} 1</button>
             <button class="af-lvl-btn" data-level="2">${lvlLabel} 2</button>
             <button class="af-lvl-btn" data-level="3">${lvlLabel} 3</button>
+            <button class="af-lvl-btn" data-level="4">${lvlLabel} 4</button>
         </div>
         <table class="af-table">
         <thead><tr>

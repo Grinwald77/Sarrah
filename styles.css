@@ -2171,22 +2171,3 @@ td.indent { padding-left: 28px !important; }
 .af-foot td.red   { color:#fca5a5 !important; }
 
 .af-table thead th { color:#ffffff !important; }
-
-/* ── Analysis table fixes v8.7c ── */
-
-/* No hover highlight on rows */
-.af-table tr:hover td { background: inherit !important; }
-.af-l1:hover td { background: inherit !important; }
-.af-l2:hover td { background: inherit !important; }
-.af-l3:hover td { background: inherit !important; }
-
-/* Header row — dark bg, white text */
-.af-table thead tr { background: #1a3660; }
-.af-table thead th { color: #ffffff !important; background: #1a3660 !important; }
-.af-tp:hover { background: #1e4278 !important; }
-
-/* Bigger sort triangles */
-.afs-none { font-size: 14px !important; }
-.afs-asc  { font-size: 14px !important; }
-.afs-desc { font-size: 14px !important; }
-

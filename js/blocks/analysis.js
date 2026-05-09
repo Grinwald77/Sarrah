@@ -33,6 +33,7 @@ export const AnalysisBlock = {
 
     _render(){
         const el = document.getElementById("analysisBlock");
+        console.log("_render called, el:", !!el, "built:", Store.get("built"));
         if(!el) return;
         if(!Store.get("built")){ el.innerHTML = ""; el.style.display = "none"; return; }
         el.style.display = "";
@@ -44,9 +45,11 @@ export const AnalysisBlock = {
         const multiB      = branchCount > 1;
 
         const bList = isSummary ? branches : (branches[ab] ? [branches[ab]] : []);
+        console.log("bList:", bList.length, "ab:", ab, "branchCount:", branchCount);
         if(!bList.length){ el.innerHTML = ""; el.style.display = "none"; return; }
 
         const d = FactorModel.calcDetailed(bList);
+        console.log("d.R0:", d.R0, "d.R1:", d.R1, "tree branches:", d.branches.length);
         if(d.R0 === 0 && d.R1 === 0){ el.innerHTML = ""; el.style.display = "none"; return; }
 
         // Build tree: factor -> branch -> activity -> group

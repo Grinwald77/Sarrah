@@ -386,23 +386,10 @@ export const TopBlock = {
         const type = document.getElementById("periodType").value;
         const lang = Store.get("language");
 
-        const months = {
-            en: ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
-            ru: ["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
-            he: ["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"],
-            de: ["Jan.","Feb.","Mär.","Apr.","Mai","Jun.","Jul.","Aug.","Sep.","Okt.","Nov.","Dez."],
-            fr: ["Jan.","Fév.","Mar.","Avr.","Mai","Jun.","Jul.","Aoû.","Sep.","Oct.","Nov.","Déc."]
-        };
-
-        const quarters = {
-            en: ["Q1","Q2","Q3","Q4"],
-            ru: ["К1","К2","К3","К4"],
-            he: ["Q1","Q2","Q3","Q4"],
-            de: ["Q1","Q2","Q3","Q4"],
-            fr: ["T1","T2","T3","T4"]
-        };
-
-        const weekPrefix = { en:"W", ru:"Н", he:"W", de:"W", fr:"S" };
+        // Period labels from i18n dictionary
+        const months      = t("monthLabels")    || ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
+        const quarters    = t("quarterLabels")  || ["Q1","Q2","Q3","Q4"];
+        const weekPfx     = t("weekPrefix")     || "W";
 
         const period0 = document.getElementById("period0");
         const period1 = document.getElementById("period1");
@@ -415,11 +402,11 @@ export const TopBlock = {
 
         period0.disabled = false; period1.disabled = false;
 
-        const pfx = weekPrefix[lang] || "W";
+        const pfx = weekPfx;
         let list = [];
         if(type === "weeks")    list = Array.from({length:52}, (_,i) => `${pfx}${i+1}`);
-        if(type === "months")   list = months[lang]   || months.en;
-        if(type === "quarters") list = quarters[lang] || quarters.en;
+        if(type === "months")   list = months;
+        if(type === "quarters") list = quarters;
 
         const prev0 = Store.get("periods")?.period0;
         const prev1 = Store.get("periods")?.period1;

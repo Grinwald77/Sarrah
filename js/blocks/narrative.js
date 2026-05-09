@@ -25,8 +25,10 @@ function fmtPct(v, total){
 function formatPeriodForText(period, year){
     if(!period) return year ? year + " года" : "";
 
-    // Кварталы: К1, К2, Q1, Q2, T1 и т.д.
-    const qMatch = period.match(/^[КQT](\d)$/);
+    // Кварталы: 1 кв., 2 кв., Q1, Q2, T1 и т.д.
+    const qMatchRu = period.match(/^(\d) кв\.$/);
+    if(qMatchRu) return `${qMatchRu[1]} кв. ${year} года`;
+    const qMatch = period.match(/^[QT](\d)$/);
     if(qMatch) return `${qMatch[1]} кв. ${year} года`;
 
     // Недели: Н1, W1, S1
@@ -50,7 +52,9 @@ function formatPeriodForText(period, year){
 // Короткое название периода: К1 → 1 кв. 2026
 function formatPeriodShort(period, year){
     if(!period) return year || "";
-    const qMatch = period.match(/^[КQT](\d)$/);
+    const qMatchRuS = period.match(/^(\d) кв\.$/);
+    if(qMatchRuS) return `${qMatchRuS[1]} кв. ${year}`;
+    const qMatch = period.match(/^[QT](\d)$/);
     if(qMatch) return `${qMatch[1]} кв. ${year}`;
     const wMatch = period.match(/^[НWS](\d+)$/);
     if(wMatch) return `${wMatch[1]} нед. ${year}`;

@@ -3,6 +3,10 @@
 //  Детерминированный алгоритм на шаблонах
 // ─────────────────────────────────────────────
 
+function splitSentences(text){
+    return text.replace(/([.!?]) ([А-ЯA-Z])/g, "$1\n$2");
+}
+
 function fmt(v){
     return Math.abs(v).toLocaleString("ru-RU", {minimumFractionDigits:0, maximumFractionDigits:0});
 }
@@ -121,7 +125,89 @@ function factorText(key, value, dR, cur, rank){
 
     const t = templates[key];
     if(!t) return `Фактор ${key}: ${fmtSigned(value)} ${cur} (${pp}%).`;
-    return value >= 0 ? t.pos : t.neg;
+    return splitSentences(value >= 0 ? t.pos : t.neg);
+}
+
+// Анализ долей выручки
+function shareAnalysis(d, cur){
+    if(d.R0 === 0 && d.R1 === 0) return "";
+
+    // Collect all groups with their revenues
+    const items = [];
+    d.branches.forEach((br, bi) => {
+        const bName = d.branches.length > 1 ? br.name || `Филиал ${bi+1}` : null;
+        br.activities.forEach(act => {
+            act.groups.forEach(g => {
+                const r0 = act.singleFactor ? (g.r0||0) : (g.r0||0);
+                const r1 = act.singleFactor ? (g.r1||0) : (g.r1||0);
+                if(r0 === 0 && r1 === 0) return;
+                const label = [bName, act.name, g.name].filter(Boolean).join(" / ");
+                items.push({ label, r0, r1 });
+            });
+        });
+    });
+
+    if(!items.length) return "";
+
+    const R0 = d.R0, R1 = d.R1;
+    if(R0 === 0 || R1 === 0) return "";
+
+    // Sort by r1 share descending
+    items.sort((a,b) => b.r1/R1 - a.r1/R1);
+
+    const lines = [];
+    lines.push("Структура выручки:");
+    lines.push("");
+
+    // Largest contributor
+    const top = items[0];
+    const topS1 = (top.r1/R1*100).toFixed(1);
+    const topS0 = (top.r0/R0*100).toFixed(1);
+    const topDelta = (top.r1/R1 - top.r0/R0)*100;
+    if(Math.abs(topDelta) < 1){
+        lines.push(`Наибольший вклад в выручку вносит ${top.label} — ${topS1}% в отчётном периоде, практически без изменений по сравнению с базовым (${topS0}%).`);
+    } else if(topDelta > 0){
+        lines.push(`Наибольший вклад в выручку вносит ${top.label} — ${topS1}% в отчётном периоде, что на ${Math.abs(topDelta).toFixed(1)} п.п. выше базового уровня (${topS0}%). Позиции этой группы усилились.`);
+    } else {
+        lines.push(`Наибольший вклад в выручку вносит ${top.label} — ${topS1}% в отчётном периоде, хотя доля снизилась на ${Math.abs(topDelta).toFixed(1)} п.п. по сравнению с базовым (${topS0}%).`);
+    }
+
+    // Biggest change
+    const sorted = [...items].sort((a,b) => Math.abs(b.r1/R1 - b.r0/R0) - Math.abs(a.r1/R1 - a.r0/R0));
+    const bigChange = sorted[0];
+    if(bigChange !== top){
+        const bc1 = (bigChange.r1/R1*100).toFixed(1);
+        const bc0 = (bigChange.r0/R0*100).toFixed(1);
+        const bcd = (bigChange.r1/R1 - bigChange.r0/R0)*100;
+        if(bcd > 0.5){
+            lines.push(`Наиболее заметно выросла доля ${bigChange.label} — с ${bc0}% до ${bc1}% (+${bcd.toFixed(1)} п.п.), что свидетельствует об усилении её вклада в общий результат.`);
+        } else if(bcd < -0.5){
+            lines.push(`Наиболее заметно сократилась доля ${bigChange.label} — с ${bc0}% до ${bc1}% (${bcd.toFixed(1)} п.п.), что указывает на снижение её значимости в структуре выручки.`);
+        }
+    }
+
+    // Others — brief
+    const others = items.slice(1).filter(it => it !== bigChange);
+    if(others.length){
+        const stable = others.filter(it => Math.abs(it.r1/R1 - it.r0/R0)*100 < 1);
+        const grew   = others.filter(it => (it.r1/R1 - it.r0/R0)*100 >= 1);
+        const fell   = others.filter(it => (it.r1/R1 - it.r0/R0)*100 <= -1);
+
+        if(grew.length){
+            const names = grew.map(it => `${it.label} (+${((it.r1/R1 - it.r0/R0)*100).toFixed(1)} п.п.)`).join(", ");
+            lines.push(`Долю в структуре выручки нарастили: ${names}.`);
+        }
+        if(fell.length){
+            const names = fell.map(it => `${it.label} (${((it.r1/R1 - it.r0/R0)*100).toFixed(1)} п.п.)`).join(", ");
+            lines.push(`Долю в структуре выручки утратили: ${names}.`);
+        }
+        if(stable.length && stable.length <= 3){
+            const names = stable.map(it => it.label).join(", ");
+            lines.push(`Без существенных изменений в структуре: ${names}.`);
+        }
+    }
+
+    return lines.join("\n");
 }
 
 export function generateNarrative(d, checkedIds, currency, periods){
@@ -221,6 +307,14 @@ export function generateNarrative(d, checkedIds, currency, periods){
                 }
             });
         });
+    }
+
+    // ── Анализ долей ──
+    const shareText = shareAnalysis(d, cur);
+    if(shareText){
+        lines.push("");
+        lines.push("─".repeat(48));
+        lines.push(shareText);
     }
 
     // ── Итог ──

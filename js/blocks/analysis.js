@@ -85,6 +85,7 @@ export const AnalysisBlock = {
             if(fNode.branches.length) tree.push(fNode);
         });
 
+        console.log("tree length:", tree.length, tree.map(f => f.label + " branches:" + f.branches.length));
         if(!tree.length){ el.innerHTML = ""; el.style.display = "none"; return; }
 
         // Init checkboxes

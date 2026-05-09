@@ -386,10 +386,25 @@ export const TopBlock = {
         const type = document.getElementById("periodType").value;
         const lang = Store.get("language");
 
-        // Period labels from i18n dictionary
-        const months      = t("monthLabels")    || ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."];
-        const quarters    = t("quarterLabels")  || ["Q1","Q2","Q3","Q4"];
-        const weekPfx     = t("weekPrefix")     || "W";
+        // Period labels — per language
+        const monthsMap = {
+            en: ["Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."],
+            ru: ["Янв.","Фев.","Мар.","Апр.","Май","Июн.","Июл.","Авг.","Сен.","Окт.","Ноя.","Дек."],
+            he: ["ינו׳","פבר׳","מרץ","אפר׳","מאי","יונ׳","יול׳","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"],
+            de: ["Jan.","Feb.","Mär.","Apr.","Mai","Jun.","Jul.","Aug.","Sep.","Okt.","Nov.","Dez."],
+            fr: ["Jan.","Fév.","Mar.","Avr.","Mai","Jun.","Jul.","Aoû.","Sep.","Oct.","Nov.","Déc."]
+        };
+        const quartersMap = {
+            en: ["Q1","Q2","Q3","Q4"],
+            ru: ["1 кв.","2 кв.","3 кв.","4 кв."],
+            he: ["ר1","ר2","ר3","ר4"],
+            de: ["Q1","Q2","Q3","Q4"],
+            fr: ["T1","T2","T3","T4"]
+        };
+        const weekPrefixMap = { en:"W", ru:"Н", he:"ש", de:"W", fr:"S" };
+        const months   = monthsMap[lang]   || monthsMap.en;
+        const quarters = quartersMap[lang] || quartersMap.en;
+        const weekPfx  = weekPrefixMap[lang] || "W";
 
         const period0 = document.getElementById("period0");
         const period1 = document.getElementById("period1");

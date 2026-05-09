@@ -220,12 +220,23 @@ export const AnalysisBlock = {
         </tr></tfoot>
         </table>`;
 
-        el.innerHTML = html;
+        // Generate narrative
+        const checkedSet = new Set(Object.entries(this._checked).filter(([,v])=>v).map(([k])=>k));
+        const narrativeText = generateNarrative(d, checkedSet, Store.get("currency")||"ILS", Store.get("periods")||{});
+        const fullHtml = `<div class="af-two-col"><div class="af-left">${html}</div><div class="af-right"><div class="af-narrative-header"><span class="af-narrative-title">Аналитическая записка</span><button class="af-copy-btn" id="afCopyBtn">Копировать</button></div><pre class="af-narrative-text" id="afNarrativeText">${narrativeText}</pre></div></div>`;
+
+        el.innerHTML = fullHtml;
         this._bind(el, tree, bList);
         this._makeResizable(el);
-    },
 
-    _makeResizable(el){
+        const copyBtn = document.getElementById("afCopyBtn");
+        if(copyBtn) copyBtn.addEventListener("click", () => {
+            const text = document.getElementById("afNarrativeText")?.textContent || "";
+            navigator.clipboard.writeText(text).then(() => {
+                copyBtn.textContent = "Скопировано ✓";
+                setTimeout(() => { copyBtn.textContent = "Копировать"; }, 2000);
+            });
+        });
         const table = el.querySelector(".af-table");
         if(!table) return;
         const ths = table.querySelectorAll("thead th");

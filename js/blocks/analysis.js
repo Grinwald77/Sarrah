@@ -48,6 +48,7 @@ export const AnalysisBlock = {
         console.log("bList:", bList.length, "ab:", ab, "branchCount:", branchCount);
         if(!bList.length){ el.innerHTML = ""; el.style.display = "none"; return; }
 
+        console.log("bList[0] activities:", JSON.stringify(bList[0]?.activities?.slice(0,1)));
         const d = FactorModel.calcDetailed(bList);
         console.log("d.R0:", d.R0, "d.R1:", d.R1, "tree branches:", d.branches.length);
         if(d.R0 === 0 && d.R1 === 0){ el.innerHTML = ""; el.style.display = "none"; return; }

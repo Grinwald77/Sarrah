@@ -122,8 +122,8 @@ function factorText(key, value, dR, cur, rank){
                 : `Рост скидок сократил нетто-выручку на ${val} ${cur} (−${pp}%).`,
         },
         s: {
-            pos: `Прямое изменение выручки по однофакторным видам деятельности составило +${val} ${cur} (+${pp}%).`,
-            neg: `Снижение выручки по однофакторным видам деятельности составило −${val} ${cur} (−${pp}%).`,
+            pos: `Прямое изменение выручки без выделенных факторов составило +${val} ${cur} (+${pp}%). Рекомендуем выделить факторы в данной статье для детального анализа.`,
+            neg: `Прямое изменение выручки без выделенных факторов составило −${val} ${cur} (−${pp}%). Рекомендуем выделить факторы в данной статье для детального анализа.`,
         },
     };
 
@@ -244,7 +244,7 @@ export function generateNarrative(d, checkedIds, currency, periods){
 
     // ── Собираем выбранные факторы ──
     const KEYS = ["q","p","d","s"];
-    const NAMES = { q:"объёма продаж", p:"средних цен", d:"скидок", s:"однофакторных активностей" };
+    const NAMES = { q:"изменения количества продаж", p:"изменения средней цены", d:"изменения скидок", s:"прямого изменения выручки без выделенных факторов" };
     const selected = { q:0, p:0, d:0, s:0 };
 
     d.branches.forEach((br, bi) => {
@@ -285,9 +285,8 @@ export function generateNarrative(d, checkedIds, currency, periods){
             const bName = br.name || `Филиал ${bi+1}`;
             const bDR   = br.R1 - br.R0;
             const bPct  = br.R0 ? Math.abs(bDR / br.R0 * 100) : 0;
-            const bGrew = bDR > 0;
             lines.push("");
-            if(bGrew){
+            if(bDR > 0){
                 lines.push(`${bName}: выручка выросла на ${fmt(bDR)} ${cur} (+${bPct.toFixed(1)}%) — с ${fmt(br.R0)} до ${fmt(br.R1)} ${cur}.`);
             } else if(bDR < 0){
                 lines.push(`${bName}: выручка снизилась на ${fmt(Math.abs(bDR))} ${cur} (−${bPct.toFixed(1)}%) — с ${fmt(br.R0)} до ${fmt(br.R1)} ${cur}.`);
@@ -295,21 +294,46 @@ export function generateNarrative(d, checkedIds, currency, periods){
                 lines.push(`${bName}: выручка осталась на уровне ${fmt(br.R1)} ${cur}.`);
             }
 
+            // Factor totals for branch
+            const kNames = { q:"Изменение количества продаж", p:"Изменение средней цены", d:"Изменение скидок", s:"Прямое изменение выручки без выделенных факторов (рекомендуем выделить факторы в данной статье)" };
             KEYS.forEach(k => {
                 let brVal = 0;
                 br.activities.forEach((act, ai) => {
                     act.groups.forEach((g, gi) => {
                         const id = `f_${k}_b${bi}_a${ai}_g${gi}`;
-                        if(checkedIds.has(id)){
-                            brVal += act.singleFactor ? (g.s||0) : (g[k]||0);
+                        if(checkedIds.has(id)) brVal += act.singleFactor ? (g.s||0) : (g[k]||0);
+                    });
+                });
+                if(brVal !== 0) lines.push(`  ${kNames[k]}: ${fmtSigned(brVal)} ${cur}`);
+            });
+
+            // Most influential activity — drill down to groups
+            let topAct = null, topActVal = 0;
+            br.activities.forEach((act, ai) => {
+                let actVal = 0;
+                KEYS.forEach(k => {
+                    act.groups.forEach((g, gi) => {
+                        const id = `f_${k}_b${bi}_a${ai}_g${gi}`;
+                        if(checkedIds.has(id)) actVal += act.singleFactor ? (g.s||0) : (g[k]||0);
+                    });
+                });
+                if(Math.abs(actVal) > Math.abs(topActVal)){ topActVal = actVal; topAct = { act, ai }; }
+            });
+
+            if(topAct && topAct.act.groups.length > 1){
+                const aName = topAct.act.name || `Вид деятельности ${topAct.ai+1}`;
+                lines.push(`  Наибольшее влияние — "${aName}" (${fmtSigned(topActVal)} ${cur}):`);
+                KEYS.forEach(k => {
+                    topAct.act.groups.forEach((g, gi) => {
+                        const id = `f_${k}_b${bi}_a${topAct.ai}_g${gi}`;
+                        const val = checkedIds.has(id) ? (topAct.act.singleFactor ? (g.s||0) : (g[k]||0)) : 0;
+                        if(val !== 0){
+                            const gName = g.name || `Группа ${gi+1}`;
+                            lines.push(`    ${gName} / ${kNames[k]}: ${fmtSigned(val)} ${cur}`);
                         }
                     });
                 });
-                if(brVal !== 0){
-                    const kNames = { q:"Объём", p:"Цена", d:"Скидки", s:"Прямая выручка" };
-                    lines.push(`  ${kNames[k]}: ${fmtSigned(brVal)} ${cur}`);
-                }
-            });
+            }
         });
     }
 
